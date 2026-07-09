@@ -301,7 +301,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .eco svg.links line{stroke:rgba(86,148,205,.22);stroke-width:1;transition:opacity .2s ease;}
 .eco svg.links line.atlasLine{stroke:rgba(17,83,138,.35);stroke-width:1.4;}
 .eco .core{
-  --coreD:clamp(90px,min(8.8vw,14vh),140px);
+  --coreD:clamp(90px,min(8.8vw,14vh),185px);
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:var(--coreD);height:var(--coreD);border-radius:50%;
 display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;
@@ -314,7 +314,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   z-index:0;cursor:default;
 }
 .eco.drilled .core{
-  --coreD:clamp(140px,min(13vw,20vh),200px);
+  --coreD:clamp(140px,min(13vw,20vh),260px);
   left:calc(var(--coreD)/2 + 16px);top:50%;cursor:pointer;
   background-color:transparent;border-color:transparent;
 }
@@ -343,10 +343,10 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .slide.entered .mod{animation:modIn .7s var(--ease) forwards;animation-delay:var(--md,0s);}
 @keyframes modIn{from{opacity:0;transform:translate(-50%,-50%) scale(.5);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
 .mod .node{
-  width:clamp(76px,min(7.6vw,12vh),112px);height:clamp(76px,min(7.6vw,12vh),112px);border-radius:50%;
+  width:clamp(76px,min(7.6vw,12vh),150px);height:clamp(76px,min(7.6vw,12vh),150px);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   background:var(--well);border:1.5px solid rgba(var(--brd-rgb),.55);
-  font-weight:700;font-size:clamp(11.5px,.98vw,15px);line-height:1.22;
+  font-weight:700;font-size:clamp(11.5px,.98vw,19px);line-height:1.22;
   padding:.5em;text-align:center;color:var(--title);
   transition:all .3s var(--ease);
 }
@@ -357,20 +357,20 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .mod{cursor:pointer;}
 .mod.hub{z-index:4;}
 .mod.hub .node{
-  width:clamp(90px,min(8.8vw,14vh),140px);height:clamp(90px,min(8.8vw,14vh),140px);
+  width:clamp(90px,min(8.8vw,14vh),190px);height:clamp(90px,min(8.8vw,14vh),190px);
   background:#0a4673;
   border-color:transparent;color:#fff;position:relative;overflow:hidden;
-  font-weight:800;font-size:clamp(16px,1.6vw,25px);letter-spacing:-.01em;cursor:default;
+  font-weight:800;font-size:clamp(16px,1.6vw,34px);letter-spacing:-.01em;cursor:default;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;
 }
 .mod.hub .hubMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:118%;height:118%;color:#fff;opacity:.16;pointer-events:none;}
-.mod.hub .hubA{position:relative;z-index:1;font-size:clamp(20px,2vw,32px);font-weight:800;letter-spacing:-.01em;line-height:1.05;}
-.mod.hub .hubName{position:relative;z-index:1;font-size:clamp(12px,1.2vw,18px);font-weight:700;
+.mod.hub .hubA{position:relative;z-index:1;font-size:clamp(20px,2.5vw,40px);font-weight:800;letter-spacing:-.01em;line-height:1.05;}
+.mod.hub .hubName{position:relative;z-index:1;font-size:clamp(12px,1.5vw,22px);font-weight:700;
   letter-spacing:-.01em;color:#8fd0ff;line-height:1.05;}
 .mod.out{opacity:0!important;pointer-events:none;}
-.mod.fan .node{width:clamp(36px,3.8vw,52px);height:clamp(36px,3.8vw,52px);font-size:clamp(7.5px,.56vw,9.5px);color:var(--sec);}
-.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),84px);height:clamp(48px,min(6.2vw,9.6vh),84px);font-size:clamp(8.5px,.76vw,12px);}
+.mod.fan .node{width:clamp(36px,3.8vw,70px);height:clamp(36px,3.8vw,70px);font-size:clamp(7.5px,.56vw,13px);color:var(--sec);}
+.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),115px);height:clamp(48px,min(6.2vw,9.6vh),115px);font-size:clamp(8.5px,.76vw,16px);}
 .eco.dense10 .mod .node{width:clamp(56px,min(5.4vw,8.6vh),78px);height:clamp(56px,min(5.4vw,8.6vh),78px);font-size:clamp(8.5px,.66vw,10.5px);}
 .eco.dense20 .mod .node{width:clamp(42px,min(4vw,6.4vh),58px);height:clamp(42px,min(4vw,6.4vh),58px);font-size:clamp(6.8px,.54vw,8.3px);padding:.35em;}
 .detail{
@@ -380,18 +380,18 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 
   backdrop-filter:blur(4px);
 }
-.detail .dnum{font-size:clamp(11px,.85vw,14px);letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--blue-bright);margin-bottom:.8vh;}
-.detail h3{font-size:clamp(18px,1.7vw,28px);font-weight:800;margin-bottom:1.8vh;line-height:1.15;}
+.detail .dnum{font-size:clamp(11px,1vw,17px);letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--blue-bright);margin-bottom:.8vh;}
+.detail h3{font-size:clamp(18px,2.1vw,36px);font-weight:800;margin-bottom:1.8vh;line-height:1.15;}
 .detail .chip{margin-bottom:1.2vh;align-self:flex-start;}
 .dSec{margin-bottom:1.7vh;}
 .dSec:last-of-type{margin-bottom:0;}
 .dSec .dt{
-  font-size:clamp(10px,.78vw,12.5px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  font-size:clamp(10px,.95vw,15px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;
   color:var(--soft);margin-bottom:.45vh;display:flex;align-items:center;gap:.6em;
 }
 .dSec .dt::before{content:"";width:14px;height:2px;background:var(--blue-bright);border-radius:1px;display:inline-block;}
-.dSec p{font-size:clamp(12.5px,1.02vw,16px);color:var(--txt);line-height:1.5;}
-.detail .hint{margin-top:2vh;font-size:clamp(11px,.85vw,13.5px);color:var(--blue-grey);}
+.dSec p{font-size:clamp(12.5px,1.25vw,19px);color:var(--txt);line-height:1.5;}
+.detail .hint{margin-top:2vh;font-size:clamp(11px,1vw,16px);color:var(--blue-grey);}
 
 /* --- Slide 4b: Atlas app modules (guidelines style) --- */
 #s4b .inner{display:flex;flex-direction:column;}
@@ -1262,7 +1262,7 @@ function drillInto(m,btn){
   var n=others.length;
   var er=eco.getBoundingClientRect();
   var vw=window.innerWidth, vh=window.innerHeight;
-  var giantD=Math.min(200,Math.max(140,Math.min(0.13*vw,0.20*vh)));
+  var giantD=Math.min(260,Math.max(140,Math.min(0.13*vw,0.20*vh)));
   var atlasCxPct=(((giantD/2)+16)/er.width)*100;    // Atlas's own centre, % of eco width
   var atlasRPct=((giantD/2)/er.width)*100;          // Atlas's own radius, % of eco width
   var ARC_R=atlasRPct+9;                            // just outside Atlas's edge
