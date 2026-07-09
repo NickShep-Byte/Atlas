@@ -1228,7 +1228,7 @@ function renderRoot(){
   FEATURE_MODS.forEach(function(m,i){
     var ang = -90 + i*(360/FEATURE_MODS.length);
     var rad = ang*Math.PI/180;
-    var R = 46;
+    var R = 42;
     var x = 50 + R*Math.cos(rad), y = 50 + R*ecoAR()*Math.sin(rad);
     var b = document.createElement('button');
     b.className='mod';
@@ -1458,7 +1458,7 @@ function relinkEco(){
     positionAtlasLine();
     relinkFan();
   }else{
-    relinkRing(core,0.46);
+    relinkRing(core,0.40);
   }
 }
 var relinkTimer=null;
