@@ -1290,7 +1290,7 @@ function drillInto(m,btn){
   var ARC_R_px=ARC_R/100*er.width;
   var minChordPx=chipOuterD+5;
   var minStepDeg=n>1?2*Math.asin(Math.min(1,minChordPx/(2*ARC_R_px)))*180/Math.PI:0;
-  var span=Math.max(139.2,n>1?minStepDeg*(n-1):0);
+  var span=Math.max(180,n>1?minStepDeg*(n-1):0);
   var ARC_START=-span/2, ARC_END=span/2;
   var neededHubCenterPx=(giantD/2+16)+giantD/2+GAP+chipOuterD+GAP+hubOuterD/2;
   var ringRadiusPx=Math.min(er.width,er.height)*hubRingFrac();
