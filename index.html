@@ -354,7 +354,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .mod.hi{transform:translate(-50%,-50%) scale(1.1);z-index:3;}
 .mod.sel{transform:translate(-50%,-50%) scale(1.08);z-index:3;}
 .mod.hi .node,.mod.sel .node{background:var(--teal);border-color:transparent;color:#fff;}
-.mod:hover .node{border-color:rgba(var(--acc2-rgb),.8);}
+.mod:hover:not(.sel):not(.hi) .node{border-color:rgba(var(--acc2-rgb),.8);}
 .mod{cursor:pointer;}
 .mod.hub{z-index:4;}
 .mod.hub .node{
@@ -567,8 +567,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 }
 .seg:hover,.seg:focus-visible{background:rgba(var(--srf-rgb),.38);}
 .seg:focus-visible{outline:2px solid var(--blue-bright);outline-offset:3px;}
-.seg.done{background:rgba(var(--acc2-rgb),.55);}
-.seg.cur{background:var(--grad);}
+.seg.done{background:var(--teal);}
+.seg.cur{background:var(--teal);}
 .seg .tip{
   position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
   font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--txt);white-space:nowrap;
