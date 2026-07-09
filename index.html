@@ -314,8 +314,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   z-index:0;cursor:default;
 }
 .eco.drilled .core{
-  --coreD:clamp(180px,min(17.6vw,28vh),280px);
-  left:calc(55px - var(--coreD)/2);top:50%;cursor:pointer;
+  --coreD:clamp(140px,min(13vw,20vh),200px);
+  left:calc(var(--coreD)/2 + 16px);top:50%;cursor:pointer;
   background-color:transparent;border-color:transparent;
 }
 .eco .core .coreMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
@@ -323,19 +323,15 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   transition:color .7s var(--ease),opacity .7s var(--ease);}
 .eco.drilled .core .coreMark{color:var(--sec);opacity:.07;}
 [data-theme="dark"] .eco.drilled .core .coreMark{color:var(--acc2);opacity:.10;}
-.eco .core .coreLabel{position:relative;z-index:1;color:#fff;opacity:1;
+.eco .core .coreLabel{position:relative;z-index:1;color:#fff;
   font-size:calc(var(--coreD)*.225);font-weight:800;letter-spacing:-.01em;text-transform:none;line-height:1.05;
-  transition:font-size .7s var(--ease),color .7s var(--ease),opacity .5s var(--ease);}
-/* drilled: the giant core slides mostly off-canvas as a decorative watermark shape
-   (like #s1 .atlasWatermark) — its own label would get clipped mid-word by the
-   slide edge, so it fades out; the readable "Atlas / ModuleName" text lives in
-   the hub button at centre instead. */
-.eco.drilled .core .coreLabel{color:var(--navy);opacity:0;}
+  transition:font-size .7s var(--ease),color .7s var(--ease);}
+.eco.drilled .core .coreLabel{color:var(--navy);}
 [data-theme="dark"] .eco.drilled .core .coreLabel{color:var(--title);}
 .eco .core .coreSub{position:relative;z-index:1;font-size:calc(var(--coreD)*.128)!important;font-weight:700!important;
-  letter-spacing:-.01em!important;color:#8fd0ff!important;text-transform:none!important;line-height:1.05;opacity:1;
-  transition:font-size .7s var(--ease),color .7s var(--ease),opacity .5s var(--ease);}
-.eco.drilled .core .coreSub{color:var(--sec)!important;opacity:0;}
+  letter-spacing:-.01em!important;color:#8fd0ff!important;text-transform:none!important;line-height:1.05;
+  transition:font-size .7s var(--ease),color .7s var(--ease);}
+.eco.drilled .core .coreSub{color:var(--sec)!important;}
 .eco .core .coreSub:empty{display:none;}
 .mod{
   position:absolute;transform:translate(-50%,-50%);
@@ -1143,6 +1139,7 @@ var coreLabel=document.getElementById('coreLabel'),coreSub=document.getElementBy
 var roadDetail=document.getElementById('roadDetail'),rdNum=document.getElementById('rdNum'),
     rdName=document.getElementById('rdName'),rdBody=document.getElementById('rdBody'),rdHint=document.getElementById('rdHint');
 var ECO_AR = 1.18;  // .eco aspect-ratio (width/height) — keeps orbit a true circle
+var HUB_X_DRILLED = 63; // hub's % x-position once drilled — shifted right to leave the on-screen giant Atlas circle room on the left
 var selBtn=null, STATE='root', genID=0;
 function showDetail(node,label){
   rdNum.textContent=(label||'Feature');
@@ -1185,7 +1182,7 @@ function spawnFeatures(m,myGen){
       var ang = BASE_ANG + slot*(360/nSlots);
       var rad = ang*Math.PI/180;
       var R = window.matchMedia('(max-height:600px)').matches ? 46 : 26;
-      var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+      var x = HUB_X_DRILLED + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
       var b = document.createElement('button');
       b.className='mod';
       b.dataset.kind='feature';
@@ -1258,13 +1255,15 @@ function drillInto(m,btn){
   eco.querySelectorAll('.mod[data-kind="feature"]').forEach(function(b){b.remove();});
   // fan every other module into an arc that hugs the OUTSIDE of the giant Atlas
   // circle (its own centre, not the hub) — computed from Atlas's actual geometry
-  // so the arc sits on the far side of Atlas, facing back toward the hub
+  // so the arc sits on the far side of Atlas, facing back toward the hub. The
+  // circle itself stays fully on-screen (left edge inset by a small margin,
+  // matching #s4 .core CSS), and the hub shifts right of centre to leave it room.
   var others=[].slice.call(eco.querySelectorAll('.mod[data-kind="module"]')).filter(function(b){return b!==btn;});
   var n=others.length;
   var er=eco.getBoundingClientRect();
   var vw=window.innerWidth, vh=window.innerHeight;
-  var giantD=Math.min(280,Math.max(180,Math.min(0.176*vw,0.28*vh)));
-  var atlasCxPct=((55-giantD/2)/er.width)*100;      // Atlas's own centre, % of eco width
+  var giantD=Math.min(200,Math.max(140,Math.min(0.13*vw,0.20*vh)));
+  var atlasCxPct=(((giantD/2)+16)/er.width)*100;    // Atlas's own centre, % of eco width
   var atlasRPct=((giantD/2)/er.width)*100;          // Atlas's own radius, % of eco width
   var ARC_R=atlasRPct+9;                            // just outside Atlas's edge
   var ARC_START=-58, ARC_END=58;                    // degrees either side of due-east (facing the hub)
@@ -1280,7 +1279,7 @@ function drillInto(m,btn){
   // the clicked module morphs in place into the central hub
   btn.classList.remove('fan');
   btn.classList.add('hub');
-  placeAt(btn,50,50);
+  placeAt(btn,HUB_X_DRILLED,50);
   btn.setAttribute('aria-label','Module: '+m.name);
   btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'<span class="hubA">Atlas</span><span class="hubName">'+m.name+'</span></span>';
   clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>','');
