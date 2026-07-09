@@ -1248,7 +1248,17 @@ function renderRoot(){
     b.setAttribute('aria-label','Module: '+m.name);
     b._mod=m;
     b.innerHTML='<span class="node">'+m.name+'</span>';
-    b.addEventListener('click',function(e){e.stopPropagation();drillInto(m,b);});
+    b.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(b.classList.contains('hub')){
+        // already the active/drilled-in module — reload its feature ring
+        // instead of no-oping (position/content wouldn't otherwise change)
+        var myGen=++genID;
+        spawnFeatures(m,myGen);
+        return;
+      }
+      drillInto(m,b);
+    });
     eco.appendChild(b);
     var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
     ln.setAttribute('x1','50%');ln.setAttribute('y1','50%');
