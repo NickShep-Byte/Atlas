@@ -167,22 +167,6 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s1 .halo{display:none;}
 #s1.entered .halo{opacity:1;}
 
-/* ============================================================
-   SLIDE 2: The reality today (pain cards)
-   ============================================================ */
-#s2 .head{margin-bottom:4.2vh;max-width:1050px;}
-#s2 .grid{display:grid;grid-template-columns:1fr 1fr;gap:2.2vh 2vw;}
-.pain{
-  padding:3vh 2.2vw;border-radius:14px;position:relative;
-  background:var(--white);color:var(--ink);box-shadow:var(--card-shadow);border:1px solid var(--card-line);
-}
-.pain .pi{
-  width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  background:var(--light);margin-bottom:1.6vh;
-}
-.pain .pi svg{width:24px;height:24px;stroke:var(--navy-mid);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
-.pain h3{font-size:clamp(16px,1.45vw,23px);color:var(--navy);margin-bottom:.7vh;font-weight:700;}
-.pain p{font-size:clamp(13px,1.05vw,16.5px);color:var(--ink-soft);line-height:1.5;}
 
 /* ============================================================
    SLIDE 3: Cost flow + concept (SIGNATURE / HERO)
@@ -730,37 +714,6 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
 </section>
 
 <!-- Slide 2: The reality today -->
-<section class="slide" id="s2" data-label="Today" data-act="1" data-frags="1">
-  <div class="inner">
-    <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>The Reality Today</span>
-      <h2 style="margin-top:1.6vh;">Project delivery runs on spreadsheets, and a ledger that lacks project cost controls.</h2>
-    </div>
-    <div class="grid">
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg></div>
-        <h3>Manual, fragmented tooling</h3>
-        <p>The Daily Diary / Cost Tracker (the "PFC tool") and a sprawl of point solutions hold critical delivery data in Excel.</p>
-      </div>
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg></div>
-        <h3>Pronto is an unreliable ledger</h3>
-        <p>Outside purchase orders, costs are hard-coded to a single cost code. PMs and cost controllers can't control how charges land against budget, so cost-to-complete forecasting is difficult and inaccurate.</p>
-      </div>
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg></div>
-        <h3>Reconciliation is painful</h3>
-        <p>Operations and Project Delivery rely on disconnected spreadsheets that are hard to reconcile to the source of truth, undermining project controls.</p>
-      </div>
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <h3>Reporting is slow</h3>
-        <p>Monthly Project Reports and Cashflow Reports are heavily manual to collate, frustrating teams and delaying insight to leadership.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ════════════ ACT 2 ════════════ -->
 
 <!-- Slide 3: Cost flow + the Atlas concept (SIGNATURE / HERO) -->
