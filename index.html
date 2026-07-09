@@ -1146,6 +1146,14 @@ function ecoAR(){
   var r=eco.getBoundingClientRect();
   return (r.width && r.height) ? r.width/r.height : 1.18;
 }
+// %-of-eco-width x-offset that lands a node at pixel-radius `frac` of
+// min(ecoWidth,ecoHeight) — i.e. the same true-circle target relinkRing
+// corrects to. Without this, a fixed %-of-width guess overshoots badly on a
+// wide (non-square) .eco, so relinkRing's first correction pass reads it as
+// a stale/transitional position and hides the line instead of just moving it.
+function ringKPct(frac){
+  return frac*100/Math.max(1,ecoAR());
+}
 var HUB_X_GUESS = 63; // rough initial % x-guess for feature nodes before the hub's actual (dynamically computed) position lands and relinkRing corrects them
 var selBtn=null, STATE='root', genID=0;
 function showDetail(node,label){
@@ -1228,7 +1236,7 @@ function renderRoot(){
   FEATURE_MODS.forEach(function(m,i){
     var ang = -90 + i*(360/FEATURE_MODS.length);
     var rad = ang*Math.PI/180;
-    var R = 42;
+    var R = ringKPct(0.40); // matches relinkRing(core,0.40)'s true-circle target
     var x = 50 + R*Math.cos(rad), y = 50 + R*ecoAR()*Math.sin(rad);
     var b = document.createElement('button');
     b.className='mod';
