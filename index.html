@@ -323,14 +323,19 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   transition:color .7s var(--ease),opacity .7s var(--ease);}
 .eco.drilled .core .coreMark{color:var(--sec);opacity:.07;}
 [data-theme="dark"] .eco.drilled .core .coreMark{color:var(--acc2);opacity:.10;}
-.eco .core .coreLabel{position:relative;z-index:1;color:#fff;
+.eco .core .coreLabel{position:relative;z-index:1;color:#fff;opacity:1;
   font-size:calc(var(--coreD)*.225);font-weight:800;letter-spacing:-.01em;text-transform:none;line-height:1.05;
-  transition:font-size .7s var(--ease),color .7s var(--ease);}
-.eco.drilled .core .coreLabel{color:var(--navy);}
+  transition:font-size .7s var(--ease),color .7s var(--ease),opacity .5s var(--ease);}
+/* drilled: the giant core slides mostly off-canvas as a decorative watermark shape
+   (like #s1 .atlasWatermark) — its own label would get clipped mid-word by the
+   slide edge, so it fades out; the readable "Atlas / ModuleName" text lives in
+   the hub button at centre instead. */
+.eco.drilled .core .coreLabel{color:var(--navy);opacity:0;}
+[data-theme="dark"] .eco.drilled .core .coreLabel{color:var(--title);}
 .eco .core .coreSub{position:relative;z-index:1;font-size:calc(var(--coreD)*.128)!important;font-weight:700!important;
-  letter-spacing:-.01em!important;color:#8fd0ff!important;text-transform:none!important;line-height:1.05;
-  transition:font-size .7s var(--ease),color .7s var(--ease);}
-.eco.drilled .core .coreSub{color:var(--sec)!important;}
+  letter-spacing:-.01em!important;color:#8fd0ff!important;text-transform:none!important;line-height:1.05;opacity:1;
+  transition:font-size .7s var(--ease),color .7s var(--ease),opacity .5s var(--ease);}
+.eco.drilled .core .coreSub{color:var(--sec)!important;opacity:0;}
 .eco .core .coreSub:empty{display:none;}
 .mod{
   position:absolute;transform:translate(-50%,-50%);
@@ -1171,10 +1176,9 @@ function spawnFeatures(m,myGen){
   var atlasSlot = 0;
   var BASE_ANG = -180;
   var atlasLn=document.createElementNS('http://www.w3.org/2000/svg','line');
-  atlasLn.setAttribute('x1','2%');atlasLn.setAttribute('y1','50%');
-  atlasLn.setAttribute('x2','50%');atlasLn.setAttribute('y2','50%');
   atlasLn.setAttribute('class','atlasLine');
   linksSvg.appendChild(atlasLn);
+  positionAtlasLine();
   if(feats.length){
     feats.forEach(function(f,i){
       var slot = i<atlasSlot ? i : i+1;
@@ -1347,10 +1351,35 @@ function relinkRing(centerEl,radiusFrac){
   });
   return {cx:cx,cy:cy};
 }
+function positionAtlasLine(){
+  var atlasLn=linksSvg.querySelector('.atlasLine');
+  if(!atlasLn)return;
+  var er=eco.getBoundingClientRect();
+  if(!er.width)return;
+  var cr=core.getBoundingClientRect();
+  var hubBtn=eco.querySelector('.mod.hub');
+  var hx,hy;
+  if(hubBtn){
+    var hr=hubBtn.getBoundingClientRect();
+    hx=hr.left+hr.width/2-er.left;hy=hr.top+hr.height/2-er.top;
+  }else{
+    hx=er.width*0.5;hy=er.height*0.5;
+  }
+  // start the line at the giant Atlas circle's actual edge (nearest the hub),
+  // not a guessed percentage, so it never draws underneath/through the circle
+  var ccx=cr.left+cr.width/2-er.left, ccy=cr.top+cr.height/2-er.top;
+  var ang=Math.atan2(hy-ccy,hx-ccx);
+  var edgeX=ccx+(cr.width/2)*Math.cos(ang), edgeY=ccy+(cr.height/2)*Math.sin(ang);
+  linksSvg.setAttribute('viewBox','0 0 '+er.width+' '+er.height);
+  linksSvg.setAttribute('preserveAspectRatio','none');
+  atlasLn.setAttribute('x1',edgeX);atlasLn.setAttribute('y1',edgeY);
+  atlasLn.setAttribute('x2',hx);atlasLn.setAttribute('y2',hy);
+}
 function relinkEco(){
   if(STATE==='drilled'){
     var hubBtn=eco.querySelector('.mod.hub');
     if(hubBtn)relinkRing(hubBtn,hubRingFrac());
+    positionAtlasLine();
   }else{
     relinkRing(core,0.40);
   }
