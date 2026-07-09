@@ -304,7 +304,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .vflow .vlbl.greyLbl{color:var(--grey);}
 
 /* ============================================================
-   SLIDE 4: Roadmap ecosystem (SIGNATURE 2)
+   SLIDE 4: Feature ecosystem (SIGNATURE 2)
    ============================================================ */
 #s4.slide{overflow-x:hidden;}
 #s4 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,1fr);gap:2.2vw;align-items:center;}
@@ -840,7 +840,7 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
 
 <!-- ════════════ ACT 3 ════════════ -->
 
-<!-- Slide 4: Roadmap ecosystem (SIGNATURE 2) -->
+<!-- Slide 4: Feature ecosystem (SIGNATURE 2) -->
 
 <section class="slide" id="s4" data-label="Features" data-act="3">
 
@@ -848,8 +848,8 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
     <div class="wrap">
       <div>
         <div class="head rv">
-          <span class="eyebrow"><span class="dot"></span>The Transformation Roadmap</span>
-          <h2 style="margin-top:1.4vh;font-size:clamp(24px,2.6vw,40px);">Delivered in phases. One living platform.</h2>
+          <span class="eyebrow"><span class="dot"></span>The Feature Ecosystem</span>
+          <h2 style="margin-top:1.4vh;font-size:clamp(24px,2.6vw,40px);">Every module. Every feature. One living platform.</h2>
         </div>
         <div class="eco rv d2" id="eco">
           <svg class="links" id="ecoLinks" aria-hidden="true"></svg>
@@ -858,9 +858,9 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
         </div>
       </div>
       <div class="detail rv d3" id="roadDetail">
-        <div class="dnum" id="rdNum">The ecosystem</div>
-        <h3 id="rdName">Seven modules, one platform</h3>
-        <div id="rdBody"><div class="dSec"><p>Select a module to see the roadmap features that belong to it.</p></div></div>
+        <div class="dnum" id="rdNum">The feature set</div>
+        <h3 id="rdName">Seven modules, every feature</h3>
+        <div id="rdBody"><div class="dSec"><p>Select a module to see the features that belong to it.</p></div></div>
         <div class="hint" id="rdHint" style="display:none;">Select a feature to see its pain point, scope and benefits.</div>
       </div>
     </div>
@@ -1024,15 +1024,15 @@ var MODS = [
 
 /* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas modules.
    Click zooms the node to centre, replacing the core with an "Atlas | Name" hero.
-   TODO: once the roadmap-features-by-module Word doc lands, replace each
-   ROADMAP_MODS[i].feats with that module's roadmap feature list (currently empty). */
+   TODO: once the features-by-module Word doc lands, replace each
+   FEATURE_MODS[i].feats with that module's feature list (currently empty). */
 /* Build ecosystem ring (slide 4) — 11 phase nodes orbit the Atlas core (uses MODS,
    defined above). A module chip row selects one of the 7 Atlas modules: the core
    relabels to "Atlas / ModuleName" and the ring rebuilds to show ONLY that
    module's features (not the full 11). Clicking any node (phase or feature)
    shows its pain/scope/benefit in the panel below. Data sourced from
    Atlas_Description_Text_updated.docx. */
-var ROADMAP_MODS=[
+var FEATURE_MODS=[
  {name:'People',fn:'PEOPLE & PAYROLL',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:[
   {n:'01',name:'Onboarding & Offboarding',
    pain:'New starters are onboarded from disconnected spreadsheets and email, so staff can be added to payroll and given system access before their first day is even confirmed.',
@@ -1241,8 +1241,8 @@ function renderRoot(){
   coreLabel.textContent='Atlas';coreSub.textContent='';
   eco.querySelectorAll('.mod').forEach(function(b){b.remove();});
   linksSvg.innerHTML='';
-  ROADMAP_MODS.forEach(function(m,i){
-    var ang = -90 + i*(360/ROADMAP_MODS.length);
+  FEATURE_MODS.forEach(function(m,i){
+    var ang = -90 + i*(360/FEATURE_MODS.length);
     var rad = ang*Math.PI/180;
     var R = 42;
     var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
@@ -1263,7 +1263,7 @@ function renderRoot(){
     linksSvg.appendChild(ln);
   });
   clearDetail('The ecosystem','Seven modules, one platform',
-    '<div class="dSec"><p>Select a module to see the roadmap features that belong to it.</p></div>','');
+    '<div class="dSec"><p>Select a module to see the features that belong to it.</p></div>','');
   rdHint.style.display='none';
   if(wasDrilled){setTimeout(function(){if(myGen===genID)relinkEco();},720);}
   else{requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID)relinkEco();});});}
