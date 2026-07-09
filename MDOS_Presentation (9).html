@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en-AU" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDOS Executive Leadership Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MDOS Executive Showcase / McMahon Services
+   Atlas brand · Plus Jakarta Sans + Archivo (Google Fonts) · dark/light toggle
+   ============================================================ */
+:root{
+  --navy:#003764;
+  --navy-deep:#002D4B;
+  --navy-mid:#0A4673;
+  --sec:#0582CA;         /* Atlas Blue */
+  --sec-rgb:5,130,202;
+  --acc2:#3AA0E0;        /* Atlas Blue, dark accent */
+  --acc2-rgb:58,160,224;
+  --teal:#00908E;        /* MAC Teal, single attention element */
+  --teal-rgb:0,144,142;
+  --blue:var(--sec);
+  --blue-bright:var(--acc2);
+  --grad:var(--sec);
+  --bg:#062A45;
+  --txt:#E8EEF4;
+  --title:#FFFFFF;
+  --soft:#8FB0CC;
+  --soft-rgb:143,176,204;
+  --grey:var(--soft);
+  --blue-grey:var(--soft);
+  --srf-rgb:255,255,255;
+  --brd-rgb:122,170,214;
+  --well:#06283F;
+  --card-line:transparent;
+  --line-l:#D4DCE5;
+  --ink:#003764;
+  --ink-soft:#41647D;
+  --light:#E6EBF0;
+  --white:#FFFFFF;
+  --shadow:0 30px 90px rgba(0,0,0,.45);
+  --card-shadow:0 22px 60px rgba(0,0,0,.4);
+  --wm1:#FFFFFF; --wm2:#7CC3EA; --wm3:#3AA0E0;
+  --font:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --font-util:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --ease:cubic-bezier(.22,.61,.2,1);
+}
+[data-theme="light"]{
+  --acc2:#0582CA; --acc2-rgb:5,130,202;
+  --bg:#FAF9F7;
+  --txt:#003764;
+  --title:#003764;
+  --soft:#41647D;
+  --soft-rgb:65,100,125;
+  --srf-rgb:0,55,100;
+  --brd-rgb:65,100,125;
+  --well:#E6EBF0;
+  --card-line:#D4DCE5;
+  --shadow:0 30px 90px rgba(0,55,100,.16);
+  --card-shadow:0 22px 60px rgba(0,55,100,.12);
+  --wm1:#003764; --wm2:#0582CA; --wm3:#00908E;
+  --grad:#0582CA;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--white);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;}
+#contourBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#contourBg .contours path{fill:none;stroke:#C9D6E2;stroke-width:1;opacity:.55;}
+[data-theme="dark"] #contourBg .contours path{stroke:rgba(255,255,255,.10);opacity:1;}
+#stage{z-index:1;}
+
+/* ---------- Stage & slides ---------- */
+#stage{position:fixed;inset:0;overflow:hidden;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:max(5.5vh,46px) 5vw max(9vh,64px);
+  opacity:0;visibility:hidden;
+  transform:translateX(3.5vw);
+  transition:opacity .65s var(--ease),transform .65s var(--ease),visibility 0s linear .65s;
+  pointer-events:none;
+}
+.slide.active{
+  opacity:1;visibility:visible;transform:translateX(0);
+  transition:opacity .65s var(--ease) .12s,transform .65s var(--ease) .12s;
+  pointer-events:auto;
+}
+.slide.prior{transform:translateX(-3.5vw);}
+.inner{width:min(1480px,100%);max-height:100%;}
+
+/* ---------- Shared vocabulary ---------- */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6em;
+  font-size:clamp(11px,.95vw,14px);font-weight:700;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--blue-bright);
+}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--blue-bright);animation:pulse 2.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}55%{opacity:.4;}}
+h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spacing:-.012em;}
+.sub{font-size:clamp(15px,1.3vw,21px);color:var(--grey);line-height:1.55;font-weight:400;}
+.chip{
+  display:inline-flex;align-items:center;gap:.5em;
+  font-size:clamp(10px,.82vw,13px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:.5em 1.1em;border-radius:99px;
+  background:rgba(var(--acc2-rgb),.14);color:var(--blue-bright);
+  border:1px solid rgba(var(--acc2-rgb),.35);
+}
+.chip.solid{background:var(--teal);color:#fff;border:none;}
+.cta{
+  display:inline-flex;align-items:center;gap:.6em;text-decoration:none;
+  background:var(--teal);color:#fff;font-weight:700;font-size:clamp(14px,1.25vw,20px);
+  padding:.85em 1.8em;border-radius:99px;box-shadow:0 14px 40px rgba(var(--teal-rgb),.4);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.cta:hover,.cta:focus-visible{transform:translateY(-2px);box-shadow:0 20px 50px rgba(var(--teal-rgb),.5);}
+
+/* Entrance reveals, fire on slide entry only */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
+.slide.entered .rv{opacity:1;transform:none;}
+.slide.entered .rv.d1{transition-delay:.15s;}
+.slide.entered .rv.d2{transition-delay:.3s;}
+.slide.entered .rv.d3{transition-delay:.45s;}
+.slide.entered .rv.d4{transition-delay:.6s;}
+.slide.entered .rv.d5{transition-delay:.78s;}
+.slide.entered .rv.d6{transition-delay:.95s;}
+
+/* Fragments, presenter-stepped reveals */
+.frag{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
+.frag.shown{opacity:1;transform:none;}
+
+/* ============================================================
+   SLIDE 1: Cold open
+   ============================================================ */
+#s1 .inner{text-align:center;position:relative;z-index:1;}
+#s1 .atlasWatermark{position:absolute;left:50%;top:44.8%;transform:translate(-50%,-50%);
+  width:min(620px,52vw,72vh);height:min(620px,52vw,72vh);z-index:0;pointer-events:none;
+  color:var(--sec);opacity:.07;}
+[data-theme="dark"] #s1 .atlasWatermark{color:var(--acc2);opacity:.10;}
+#s1 .wordmark{
+  font-size:clamp(64px,11vw,168px);font-weight:800;letter-spacing:-.03em;line-height:1;
+  color:var(--navy);
+  opacity:0;transform:translateY(34px) scale(.97);filter:blur(10px);
+  transition:opacity 1.2s var(--ease),transform 1.2s var(--ease),filter 1.2s var(--ease);
+}
+#s1.entered .wordmark{opacity:1;transform:none;filter:blur(0);}
+[data-theme="dark"] #s1 .wordmark{color:var(--title);}
+#s1 .expand{
+  font-size:clamp(13px,1.15vw,19px);letter-spacing:.34em;text-transform:uppercase;
+  color:var(--blue-grey);margin-top:2.2vh;font-weight:600;
+}
+#s1 .line{
+  font-size:clamp(19px,2vw,32px);color:var(--sec);font-weight:300;margin-top:calc(5vh - 3px);line-height:1.4;
+}
+#s1 .line strong{font-weight:700;color:var(--title);}
+#s1 .prep{position:absolute;left:50%;bottom:12vh;transform:translateX(-50%);
+  margin:0;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);letter-spacing:.06em;white-space:nowrap;z-index:1;}
+#s1 .prep b{color:var(--grey);font-weight:600;}
+#s1 .halo{display:none;}
+#s1.entered .halo{opacity:1;}
+
+/* ============================================================
+   SLIDE 2: The reality today (pain cards)
+   ============================================================ */
+#s2 .head{margin-bottom:4.2vh;max-width:1050px;}
+#s2 .grid{display:grid;grid-template-columns:1fr 1fr;gap:2.2vh 2vw;}
+.pain{
+  padding:3vh 2.2vw;border-radius:14px;position:relative;
+  background:var(--white);color:var(--ink);box-shadow:var(--card-shadow);border:1px solid var(--card-line);
+}
+.pain .pi{
+  width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:var(--light);margin-bottom:1.6vh;
+}
+.pain .pi svg{width:24px;height:24px;stroke:var(--navy-mid);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.pain h3{font-size:clamp(16px,1.45vw,23px);color:var(--navy);margin-bottom:.7vh;font-weight:700;}
+.pain p{font-size:clamp(13px,1.05vw,16.5px);color:var(--ink-soft);line-height:1.5;}
+
+/* ============================================================
+   SLIDE 3: Cost flow + concept (SIGNATURE / HERO)
+   ============================================================ */
+#s3 .head{text-align:center;margin-bottom:2.2vh;max-width:1200px;margin-left:auto;margin-right:auto;}
+#s3 .head h2{font-size:clamp(24px,2.7vw,42px);}
+#s3 .stack{display:flex;flex-direction:column;align-items:center;}
+.layer{
+  width:min(1060px,88vw);border-radius:16px;padding:1.8vh 2vw;text-align:center;
+}
+.layer .lt{font-size:clamp(10px,.8vw,13px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-bright);}
+.layer h3{font-size:clamp(18px,1.7vw,28px);font-weight:800;margin:.2vh 0 .4vh;}
+.layer .role{font-size:clamp(11px,.92vw,14.5px);color:var(--soft);margin-bottom:1.2vh;}
+.layer .role b{color:var(--txt);font-weight:700;}
+.layer .chips,.l1grid .chips{display:flex;justify-content:center;gap:.5vw;flex-wrap:wrap;}
+.layer .chips span{
+  font-size:clamp(10.5px,.86vw,13.5px);font-weight:600;
+  padding:.42em .95em;border-radius:8px;
+  background:rgba(var(--srf-rgb),.07);border:1px solid rgba(var(--brd-rgb),.3);color:var(--txt);
+}
+.layer.costs{background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);padding-bottom:1.6vh;}
+.layer.mdosL{
+  background:rgba(var(--sec-rgb),.1);border:1px solid rgba(var(--acc2-rgb),.55);
+  box-shadow:none;
+}
+.subBoxes{display:grid;grid-template-columns:1.5fr 1fr;gap:.8vw;text-align:left;}
+.subBox{
+  background:var(--well);border:1px solid rgba(var(--acc2-rgb),.3);border-radius:12px;
+  padding:1.3vh 1vw;
+}
+.subBox .sbt{
+  font-size:clamp(9.5px,.74vw,12px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:.9vh;display:flex;align-items:center;gap:.6em;
+}
+.subBox .sbt::before{content:"";width:14px;height:2px;background:var(--blue-bright);border-radius:1px;}
+.subBox .chips{justify-content:flex-start;gap:.4vw .4vw;}
+.subBox .chips span{background:rgba(var(--acc2-rgb),.12);border-color:rgba(var(--acc2-rgb),.4);color:var(--txt);}
+.layer.prontoL{background:var(--white);color:var(--ink);box-shadow:var(--shadow);border:1px solid var(--card-line);}
+.layer.prontoL .lt{color:var(--blue);}
+.layer.prontoL h3{color:var(--navy);display:inline-flex;align-items:center;gap:.6em;}
+.layer.prontoL .role{color:var(--ink-soft);}
+.layer.prontoL .role b{color:var(--navy);}
+.layer.prontoL .chips span{background:var(--light);border:1px solid var(--line-l);color:var(--ink-soft);}
+
+/* --- Slide 3: 4-layer left-rail; Atlas tint block spans L1-L3, notched for External --- */
+.railStack{position:relative;width:min(1080px,90vw);margin:0 auto;}
+.railRow{display:grid;grid-template-columns:150px 1fr;column-gap:1.4vw;
+  padding:1.5vh 0;align-items:stretch;position:relative;z-index:1;}
+.railRow + .railRow{border-top:1px solid rgba(var(--brd-rgb),.28);}
+.railLbl{display:flex;flex-direction:column;gap:.2vh;padding-top:.4vh;}
+.railLbl .rn{font-family:var(--font-util);font-size:clamp(9.5px,.74vw,12px);font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--acc2);}
+.railLbl .rt{font-size:clamp(13px,1.2vw,19px);font-weight:800;color:var(--title);line-height:1.15;letter-spacing:-.01em;}
+.railBody{display:grid;grid-template-columns:1fr 1fr;column-gap:1.4vw;align-items:start;}
+.railBody.single{grid-template-columns:1fr;}
+.railBody.centreOne{grid-template-columns:1fr;justify-items:center;}
+.railBody.centreOne .rcell{width:min(560px,64%);}
+.railBody.offsetR{grid-template-columns:1fr 1fr;}
+.railBody.offsetR .rcell{grid-column:2;}
+/* boxed cell = Atlas-styled card */
+.rcell{background:var(--well);border:1px solid rgba(var(--acc2-rgb),.35);border-radius:12px;padding:1.2vh 1vw;text-align:center;}
+.rcell.head3 h4{font-size:clamp(14px,1.3vw,20px);font-weight:800;color:var(--title);margin-bottom:.6vh;}
+.rcell .sbt{font-size:clamp(9.5px,.74vw,12px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:.7vh;display:flex;align-items:center;justify-content:center;gap:.6em;font-family:var(--font-util);}
+.rcell .sbt::before{content:"";width:14px;height:2px;background:var(--acc2);border-radius:1px;}
+.rcell .chips{display:flex;flex-wrap:wrap;gap:.4vw;justify-content:center;}
+.rcell .chips span{font-size:clamp(10px,.82vw,13px);font-weight:600;padding:.4em .9em;border-radius:8px;
+  background:rgba(var(--acc2-rgb),.12);border:1px solid rgba(var(--acc2-rgb),.4);color:var(--txt);}
+.rcell.external{background:var(--well);border-color:rgba(var(--brd-rgb),.45);}
+.rcell.pronto{background:var(--white);border:1px solid var(--card-line);}
+.rcell.pronto .sbt{color:var(--ink-soft);}
+.rcell.pronto .sbt::before{background:var(--sec);}
+.rcell.pronto .chips span{background:var(--light);border:1px solid var(--line-l);color:var(--ink-soft);}
+.prontoHead{display:flex;align-items:center;justify-content:center;gap:.6em;margin-bottom:.3vh;}
+.prontoHead .pName{font-size:clamp(16px,1.5vw,24px);font-weight:800;color:var(--navy);}
+.rcell.pronto .role{font-size:clamp(11px,.9vw,14px);color:var(--ink-soft);margin:0 0 .8vh;}
+.rcell.pronto .role b{color:var(--navy);font-weight:700;}
+/* Atlas tint block behind L1-L3, drawn as SVG so the notched outline renders cleanly */
+.atlasL{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.atlasL svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.atlasL .atlasFill{fill:rgba(var(--sec-rgb),.09);stroke:rgba(var(--acc2-rgb),.5);stroke-width:1.5;}
+.atlasL .atlasTag{position:absolute;
+  font-family:var(--font-util);font-size:clamp(14px,1.4vw,22px);font-weight:700;letter-spacing:.14em;
+  color:var(--acc2);}
+[data-theme="light"] .atlasL .atlasFill{fill:rgba(var(--sec-rgb),.07);}
+/* data-flow arrows (SVG overlay) — house style: solid rail + travelling glow dots, cardinal only */
+.flowLayer{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:visible;}
+.flowLayer .frail{fill:none;stroke:rgba(var(--acc2-rgb),.4);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;}
+.flowLayer .frail.recon{stroke:rgba(var(--soft-rgb),.4);}
+.flowLayer .fdot{fill:var(--acc2);}
+.flowLayer .flowLbl{font-family:var(--font-util);font-size:10px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;fill:var(--acc2);}
+.flowLayer .flowLbl.recon{fill:var(--grey);}
+.flowLayer .fdot.recon{fill:var(--grey);}
+/* vertical flow connectors */
+.vflow{position:relative;width:min(1060px,88vw);height:clamp(40px,6.2vh,62px);}
+.vflow .vrail{
+  position:absolute;top:3px;bottom:3px;width:2px;
+  background:rgba(var(--acc2-rgb),.4);
+}
+.vflow .vp{
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:var(--blue-bright);
+  transform:translate(-50%,-50%);
+}
+.vflow .vlbl{
+  position:absolute;top:50%;transform:translateY(-50%);
+  font-size:clamp(9.5px,.76vw,12px);letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--blue-bright);white-space:nowrap;
+}
+.vp.down{animation:flowD 2.6s linear infinite;}
+.vp.down.p2{animation-delay:-0.87s;}
+.vp.down.p3{animation-delay:-1.73s;}
+@keyframes flowD{0%{top:-4%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:104%;opacity:0;}}
+.vp.up{background:var(--grey);width:7px;height:7px;animation:flowU 3.4s linear infinite;}
+.vp.up.p2{animation-delay:-1.7s;}
+@keyframes flowU{0%{top:104%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:-4%;opacity:0;}}
+.vflow .vrail.greyRail{background:rgba(var(--soft-rgb),.32);width:1px;}
+.vflow .vlbl.greyLbl{color:var(--grey);}
+
+/* ============================================================
+   SLIDE 4: Roadmap ecosystem (SIGNATURE 2)
+   ============================================================ */
+#s4.slide{overflow-x:hidden;}
+#s4 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,1fr);gap:2.2vw;align-items:center;}
+#s4 .head{margin-bottom:1.4vh;}
+.eco{position:relative;width:100%;aspect-ratio:1.18/1;max-height:60vh;margin:0 auto;}
+.eco svg.links{position:absolute;inset:0;width:100%;height:100%;}
+.eco svg.links line{stroke:rgba(86,148,205,.22);stroke-width:1;transition:opacity .2s ease;}
+.eco svg.links line.atlasLine{stroke:rgba(17,83,138,.35);stroke-width:1.4;}
+.eco .core{
+  --coreD:clamp(90px,min(8.8vw,14vh),140px);
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:var(--coreD);height:var(--coreD);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;
+  background-color:#0a4673;
+  border:1px solid rgba(var(--acc2-rgb),.5);
+  box-shadow:none;overflow:hidden;
+  font-weight:800;font-size:clamp(16px,1.6vw,25px);letter-spacing:-.01em;
+  transition:width .7s var(--ease),height .7s var(--ease),left .7s var(--ease),top .7s var(--ease),
+             background-color .7s var(--ease),border-color .7s var(--ease);
+  z-index:0;cursor:default;
+}
+.eco.drilled .core{
+  --coreD:clamp(180px,min(17.6vw,28vh),280px);
+  left:calc(55px - var(--coreD)/2);top:50%;cursor:pointer;
+  background-color:transparent;border-color:transparent;
+}
+.eco .core .coreMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:118%;height:118%;color:#fff;opacity:.16;pointer-events:none;
+  transition:color .7s var(--ease),opacity .7s var(--ease);}
+.eco.drilled .core .coreMark{color:var(--sec);opacity:.07;}
+[data-theme="dark"] .eco.drilled .core .coreMark{color:var(--acc2);opacity:.10;}
+.eco .core .coreLabel{position:relative;z-index:1;color:#fff;
+  font-size:calc(var(--coreD)*.225);font-weight:800;letter-spacing:-.01em;text-transform:none;line-height:1.05;
+  transition:font-size .7s var(--ease),color .7s var(--ease);}
+.eco.drilled .core .coreLabel{color:var(--navy);}
+.eco .core .coreSub{position:relative;z-index:1;font-size:calc(var(--coreD)*.128)!important;font-weight:700!important;
+  letter-spacing:-.01em!important;color:#8fd0ff!important;text-transform:none!important;line-height:1.05;
+  transition:font-size .7s var(--ease),color .7s var(--ease);}
+.eco.drilled .core .coreSub{color:var(--sec)!important;}
+.eco .core .coreSub:empty{display:none;}
+.mod{
+  position:absolute;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.45em;
+  background:none;border:none;color:var(--title);cursor:default;padding:6px;border-radius:12px;
+  transition:transform .5s var(--ease),opacity .35s var(--ease),left .5s var(--ease),top .5s var(--ease);
+  opacity:0;
+}
+.slide.entered .mod{animation:modIn .7s var(--ease) forwards;animation-delay:var(--md,0s);}
+@keyframes modIn{from{opacity:0;transform:translate(-50%,-50%) scale(.5);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+.mod .node{
+  width:clamp(76px,min(7.6vw,12vh),112px);height:clamp(76px,min(7.6vw,12vh),112px);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--well);border:1.5px solid rgba(var(--brd-rgb),.55);
+  font-weight:700;font-size:clamp(11.5px,.98vw,15px);line-height:1.22;
+  padding:.5em;text-align:center;color:var(--title);
+  transition:all .3s var(--ease);
+}
+.mod.hi{transform:translate(-50%,-50%) scale(1.1);z-index:3;}
+.mod.sel{transform:translate(-50%,-50%) scale(1.08);z-index:3;}
+.mod.hi .node,.mod.sel .node{background:var(--grad);border-color:transparent;color:#fff;}
+.mod:hover .node{border-color:rgba(var(--acc2-rgb),.8);}
+.mod{cursor:pointer;}
+.mod.hub{z-index:4;}
+.mod.hub .node{
+  width:clamp(90px,min(8.8vw,14vh),140px);height:clamp(90px,min(8.8vw,14vh),140px);
+  background:#0a4673;
+  border-color:transparent;color:#fff;position:relative;overflow:hidden;
+  font-weight:800;font-size:clamp(16px,1.6vw,25px);letter-spacing:-.01em;cursor:default;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;
+}
+.mod.hub .hubMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:118%;height:118%;color:#fff;opacity:.16;pointer-events:none;}
+.mod.hub .hubA{position:relative;z-index:1;font-size:clamp(20px,2vw,32px);font-weight:800;letter-spacing:-.01em;line-height:1.05;}
+.mod.hub .hubName{position:relative;z-index:1;font-size:clamp(12px,1.2vw,18px);font-weight:700;
+  letter-spacing:-.01em;color:#8fd0ff;line-height:1.05;}
+.mod.out{opacity:0!important;pointer-events:none;}
+.mod.fan .node{width:clamp(36px,3.8vw,52px);height:clamp(36px,3.8vw,52px);font-size:clamp(7.5px,.56vw,9.5px);color:var(--sec);}
+.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),84px);height:clamp(48px,min(6.2vw,9.6vh),84px);font-size:clamp(8.5px,.76vw,12px);}
+.eco.dense10 .mod .node{width:clamp(56px,min(5.4vw,8.6vh),78px);height:clamp(56px,min(5.4vw,8.6vh),78px);font-size:clamp(8.5px,.66vw,10.5px);}
+.eco.dense20 .mod .node{width:clamp(42px,min(4vw,6.4vh),58px);height:clamp(42px,min(4vw,6.4vh),58px);font-size:clamp(6.8px,.54vw,8.3px);padding:.35em;}
+.detail{
+  background:rgba(var(--srf-rgb),.05);border:1px solid rgba(var(--brd-rgb),.25);
+  border-radius:18px;padding:3vh 1.9vw;min-height:52vh;display:flex;flex-direction:column;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.detail .dnum{font-size:clamp(11px,.85vw,14px);letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--blue-bright);margin-bottom:.8vh;}
+.detail h3{font-size:clamp(18px,1.7vw,28px);font-weight:800;margin-bottom:1.8vh;line-height:1.15;}
+.detail .chip{margin-bottom:1.2vh;align-self:flex-start;}
+.dSec{margin-bottom:1.7vh;}
+.dSec:last-of-type{margin-bottom:0;}
+.dSec .dt{
+  font-size:clamp(10px,.78vw,12.5px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:.45vh;display:flex;align-items:center;gap:.6em;
+}
+.dSec .dt::before{content:"";width:14px;height:2px;background:var(--blue-bright);border-radius:1px;display:inline-block;}
+.dSec p{font-size:clamp(12.5px,1.02vw,16px);color:var(--txt);line-height:1.5;}
+.detail .hint{margin-top:2vh;font-size:clamp(11px,.85vw,13.5px);color:var(--blue-grey);}
+
+/* --- Slide 4b: Atlas app modules (guidelines style) --- */
+#s4b .inner{display:flex;flex-direction:column;}
+.modSelect{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(6px,.8vw,12px);margin:2.5vh 0 0;width:min(1080px,90vw);align-self:center;}
+.modSelect button{font-family:var(--font);font-weight:600;font-size:clamp(12px,1.15vw,17px);
+  color:var(--txt);background:var(--well);border:1px solid rgba(var(--brd-rgb),.4);border-radius:10px;
+  padding:.7em .4em;cursor:pointer;transition:all .2s var(--ease);}
+.modSelect button:hover{border-color:rgba(var(--acc2-rgb),.6);}
+.modSelect button.on{background:var(--sec);border-color:transparent;color:#fff;}
+.modShow{display:flex;flex-direction:column;align-items:center;text-align:center;
+  margin-top:4vh;padding:4vh 2vw;width:min(1080px,90vw);align-self:center;
+  background:var(--well);border:1px solid rgba(var(--brd-rgb),.35);border-radius:18px;}
+.modFn{font-family:var(--font-util);font-size:clamp(10px,1.1vw,14px);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--soft);margin-bottom:2vh;}
+.modLock{display:flex;align-items:center;gap:clamp(8px,1.4vw,20px);
+  font-weight:800;font-size:clamp(40px,6vw,88px);letter-spacing:-.02em;line-height:1;}
+.modLock .mlA{color:var(--title);}
+.modLock .mlSep{color:var(--teal);font-weight:500;}
+.modLock .mlName{color:var(--sec);}
+.modDesc{font-size:clamp(15px,1.7vw,24px);font-weight:500;color:var(--soft);
+  margin-top:2.5vh;max-width:44ch;line-height:1.4;}
+.modFeats{display:flex;flex-wrap:wrap;justify-content:center;gap:.55vw;margin-top:3vh;}
+.modFeats span{font-size:clamp(11px,.92vw,14px);font-weight:600;padding:.45em 1em;border-radius:8px;
+  background:rgba(var(--acc2-rgb),.12);border:1px solid rgba(var(--acc2-rgb),.4);color:var(--txt);}
+
+
+/* ============================================================
+   SLIDE 5: Release cadence (looping delivery animation)
+   ============================================================ */
+#s5 .inner{max-width:1480px;}
+#s5 .head{margin-bottom:1.2vh;}
+#s5 .tl{width:100%;height:52vh;}
+#s5 .spine{stroke:rgba(var(--acc2-rgb),.22);stroke-width:3;fill:none;stroke-linecap:round;}
+#s5 .spineFill{stroke:url(#spineGrad);stroke-width:3;fill:none;stroke-linecap:round;}
+#s5 .tick circle{fill:var(--well);stroke:rgba(var(--acc2-rgb),.45);stroke-width:2;transition:all .45s var(--ease);}
+#s5 .tick text{font-family:var(--font);fill:var(--soft);transition:fill .45s ease;}
+#s5 .tick .q{font-size:12.5px;font-weight:700;letter-spacing:.08em;}
+#s5 .tick .mn,#s5 .tick .mn2{font-size:13.5px;font-weight:700;}
+#s5 .tick .ck{font-size:13px;font-weight:800;fill:#fff;opacity:0;transition:opacity .35s ease;}
+#s5 .tick.delivered circle{fill:var(--sec);stroke:var(--acc2);}
+#s5 .tick.delivered text{fill:var(--title);}
+#s5 .tick.delivered .q{fill:var(--acc2);}
+#s5 .tick.delivered .ck{opacity:1;}
+#s5 .playhead line{stroke:var(--acc2);stroke-width:1.5;opacity:.8;}
+#s5 .playhead circle{fill:var(--acc2);}
+#s5 .playhead text{font-family:var(--font);font-size:13px;font-weight:800;fill:var(--title);letter-spacing:.06em;}
+#s5 .cap{text-align:center;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;margin-top:.5vh;}
+
+/* ============================================================
+   SLIDE 6: Delivery process (production line, staged loop)
+   ============================================================ */
+#s6 .head{text-align:center;margin-bottom:4vh;}
+.lineWrap{position:relative;width:min(1380px,92vw);margin:0 auto;}
+.lineTrack{
+  position:absolute;left:3%;right:3%;top:34px;height:2px;
+  background:rgba(var(--acc2-rgb),.4);
+}
+.stations{display:flex;justify-content:space-between;gap:1vw;position:relative;padding:96px 0 1vh;}
+.station{
+  flex:0 1 19.5vw;min-width:190px;border-radius:16px;text-align:center;
+  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);
+  padding:2.4vh 1.2vw 2.2vh;position:relative;
+  transition:all .5s var(--ease);
+}
+.station .sNum{
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;
+  transition:all .5s var(--ease);
+}
+.station h3{font-size:clamp(14px,1.3vw,21px);font-weight:800;margin:.8vh 0 .4vh;}
+.station .own{font-size:clamp(9.5px,.78vw,12px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);}
+.station p{font-size:clamp(11px,.92vw,14.5px);color:var(--soft);line-height:1.45;margin-top:.8vh;}
+.station .ring{
+  width:46px;height:46px;margin:1.4vh auto 0;border-radius:50%;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.station .ringSvg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.station .ringTrack{fill:none;stroke:rgba(var(--brd-rgb),.18);stroke-width:4;}
+.station .ringFill{
+  fill:none;stroke:var(--blue-bright);stroke-width:4;stroke-linecap:round;
+  stroke-dasharray:125.7;stroke-dashoffset:calc(125.7 - (125.7*var(--pr,0)/100));
+  transition:stroke-dashoffset .3s linear;
+}
+.station.done .ringFill{stroke:var(--acc2);}
+.station .ring i{
+  width:34px;height:34px;border-radius:50%;background:var(--well);position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:center;font-style:normal;font-size:15px;font-weight:800;color:transparent;
+}
+.station.active{
+  background:rgba(var(--sec-rgb),.13);border-color:rgba(var(--acc2-rgb),.65);
+  transform:translateY(-4px);
+}
+.station.active .sNum{background:var(--blue);border-color:transparent;}
+.station.done .ring i{color:var(--acc2);}
+.modToken{
+  position:absolute;top:34px;left:-10%;transform:translate(-50%,-50%);
+  z-index:5;display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:left .85s var(--ease),opacity .4s ease;
+  opacity:0;pointer-events:none;
+}
+.modToken .tk{
+  padding:.5em 1.1em;border-radius:99px;background:var(--grad);color:#fff;
+  font-weight:800;font-size:clamp(12px,1.05vw,17px);letter-spacing:.02em;
+  box-shadow:0 10px 30px rgba(var(--sec-rgb),.35);white-space:nowrap;
+}
+.modToken .tkn{font-size:clamp(9px,.74vw,11.5px);font-weight:700;color:var(--soft);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+  background:var(--well);padding:3px 9px;border-radius:6px;}
+.modToken.flying{transition:left .8s var(--ease),transform .8s var(--ease),opacity .8s ease;transform:translate(-50%,-50%) scale(.5);opacity:0;}
+.shelf{
+  margin-top:1.4vh;display:flex;align-items:center;justify-content:center;gap:.6vw;flex-wrap:wrap;min-height:5.4vh;
+}
+.shelf .sl{font-size:clamp(10px,.84vw,13px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-grey);margin-right:.6vw;}
+.shelf span.dchip{
+  font-size:clamp(10.5px,.86vw,13.5px);font-weight:700;padding:.4em .9em;border-radius:99px;
+  background:rgba(var(--acc2-rgb),.14);border:1px solid rgba(var(--acc2-rgb),.45);color:var(--txt);
+  animation:chipIn .5s var(--ease);
+}
+@keyframes chipIn{from{opacity:0;transform:scale(.5);}to{opacity:1;transform:scale(1);}}
+#s6 .cap{text-align:center;margin-top:2vh;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;}
+
+/* ============================================================
+   SLIDE 7: Proof (design to ~90%, prototype, walkthrough link)
+   ============================================================ */
+#s7{background:transparent;}
+#s7 .inner{text-align:center;}
+#s7 .rv{transition-duration:1.2s;}
+#s7 h2{font-size:clamp(30px,4vw,62px);max-width:24ch;margin:2.6vh auto 0;}
+#s7 .themes{display:flex;justify-content:center;gap:1.6vw;margin-top:6vh;flex-wrap:wrap;}
+.theme{
+  width:clamp(220px,21vw,330px);padding:4.2vh 1.6vw;border-radius:18px;
+  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);
+}
+.theme .glyph{
+  font-size:clamp(34px,3.4vw,56px);font-weight:800;line-height:1;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.theme h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;margin-top:1.6vh;}
+.theme p{font-size:clamp(11px,.95vw,14.5px);color:var(--blue-grey);margin-top:.6vh;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+#s7 .go{margin-top:6.5vh;}
+
+/* ============================================================
+   Chrome
+   ============================================================ */
+#brand{
+  position:fixed;top:max(2.6vh,14px);left:2.4vw;z-index:50;
+  font-weight:800;font-size:15px;letter-spacing:.02em;color:rgba(var(--srf-rgb),.85);
+  display:flex;align-items:center;gap:.55em;user-select:none;
+}
+#brand .bmark{width:35px;height:35px;color:var(--sec);flex-shrink:0;}
+[data-theme="dark"] #brand .bmark{color:var(--acc2);}
+#msLogo{
+  position:fixed;top:max(2.4vh,12px);right:2.4vw;z-index:50;user-select:none;
+  display:flex;align-items:center;
+}
+#msLogo img{height:clamp(22px,2.4vw,34px);width:auto;display:block;}
+#msLogo .msWhite{display:none;}
+[data-theme="dark"] #msLogo .msBlue{display:none;}
+[data-theme="dark"] #msLogo .msWhite{display:block;}
+#counter{
+  position:fixed;right:calc(2.4vw + 158px);bottom:max(2.9vh,14px);z-index:50;
+  font-size:13px;font-weight:700;color:var(--blue-grey);letter-spacing:.12em;font-variant-numeric:tabular-nums;
+}
+#progress{
+  position:fixed;left:50%;bottom:max(2.6vh,12px);transform:translateX(-50%);z-index:50;
+  display:flex;align-items:flex-end;gap:6px;
+}
+#progress .actGap{display:none;}
+.seg{
+  position:relative;width:clamp(42px,6vw,96px);height:5px;border-radius:3px;
+  background:rgba(var(--srf-rgb),.16);border:none;cursor:pointer;padding:0;
+  transition:background .3s ease;
+}
+.seg:hover,.seg:focus-visible{background:rgba(var(--srf-rgb),.38);}
+.seg:focus-visible{outline:2px solid var(--blue-bright);outline-offset:3px;}
+.seg.done{background:rgba(var(--acc2-rgb),.55);}
+.seg.cur{background:var(--grad);}
+.seg .tip{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--txt);white-space:nowrap;
+  opacity:0;transition:opacity .25s ease;pointer-events:none;
+  background:var(--well);padding:4px 9px;border-radius:6px;border:1px solid rgba(var(--brd-rgb),.3);
+}
+.seg:hover .tip,.seg:focus-visible .tip,.seg.cur .tip{opacity:1;}
+#navBtns{position:fixed;right:2.4vw;bottom:max(2.2vh,10px);z-index:50;display:flex;gap:8px;}
+#navBtns button{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(var(--brd-rgb),.4);
+  background:rgba(var(--srf-rgb),.06);color:var(--txt);font-size:17px;cursor:pointer;
+  transition:background .25s ease,transform .25s ease;
+}
+#navBtns button:hover{background:rgba(var(--acc2-rgb),.25);transform:translateY(-2px);}
+#navBtns button:focus-visible{outline:2px solid var(--blue-bright);outline-offset:2px;}
+#hintbar{
+  position:fixed;left:2.4vw;bottom:max(2.6vh,12px);z-index:50;
+  font-size:11px;color:var(--soft);letter-spacing:.06em;
+}
+
+/* ---------- Reduced motion ---------- */
+#navScrim{display:none;}
+
+/* ---------- Narrow viewports (portrait / small windows) ---------- */
+@media (max-width:820px){
+  .slide:not(#s1){padding:max(5.5vh,46px) 4vw max(9vh,64px);align-items:flex-start;overflow-y:auto;}
+  #s1{padding:max(5.5vh,46px) 4vw max(9vh,64px);}
+  #s4 .wrap{grid-template-columns:1fr;grid-template-rows:auto auto;}
+  #s4 .detail{margin-top:1.6vh;min-height:0;}
+  .modSelect{width:100%;}
+  #navScrim{display:block;position:fixed;left:0;right:0;bottom:0;height:56px;z-index:49;
+    background:var(--bg);pointer-events:none;}
+}
+
+/* ---------- Short viewports (landscape phones, small windows) ---------- */
+@media (max-height:600px){
+  .slide:not(#s1){align-items:flex-start;overflow-y:auto;}
+  .slide .inner{margin:0 auto;}
+  #hintbar{display:none;}
+  #navScrim{display:block;position:fixed;left:0;right:0;bottom:0;height:48px;z-index:49;
+    background:var(--bg);pointer-events:none;}
+  #brand .bmark{width:24px;height:24px;}
+  #brand{font-size:12px;}
+  #msLogo img{height:18px;}
+  #navBtns button{width:32px;height:32px;font-size:14px;}
+  #counter{right:calc(2.4vw + 110px);font-size:11px;}
+  .seg{height:4px;}
+  .head h2{font-size:clamp(16px,2.4vw,28px)!important;}
+  #s4 .eco{max-height:36vh;}
+  #s4 .detail{min-height:0;max-height:44vh;overflow-y:auto;}
+  #s4 .wrap{gap:1.4vw;}
+  .mod .node{width:clamp(32px,min(7.6vw,7.6vh),112px)!important;height:clamp(32px,min(7.6vw,7.6vh),112px)!important;font-size:7px!important;}
+  .eco:not(.drilled) .core{--coreD:clamp(52px,min(8.8vw,10vh),140px);width:var(--coreD)!important;height:var(--coreD)!important;}
+  .eco .core .coreLabel{font-size:calc(var(--coreD)*.225)!important;}
+  .eco .core .coreSub{font-size:calc(var(--coreD)*.128)!important;}
+  .mod.hub .node{width:clamp(58px,min(8.8vw,11vh),140px)!important;height:clamp(58px,min(8.8vw,11vh),140px)!important;}
+  .mod.hub .hubA{font-size:clamp(13px,1.6vw,25px)!important;}
+  .mod.hub .hubName{font-size:clamp(9px,1.2vw,18px)!important;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01s!important;}
+  .rv,.mod,#s1 .wordmark{opacity:1!important;transform:none!important;filter:none!important;}
+  .vflow .vp{display:none;}
+  #s5 .playhead{display:none;}
+  .modToken{display:none;}
+}
+
+/* ---------- Print ---------- */
+@media print{
+  html,body{overflow:visible;height:auto;}
+  body{background:var(--bg);}
+  #stage{position:static;}
+  .slide{
+    position:relative;inset:auto;opacity:1!important;visibility:visible!important;transform:none!important;
+    pointer-events:auto;page-break-after:always;height:100vh;
+    background:var(--bg);
+  }
+  .rv,.frag,.mod,#s1 .wordmark{opacity:1!important;transform:none!important;filter:none!important;}
+  #progress,#navBtns,#counter,#hintbar{display:none;}
+  #brand,#msLogo{position:absolute;}
+  .modToken{display:none;}
+}
+
+/* ---------- Atlas theme layer ---------- */
+h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
+.eyebrow,.chip,.lt,.sbt,.dt,.own,.sl,.expand,#counter,#hintbar,.seg .tip,.dnum,.vlbl,.tkn,.theme p,#msLogo .ms2,#s1 .prep,.shelf span.dchip{font-family:var(--font-util);}
+#s5 .tick .q{font-family:var(--font-util);}
+#s5 .tick line{stroke:rgba(var(--acc2-rgb),.4);}
+#spineGrad stop:first-child{stop-color:var(--sec);}
+#spineGrad stop:last-child{stop-color:var(--acc2);}
+.eco .core{color:#fff;}
+.eco .core span{color:#9FC6E8;}
+.mod:hover .node,.mod:focus-visible .node,.mod.sel .node{color:#fff;}
+.mod .node{color:var(--title);}
+</style>
+</head>
+<body>
+
+<svg id="contourBg" aria-hidden="true" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+  <g class="contours" stroke-width="1">
+    <path d="M-50,610 C250,550 420,690 700,610 C940,542 1050,650 1300,590"/>
+    <path d="M-50,655 C250,595 420,735 700,655 C940,587 1050,695 1300,635"/>
+    <path d="M-50,700 C250,640 420,780 700,700 C940,632 1050,740 1300,680"/>
+    <path d="M-50,745 C250,685 420,825 700,745 C940,677 1050,785 1300,725"/>
+    <path d="M-50,795 C250,735 420,875 700,795 C940,727 1050,835 1300,775"/>
+  </g>
+</svg>
+
+<div id="brand"><svg class="bmark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg>Atlas</div>
+<!-- McMahon Services logo: shown on all slides.
+     SWAP POINT: to use the official asset, replace the inner content of #msLogo
+     with <img src="data:image/png;base64,..." alt="McMahon Services" style="height:34px;"> -->
+<div id="msLogo" aria-label="McMahon Services"><img class="msBlue" src="data:image/png;base64,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" alt="McMahon Services"><img class="msWhite" src="data:image/png;base64,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" alt="McMahon Services"></div>
+<div id="counter" aria-live="polite">1 / 7</div>
+
+<div id="stage">
+
+<!-- ════════════ ACT 1 ════════════ -->
+
+<!-- Slide 1: Cold open -->
+<section class="slide" id="s1" data-label="Title" data-act="1">
+  <div class="halo"></div>
+  <svg class="atlasWatermark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg>
+  <div class="inner">
+    <div class="wordmark">Atlas</div>
+    <div class="line rv d4">Your world in one place.</div>
+  </div>
+  <div class="prep rv d6">Prepared by <b>Nicholas Shepherd</b></div>
+</section>
+
+<!-- Slide 4b: The Atlas app modules (guidelines style) -->
+<section class="slide" id="s4b" data-label="Modules" data-act="1">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Atlas Vision</span>
+      <h2 style="margin-top:1.2vh;font-size:clamp(24px,2.6vw,40px);">One brand. Seven modules.</h2>
+    </div>
+    <div class="modSelect rv d1" id="modChips" role="tablist" aria-label="Atlas modules"></div>
+    <div class="modShow rv d2">
+      <div class="modFn" id="mFn">PEOPLE &amp; PAYROLL</div>
+      <div class="modLock"><span class="mlA">Atlas</span><span class="mlSep">|</span><span class="mlName" id="mName">People</span></div>
+      <div class="modDesc" id="mDesc">Timesheets, payroll, HR and return to work — every person, every record, one home.</div>
+      <div class="modFeats" id="mFeats"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 2: The reality today -->
+<section class="slide" id="s2" data-label="Today" data-act="1" data-frags="1">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Reality Today</span>
+      <h2 style="margin-top:1.6vh;">Project delivery runs on spreadsheets, and a ledger that lacks project cost controls.</h2>
+    </div>
+    <div class="grid">
+      <div class="pain frag">
+        <div class="pi"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg></div>
+        <h3>Manual, fragmented tooling</h3>
+        <p>The Daily Diary / Cost Tracker (the "PFC tool") and a sprawl of point solutions hold critical delivery data in Excel.</p>
+      </div>
+      <div class="pain frag">
+        <div class="pi"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg></div>
+        <h3>Pronto is an unreliable ledger</h3>
+        <p>Outside purchase orders, costs are hard-coded to a single cost code. PMs and cost controllers can't control how charges land against budget, so cost-to-complete forecasting is difficult and inaccurate.</p>
+      </div>
+      <div class="pain frag">
+        <div class="pi"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg></div>
+        <h3>Reconciliation is painful</h3>
+        <p>Operations and Project Delivery rely on disconnected spreadsheets that are hard to reconcile to the source of truth, undermining project controls.</p>
+      </div>
+      <div class="pain frag">
+        <div class="pi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <h3>Reporting is slow</h3>
+        <p>Monthly Project Reports and Cashflow Reports are heavily manual to collate, frustrating teams and delaying insight to leadership.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ ACT 2 ════════════ -->
+
+<!-- Slide 3: Cost flow + the Atlas concept (SIGNATURE / HERO) -->
+<section class="slide" id="s3" data-label="Cost flow" data-act="2">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Atlas Vision</span>
+      <h2 style="margin-top:1.2vh;">Every cost captured and coded in Atlas, before it lands in the ledger.</h2>
+    </div>
+    <div class="railStack rv d1">
+      <div class="atlasL" aria-hidden="true"><svg id="atlasSvg" preserveAspectRatio="none"><path class="atlasFill" id="atlasPath"/></svg><span class="atlasTag">ATLAS</span></div>
+      <svg class="flowLayer" id="flowSvg" aria-hidden="true"></svg>
+
+      <div class="railRow" data-row="1">
+        <div class="railLbl"><span class="rn">Layer 1</span><span class="rt">Data Source</span></div>
+        <div class="railBody">
+          <div class="rcell inL">
+            <div class="sbt">Internal</div>
+            <div class="chips">
+              <span>Internal Plant</span><span>Labour (Timesheets)</span><span>Internal Invoicing</span><span>Overheads</span>
+            </div>
+          </div>
+          <div class="rcell external exN">
+            <div class="sbt">External</div>
+            <div class="chips">
+              <span>Purchase Cards</span><span>Labour Hire</span><span>Plant Hire</span><span>Subcontractors</span><span>Suppliers</span><span>All other costs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="railRow" data-row="2">
+        <div class="railLbl"><span class="rn">Layer 2</span><span class="rt">Context</span></div>
+        <div class="railBody">
+          <div class="rcell">
+            <div class="sbt">Capture &amp; control</div>
+            <div class="chips">
+              <span>Daily Diary</span><span>Cost Coding</span><span>Progress Claims</span><span>Internal Invoicing</span>
+            </div>
+          </div>
+          <div class="rcell">
+            <div class="sbt">Registers</div>
+            <div class="chips">
+              <span>Revenue (Contract + Variations)</span><span>Dockets</span><span>Risk &amp; Opportunities</span><span>Cost Tracking</span><span>Procurement</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="railRow" data-row="3">
+        <div class="railLbl"><span class="rn">Layer 3</span><span class="rt">Informed Decision Making</span></div>
+        <div class="railBody centreOne">
+          <div class="rcell">
+            <div class="sbt">Financial decisions</div>
+            <div class="chips">
+              <span>Monthly Reporting</span><span>Accruals</span><span>Client Progress Claims</span><span>Vendor Claim Assessments</span><span>Profit Adjustments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="railRow" data-row="4">
+        <div class="railLbl"><span class="rn">Layer 4</span><span class="rt">Financial Ledger</span></div>
+        <div class="railBody single">
+          <div class="rcell pronto">
+            <div class="prontoHead"><span class="pName">Pronto</span><span class="chip solid" style="font-size:10px;">Retained</span></div>
+            <div class="role"><b>Source of truth</b> for cost, budget &amp; financials · procurement stays in Pronto · becomes far more accurate and usable</div>
+            <div class="chips">
+              <span>Procure-to-Pay</span><span>Invoice Automation</span><span>Cost Breakdown Structure</span><span>Budget</span><span>Actuals</span><span>Margin</span><span>Profit</span><span>WIP Balances</span><span>Debtor Master</span><span>Creditor Master</span><span>GL</span><span>P&amp;L</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ ACT 3 ════════════ -->
+
+<!-- Slide 4: Roadmap ecosystem (SIGNATURE 2) -->
+<section class="slide" id="s4" data-label="Roadmap" data-act="3">
+  <div class="inner">
+    <div class="wrap">
+      <div>
+        <div class="head rv">
+          <span class="eyebrow"><span class="dot"></span>The Transformation Roadmap</span>
+          <h2 style="margin-top:1.4vh;font-size:clamp(24px,2.6vw,40px);">Delivered in phases. One living platform.</h2>
+        </div>
+        <div class="eco rv d2" id="eco">
+          <svg class="links" id="ecoLinks" aria-hidden="true"></svg>
+          <div class="core"><svg class="coreMark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg><span class="coreLabel" id="coreLabel">Atlas</span><span class="coreSub" id="coreSub"></span></div>
+          <!-- phase/feature nodes injected by JS -->
+        </div>
+      </div>
+      <div class="detail rv d3" id="roadDetail">
+        <div class="dnum" id="rdNum">The ecosystem</div>
+        <h3 id="rdName">Seven modules, one platform</h3>
+        <div id="rdBody"><div class="dSec"><p>Select a module to see the roadmap features that belong to it.</p></div></div>
+        <div class="hint" id="rdHint" style="display:none;">Select a feature to see its pain point, scope and benefits.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 5: Release cadence (looping delivery animation) -->
+<section class="slide" id="s5" data-label="Cadence" data-act="3">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The When</span>
+      <h2 style="margin-top:1.4vh;">At least one new module, roughly every quarter.</h2>
+    </div>
+    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2028, modules delivered as time progresses">
+      <defs>
+        <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
+        </linearGradient>
+      </defs>
+      <path class="spine" d="M40 260 H1360"/>
+      <path class="spineFill" id="spineFill" d="M40 260 H1360"/>
+      <!-- ticks + playhead injected by JS -->
+    </svg>
+    <div class="cap rv d3">"Indicative cadence: at least one module per quarter. Sequencing and dates to be confirmed against delivery capacity."</div>
+  </div>
+</section>
+
+<!-- ════════════ ACT 4 ════════════ -->
+
+<!-- Slide 6: Delivery process, production line -->
+<section class="slide" id="s6" data-label="Process" data-act="4">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>How We Build Each Module</span>
+      <h2 style="margin-top:1.4vh;">Four steps. Repeated for every module.</h2>
+    </div>
+    <div class="lineWrap rv d1">
+      <div class="lineTrack" aria-hidden="true"></div>
+      <div class="stations" id="stations">
+        <div class="station">
+          <div class="sNum">1</div>
+          <h3>Design</h3>
+          <div class="own">Product Manager &amp; Developer</div>
+          <p>A detailed high-level design of the module.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+        <div class="station">
+          <div class="sNum">2</div>
+          <h3>Consult</h3>
+          <div class="own">SMEs &amp; key stakeholders</div>
+          <p>The business reviews the design; feedback is folded in.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+        <div class="station">
+          <div class="sNum">3</div>
+          <h3>Build &amp; Test</h3>
+          <div class="own">Product Manager &amp; Developer</div>
+          <p>Developed and tested against the agreed design.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+        <div class="station">
+          <div class="sNum">4</div>
+          <h3>Release</h3>
+          <div class="own">Product Manager</div>
+          <p>Shipped into production.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+      </div>
+      <div class="modToken" id="modToken" aria-hidden="true">
+        <span class="tk" id="tokenLabel">M01</span>
+        <span class="tkn" id="tokenName">MPR Auto-Generation</span>
+      </div>
+    </div>
+    <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
+    <div class="cap rv d3">"The same four steps, module after module."</div>
+  </div>
+</section>
+
+<!-- ════════════ ACT 5 ════════════ -->
+
+<!-- Slide 7: Proof + walkthrough link -->
+<section class="slide" id="s7" data-label="Proof" data-act="5">
+  <div class="inner">
+    <span class="eyebrow rv"><span class="dot"></span>Proof</span>
+    <h2 class="rv d2">Prototype every module before we build it.</h2>
+    <div class="themes">
+      <div class="theme rv d3"><div class="glyph">↑</div><h3>Business buy-in</h3><p>Up</p></div>
+      <div class="theme rv d4"><div class="glyph">↓</div><h3>Development rework</h3><p>Down</p></div>
+      <div class="theme rv d5"><div class="glyph">✓</div><h3>Digital tools</h3><p>Delivered with certainty</p></div>
+    </div>
+    <div class="go rv d6"><a class="cta" href="./index.html">Open the MPR design walkthrough →</a></div>
+  </div>
+</section>
+
+</div><!-- /stage -->
+
+<!-- Chrome -->
+<nav id="progress" aria-label="Slides"></nav>
+<div id="navBtns">
+  <button id="btnPrev" aria-label="Previous slide">←</button>
+  <button id="btnNext" aria-label="Next slide">→</button>
+  <button id="btnTheme" aria-label="Toggle light or dark theme">◐</button>
+</div>
+<div id="navScrim"></div>
+<div id="hintbar">← → · Space · Home/End · F fullscreen · T theme</div>
+
+<script>
+(function(){
+"use strict";
+var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var cur = 0;
+
+/* ---------- Module data ---------- */
+var MODS = [
+ {n:"00",name:"General Ledger Journaling",
+  pain:"GL journals are prepared manually across spreadsheets and re-keyed into Pronto, with no structured workflow, audit trail, or easy way to review what was posted.",
+  scope:"Standardises and automates the creation, review and posting of general ledger journals straight into Pronto, with validation and an auditable record of every entry.",
+  ben:"Removes manual re-keying, gives a clean audit trail, speeds up month-end, and underpins the accuracy of every downstream module."},
+ {n:"01",name:"MPR Auto-Generation",m1:true,
+  pain:"MPRs are generated manually. Slow, time-consuming, and with no structured workflow.",
+  scope:"Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.",
+  ben:"Major reduction in MPR effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs."},
+ {n:"02",name:"Cost Coding Control",
+  pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
+  scope:"Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.",
+  ben:"Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking."},
+ {n:"03",name:"Registers & Quick Links",
+  pain:"Qualitative project data lives in disconnected Excel registers of varying quality.",
+  scope:"A Risk & Opportunity Register, a basic Procurement Register, the already-built Digital Dockets, and quick links to Safety 2, Procore, Hammertech, SharePoint and Pronto.",
+  ben:"One delivery workspace, register data accessible via AI, and qualitative data connected to the numbers (contingency, variations and more)."},
+ {n:"04",name:"Plant Scheduling & Cost Allocation",
+  pain:"Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility.",
+  scope:"Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant.",
+  ben:"Retires fragile macros, speeds up plant-cost processing, feeds Module 2, and is the critical enabler of an accurate Daily Diary."},
+ {n:"05",name:"Progress Claims (Upstream)",
+  pain:"80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.",
+  scope:"Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.",
+  ben:"Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable."},
+ {n:"06",name:"Subcontractor Claims",
+  pain:"Subcontractor claims arrive in personal mailboxes under strict SoPA rules, often left unprocessed and captured in error-prone Excel.",
+  scope:"Ingests, standardises and evaluates subcontractor claims for one consistent view of what subcontractors are claiming.",
+  ben:"Standardised capture, clearer evaluation, better subcontractor-exposure visibility and improved SoPA compliance."},
+ {n:"07",name:"Daily Diary",
+  pain:"Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.",
+  scope:"Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.",
+  ben:"Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool."},
+ {n:"08",name:"Cost to Complete Forecast",
+  pain:"Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.",
+  scope:"Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.",
+  ben:"Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls."},
+ {n:"09",name:"Cashflow Forecast",
+  pain:"Monthly cashflow forecasts are stitched together by hand across systems. Slow, and hard to trust.",
+  scope:"Uses data across Pronto, Atlas and CAAPS to help teams produce a monthly cashflow forecast, building on Module 8.",
+  ben:"Cross-system cashflow visibility in one view, supporting finance and project leadership."},
+ {n:"10",name:"Resource Management & Planning",
+  pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
+  scope:"Expands Module 4 for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.",
+  ben:"A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking."}
+];
+
+/* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas modules.
+   Click zooms the node to centre, replacing the core with an "Atlas | Name" hero.
+   TODO: once the roadmap-features-by-module Word doc lands, replace each
+   ROADMAP_MODS[i].feats with that module's roadmap feature list (currently empty). */
+/* Build ecosystem ring (slide 4) — 11 phase nodes orbit the Atlas core (uses MODS,
+   defined above). A module chip row selects one of the 7 Atlas modules: the core
+   relabels to "Atlas / ModuleName" and the ring rebuilds to show ONLY that
+   module's features (not the full 11). Clicking any node (phase or feature)
+   shows its pain/scope/benefit in the panel below. Data sourced from
+   Atlas_Description_Text_updated.docx. */
+var ROADMAP_MODS=[
+ {name:'People',fn:'PEOPLE & PAYROLL',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:[
+  {n:'01',name:'Onboarding & Offboarding',
+   pain:'New starters are onboarded from disconnected spreadsheets and email, so staff can be added to payroll and given system access before their first day is even confirmed.',
+   scope:'Digitises onboarding and offboarding as shared checklists across HR, Payroll, IT and Line Managers, staging new starters separately from the live employee database until a Day 1 Confirmation Gate is completed, and locking IT access out until final pay is confirmed on exit.',
+   ben:'Removes premature payroll and system access, gives every team visibility of outstanding tasks, and closes off gaps in the starter/leaver process.'},
+  {n:'02',name:'EBA Aware Timesheets',
+   pain:'Timesheets and award interpretation are handled manually via ConnX and spreadsheets, which is slow, inconsistent across sites and prone to error at pay time.',
+   scope:'Digitises timesheet entry and approval, and applies award/EBA rules automatically — ordinary time, overtime, penalties, allowances and RDOs — before exporting approved timesheets straight to MicrOpay.',
+   ben:'Accurate, consistent pay outcomes, faster approvals, and one less manual step between the field and payroll.'},
+  {n:'03',name:'Leave Management',
+   pain:'Leave applications, balances and accruals are tracked inconsistently, leaving employees and managers guessing at entitlements.',
+   scope:'Digitises leave applications with live balance and accrual calculations, structured approval workflows, and a direct feed into timesheet and payroll data.',
+   ben:'Employees see accurate balances in real time, managers approve with confidence, and payroll gets clean, exportable leave data.'},
+  {n:'04',name:'HR Case Management',
+   pain:'Return-to-work cases, licence tracking, medical records and policy sign-off are scattered across spreadsheets and email, with no reliable compliance record.',
+   scope:'Centralises RTW case management, licence and medical record tracking, and policy acknowledgements, with automatic reminders and escalation when items fall overdue.',
+   ben:'A defensible compliance record, fewer lapsed licences and overdue acknowledgements, and better visibility of RTW cases for HR and Line Managers.'},
+  {n:'05',name:'End-to-End Paycycle',
+   pain:'Payroll relies on manual reconciliation between HR data and MicrOpay, with corrections handled ad hoc and little visibility of exceptions before a pay run.',
+   scope:'Gives Payroll a pay run dashboard integrated with MicrOpay, surfacing exceptions and corrections before export and providing one place to manage the pay cycle end-to-end.',
+   ben:'Fewer pay errors, faster pay runs, and clear visibility of exceptions before they become a payslip problem.'}
+ ]},
+ {name:'Learn',fn:'LEARNING & DEVELOPMENT',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:[
+  {n:'01',name:'Learning & Training',
+   pain:'Training records and compliance/recertification training are managed outside core systems via Acorn, making them hard to track and report on.',
+   scope:'Provides an LMS course catalogue, compliance and recertification training, and a structured training record for every employee, replacing and decommissioning Acorn.',
+   ben:'One source of truth for training compliance, easier recertification tracking, and reporting that ties training directly to the workforce.'},
+  {n:'02',name:'Company Inductions',
+   pain:'Site and company inductions are tracked manually across spreadsheets and paper sign-offs, making it hard to confirm who is actually cleared to be on site.',
+   scope:'Digitises company and site induction sign-off with a structured, auditable record for every worker, linked to their employee profile.',
+   ben:'A defensible, always-current induction record, faster site access for compliant workers, and one less manual check for site teams.'},
+  {n:'03',name:'Courses',
+   pain:'Course enrolments and completions sit in disconnected systems and spreadsheets, with no easy way to see who has done what.',
+   scope:'A structured course catalogue with enrolment, progress tracking and completion records, tied directly to each employee\u2019s training history.',
+   ben:'Clear visibility of course completion across the workforce, easier planning of upcoming training, and one record instead of many.'}
+ ]},
+ {name:'Tenders',fn:'TENDER MANAGEMENT',desc:'The whole pipeline, driven — every opportunity from first lead to job won, built on our existing Tender Management Application as the framework\u2019s basis.',feats:[
+  {n:'01',name:'Pipeline Tracking',
+   pain:'Pipeline visibility already exists in the TMA, but it sits in its own environment, separate from project and financial data, so leadership has to check it apart from everything else.',
+   scope:'Brings the TMA\u2019s existing pipeline view into Atlas, surfaced alongside project and financial data rather than as a separate system to check.',
+   ben:'Leadership sees the pipeline in the same place as live project and financial performance — one platform to judge capacity and cash flow against what\u2019s coming, instead of stitching two systems together.'},
+  {n:'02',name:'Opportunities',
+   pain:'Opportunities are already captured in the TMA, but that record is disconnected from the rest of the business, making it hard to trace a lead through to the project it becomes.',
+   scope:'Connects the TMA\u2019s existing opportunity records into Atlas, linking each one through to delivery once it\u2019s won.',
+   ben:'A won opportunity flows straight into the same environment where the project will actually be delivered — no re-keying, and a direct line from the tender to the numbers that follow it.'},
+  {n:'03',name:'Approvals',
+   pain:'Go/no-go and submission approvals happen around the TMA rather than in it, tracked over email with no consistent, auditable record.',
+   scope:'Adds a structured approval workflow on top of the existing TMA data, giving go/no-go and submission decisions a clear sign-off trail.',
+   ben:'Approvals sit alongside the same governance and financial records used everywhere else in Atlas, so a go/no-go decision can be made with cost, capacity and risk data already in view.'},
+  {n:'04',name:'Win History',
+   pain:'Win/loss outcomes already exist in the TMA but aren\u2019t easy to analyse alongside the reasons behind them, so patterns are hard to see.',
+   scope:'Draws on the TMA\u2019s existing outcome data and connects it back to the original opportunity and submission for analysis.',
+   ben:'Win/loss history sits next to actual project performance in the same platform, so we can see which wins genuinely paid off — not just which tenders were won.'},
+  {n:'05',name:'Customer History',
+   pain:'Customer relationship context sits outside the TMA, in people\u2019s heads and scattered files, disconnected from the tender record itself.',
+   scope:'Connects customer history to the TMA\u2019s existing tender and project records, showing past work and relationship context in one place.',
+   ben:'A customer\u2019s tender, project and financial history all live in the same environment, so the next submission is informed by exactly how past jobs for that client actually performed.'}
+ ]},
+ {name:'Projects',fn:'PROJECT DELIVERY',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:[
+  {n:'01',name:'Monthly Project Report Auto-Generation',
+   pain:'MPRs are generated manually. Slow, time-consuming, and out of sync with the EoM timelines.',
+   scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
+   ben:'Major reduction in Project Reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'},
+  {n:'02',name:'Cost Coding Control',
+   pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
+   scope:'Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.',
+   ben:'Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking. Builds on the Finance module\u2019s journaling framework to give project teams more control of their costs.'},
+  {n:'03',name:'Registers & Quick Links',
+   pain:'Qualitative project data lives in disconnected Excel registers of varying quality.',
+   scope:'A Risk & Opportunity Register, a basic Procurement Register, the already-built Digital Dockets, and quick links to Safety 2, Procore, Hammertech, SharePoint and Pronto.',
+   ben:'One delivery workspace, register data accessible via AI, and qualitative data connected to the numbers (contingency, variations and more).'},
+  {n:'04',name:'Progress Claims (Upstream)',
+   pain:'80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.',
+   scope:'Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.',
+   ben:'Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable.'},
+  {n:'05',name:'Subcontractor Claims',
+   pain:'Subcontractor claims arrive in personal mailboxes under strict SoPA rules, often left unprocessed and captured in error-prone Excel.',
+   scope:'Ingests, standardises and evaluates subcontractor claims for one consistent view of what subcontractors are claiming.',
+   ben:'Standardised capture, clearer evaluation, better subcontractor-exposure visibility and improved SoPA compliance.'},
+  {n:'06',name:'Daily Diary',
+   pain:'Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.',
+   scope:'Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.',
+   ben:'Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool.'},
+  {n:'07',name:'Cost to Complete Forecast',
+   pain:'Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.',
+   scope:'Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.',
+   ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'}
+ ]},
+ {name:'Operations',fn:'RESOURCES & SCHEDULING',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
+  {n:'01',name:'Plant Scheduling & Cost Allocation',
+   pain:'Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility. Most streams complete the scheduling elsewhere then copy it into the trackers, as the workbooks aren\u2019t user friendly enough.',
+   scope:'Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant, and as the source of truth for all plant-related data.',
+   ben:'Retires fragile macros, speeds up plant-cost processing, feeds Cost Coding Control, and is the critical enabler of an accurate Daily Diary.'},
+  {n:'02',name:'Resource Management & Planning',
+   pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
+   scope:'Expands Plant Scheduling & Cost Allocation for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
+   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
+  {n:'03',name:'Skills Matrix',
+   pain:'Who can actually do what — tickets, licences, competencies — lives in scattered spreadsheets and is rarely up to date, making resourcing a guessing game.',
+   scope:'A live skills and competency matrix per worker, drawing on licences and training records, so resourcing decisions are made against real, current capability.',
+   ben:'Faster, safer resourcing decisions, clear visibility of skills gaps across the workforce, and one place to check who is qualified for a task.'}
+ ]},
+ {name:'Finance',fn:'FINANCE & REPORTING',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
+  {n:'01',name:'General Ledger Journaling',
+   pain:'GL journals are prepared manually across spreadsheets and re-keyed into Pronto, with no structured workflow, audit trail, or easy way to review what was posted.',
+   scope:'Standardises and automates the creation, review and posting of general ledger journals straight into Pronto, with validation and an auditable record of every entry.',
+   ben:'Removes manual re-keying, gives a clean audit trail, speeds up month-end, and underpins the accuracy of every downstream feature.'},
+  {n:'02',name:'Cashflow Forecast',
+   pain:'Monthly cashflow forecasts are stitched together by hand across systems. Slow, and hard to trust.',
+   scope:'Uses data across Pronto, Atlas and CAAPS to help teams produce a monthly cashflow forecast, building on Cost to Complete Forecast.',
+   ben:'Cross-system cashflow visibility in one view, supporting finance and project leadership.'},
+  {n:'03',name:'Accruals',
+   pain:'Month-end accruals are calculated and journaled manually across spreadsheets, with no consistent method between accountants or projects and no easy way to trace an accrual back to the source cost or claim it relates to.',
+   scope:'Standardises accrual calculation and journal creation directly from Atlas cost and claim data, with a reviewable schedule that rolls forward and reverses automatically each period.',
+   ben:'Consistent, auditable accruals every month-end, less manual journal work, and a clear link between each accrual and the underlying project data.'},
+  {n:'04',name:'Profit Recognition',
+   pain:'Profit take-up is run manually in Pronto at least twice a month by three to four accountants, and cost recognised has differed from actual cost in 1,136 instances across 488 projects over eleven straight months \u2014 a structural gap that unsubmitted variations, cost overruns and Won/Tender mismatches make very easy to miss by hand.',
+   scope:'Reproduces our declared profit recognition method exactly in a single deterministic pass across every company and project, automatically quarantining anything that can\u2019t be safely recognised, and produces an auditable review dashboard with by-stream and by-company summaries for accountant sign-off before any journal is posted.',
+   ben:'Removes the mechanical, repetitive recognition work, catches invalid or borderline recognition automatically, and leaves a saved, reviewable audit trail every cycle \u2014 while keeping the same maker-checker control we use today.'}
+ ]}
+];
+var ATLAS_MARK_SVG='<svg class="hubMark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg>';
+var eco = document.getElementById('eco');
+var linksSvg = document.getElementById('ecoLinks');
+var core = eco.querySelector('.core');
+var coreLabel=document.getElementById('coreLabel'),coreSub=document.getElementById('coreSub');
+var roadDetail=document.getElementById('roadDetail'),rdNum=document.getElementById('rdNum'),
+    rdName=document.getElementById('rdName'),rdBody=document.getElementById('rdBody'),rdHint=document.getElementById('rdHint');
+var ECO_AR = 1.18;  // .eco aspect-ratio (width/height) — keeps orbit a true circle
+var selBtn=null, STATE='root', genID=0;
+function showDetail(node,label){
+  rdNum.textContent=(label||'Feature');
+  rdName.textContent=node.name;
+  rdBody.innerHTML=
+    '<div class="dSec"><div class="dt">Pain point</div><p>'+node.pain+'</p></div>'+
+    '<div class="dSec"><div class="dt">Scope</div><p>'+node.scope+'</p></div>'+
+    '<div class="dSec"><div class="dt">Benefits</div><p>'+node.ben+'</p></div>';
+  rdHint.style.display='none';
+  if(selBtn)selBtn.classList.remove('sel');
+}
+function clearDetail(numText,nameText,bodyHtml,hintText){
+  rdNum.textContent=numText||'';rdName.textContent=nameText||'';rdBody.innerHTML=bodyHtml||'';
+  rdHint.textContent=hintText;rdHint.style.display='';
+  if(selBtn){selBtn.classList.remove('sel');selBtn=null;}
+}
+function placeAt(b,xPct,yPct){b.style.left=xPct+'%';b.style.top=yPct+'%';}
+function hubRingFrac(){
+  return window.matchMedia('(max-height:600px)').matches ? 0.46 : 0.26;
+}
+function spawnFeatures(m,myGen){
+  if(myGen!==genID)return; // user already navigated away from this drill-in
+  var feats=m.feats;
+  linksSvg.innerHTML='';
+  var hubBtn=eco.querySelector('.mod.hub');
+  // The Atlas↔hub line occupies one slot in the radial distribution (kept clear
+  // of feature nodes). Atlas sits on the left, so the whole ring is rotated 90°
+  // from the default (north-start) formula — base angle -180° puts slot 0 at
+  // due west — using the same distribution radius/formula as every other slot.
+  var nSlots = feats.length+1;
+  var atlasSlot = 0;
+  var BASE_ANG = -180;
+  var atlasLn=document.createElementNS('http://www.w3.org/2000/svg','line');
+  atlasLn.setAttribute('x1','2%');atlasLn.setAttribute('y1','50%');
+  atlasLn.setAttribute('x2','50%');atlasLn.setAttribute('y2','50%');
+  atlasLn.setAttribute('class','atlasLine');
+  linksSvg.appendChild(atlasLn);
+  if(feats.length){
+    feats.forEach(function(f,i){
+      var slot = i<atlasSlot ? i : i+1;
+      var ang = BASE_ANG + slot*(360/nSlots);
+      var rad = ang*Math.PI/180;
+      var R = window.matchMedia('(max-height:600px)').matches ? 46 : 26;
+      var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+      var b = document.createElement('button');
+      b.className='mod';
+      b.dataset.kind='feature';
+      placeAt(b,x,y);
+      b.style.setProperty('--md',(0.06+i*0.06)+'s');
+      b.setAttribute('aria-label','Feature: '+f.name);
+      b._mod=f;
+      b.innerHTML='<span class="node">'+f.name+'</span>';
+      b.addEventListener('click',function(e){e.stopPropagation();showDetail(f,'Feature');selBtn=b;b.classList.add('sel');});
+      eco.appendChild(b);
+      var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('x1','50%');ln.setAttribute('y1','50%');
+      ln.setAttribute('x2',x+'%');ln.setAttribute('y2',y+'%');
+      ln._btn=b; ln._ang=rad;
+      linksSvg.appendChild(ln);
+    });
+    clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>',
+      'Select a feature to see its pain point, scope and benefits.');
+  }else{
+    clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>',
+      'No features currently mapped to this module.');
+  }
+  if(hubBtn){
+    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID)relinkRing(hubBtn,hubRingFrac());});});
+    setTimeout(function(){if(myGen===genID)relinkRing(hubBtn,hubRingFrac());},1100);
+  }
+}
+function renderRoot(){
+  var myGen = ++genID; // invalidate any pending drill-in callbacks
+  var wasDrilled = eco.classList.contains('drilled');
+  STATE='root';selBtn=null;
+  eco.classList.remove('drilled','dense10','dense20');
+  coreLabel.textContent='Atlas';coreSub.textContent='';
+  eco.querySelectorAll('.mod').forEach(function(b){b.remove();});
+  linksSvg.innerHTML='';
+  ROADMAP_MODS.forEach(function(m,i){
+    var ang = -90 + i*(360/ROADMAP_MODS.length);
+    var rad = ang*Math.PI/180;
+    var R = 42;
+    var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+    var b = document.createElement('button');
+    b.className='mod';
+    b.dataset.kind='module';
+    placeAt(b,x,y);
+    b.style.setProperty('--md',(0.06+i*0.06)+'s');
+    b.setAttribute('aria-label','Module: '+m.name);
+    b._mod=m;
+    b.innerHTML='<span class="node">'+m.name+'</span>';
+    b.addEventListener('click',function(e){e.stopPropagation();drillInto(m,b);});
+    eco.appendChild(b);
+    var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1','50%');ln.setAttribute('y1','50%');
+    ln.setAttribute('x2',x+'%');ln.setAttribute('y2',y+'%');
+    ln._btn=b; ln._ang=rad;
+    linksSvg.appendChild(ln);
+  });
+  clearDetail('The ecosystem','Seven modules, one platform',
+    '<div class="dSec"><p>Select a module to see the roadmap features that belong to it.</p></div>','');
+  rdHint.style.display='none';
+  if(wasDrilled){setTimeout(function(){if(myGen===genID)relinkEco();},720);}
+  else{requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID)relinkEco();});});}
+}
+function drillInto(m,btn){
+  var myGen = ++genID; // invalidate any pending callbacks from a previous drill-in
+  STATE='drilled';
+  eco.classList.add('drilled');       // core morphs: grows + slides off-canvas
+  eco.classList.remove('dense10','dense20');
+  linksSvg.innerHTML='';              // drop the previous orbit/feature lines immediately
+  // drop any feature nodes left over from a previous module's drill-in
+  eco.querySelectorAll('.mod[data-kind="feature"]').forEach(function(b){b.remove();});
+  // fan every other module into an arc that hugs the OUTSIDE of the giant Atlas
+  // circle (its own centre, not the hub) — computed from Atlas's actual geometry
+  // so the arc sits on the far side of Atlas, facing back toward the hub
+  var others=[].slice.call(eco.querySelectorAll('.mod[data-kind="module"]')).filter(function(b){return b!==btn;});
+  var n=others.length;
+  var er=eco.getBoundingClientRect();
+  var vw=window.innerWidth, vh=window.innerHeight;
+  var giantD=Math.min(280,Math.max(180,Math.min(0.176*vw,0.28*vh)));
+  var atlasCxPct=((55-giantD/2)/er.width)*100;      // Atlas's own centre, % of eco width
+  var atlasRPct=((giantD/2)/er.width)*100;          // Atlas's own radius, % of eco width
+  var ARC_R=atlasRPct+9;                            // just outside Atlas's edge
+  var ARC_START=-58, ARC_END=58;                    // degrees either side of due-east (facing the hub)
+  others.forEach(function(b,i){
+    b.classList.remove('hub','sel');
+    b.classList.add('fan');
+    b.innerHTML='<span class="node">'+b._mod.name+'</span>';
+    var ang = n>1 ? ARC_START + i*((ARC_END-ARC_START)/(n-1)) : (ARC_START+ARC_END)/2;
+    var rad = ang*Math.PI/180;
+    var x = atlasCxPct + ARC_R*Math.cos(rad), y = 50 + ARC_R*ECO_AR*Math.sin(rad);
+    placeAt(b,x,y);
+  });
+  // the clicked module morphs in place into the central hub
+  btn.classList.remove('fan');
+  btn.classList.add('hub');
+  placeAt(btn,50,50);
+  btn.setAttribute('aria-label','Module: '+m.name);
+  btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'<span class="hubA">Atlas</span><span class="hubName">'+m.name+'</span></span>';
+  clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>','');
+  rdHint.style.display='none';
+  // spawn features once the hub's move-to-centre transition actually finishes
+  // (transitionend, not a guessed timeout) — with a fallback in case it never fires
+  var spawned=false;
+  function onHubMoved(e){
+    if(myGen!==genID)return; // user already navigated away from this drill-in
+    if(e && e.target!==btn)return;
+    if(e && e.propertyName!=='left' && e.propertyName!=='top')return;
+    if(spawned)return;
+    spawned=true;
+    btn.removeEventListener('transitionend',onHubMoved);
+    spawnFeatures(m,myGen);
+  }
+  btn.addEventListener('transitionend',onHubMoved);
+  setTimeout(onHubMoved,650); // fallback if transitionend doesn't fire
+}
+core.addEventListener('click',function(e){
+  e.stopPropagation();
+  if(STATE==='drilled')renderRoot();
+});
+core.addEventListener('transitionend',function(e){
+  if(e.target!==core)return;
+  if(e.propertyName!=='width'&&e.propertyName!=='height'&&e.propertyName!=='left')return;
+  relinkEco();
+});
+window.addEventListener('orientationchange',function(){setTimeout(relinkEcoDebounced,300);});
+renderRoot();
+
+/* Reposition nodes onto a true circle (equal px radius) + re-point leader lines to circle centres */
+function relinkRing(centerEl,radiusFrac){
+  if(!eco||!linksSvg||!centerEl)return null;
+  var er=eco.getBoundingClientRect();
+  if(!er.width)return null;
+  var cr=centerEl.getBoundingClientRect();
+  var cx=cr.left+cr.width/2-er.left, cy=cr.top+cr.height/2-er.top;
+  var Rpx=Math.min(er.width,er.height)*radiusFrac;   // single px radius → true circle
+  var lines=[].slice.call(linksSvg.querySelectorAll('line'));
+  // 1st pass: position each button so its NODE-CIRCLE centre lands exactly on the circle
+  lines.forEach(function(ln){
+    var b=ln._btn;if(!b)return;var n=b.querySelector('.node');if(!n)return;
+    var tx=cx+Rpx*Math.cos(ln._ang), ty=cy+Rpx*Math.sin(ln._ang); // target node-centre (eco-local px)
+    // current node-centre relative to button's left/top anchor
+    var br=b.getBoundingClientRect(), nr=n.getBoundingClientRect();
+    var offX=(nr.left+nr.width/2)-(br.left+br.width/2);  // node offset from button centre
+    var offY=(nr.top+nr.height/2)-(br.top+br.height/2);
+    b.style.left=(tx-offX)+'px'; b.style.top=(ty-offY)+'px';
+  });
+  // 2nd pass: re-point lines to the (now-corrected) node-circle centres, and to the exact centre-element centre
+  linksSvg.setAttribute('viewBox','0 0 '+er.width+' '+er.height);
+  linksSvg.setAttribute('preserveAspectRatio','none');
+  lines.forEach(function(ln){
+    var b=ln._btn;if(!b)return;var n=b.querySelector('.node');if(!n)return;
+    var nr=n.getBoundingClientRect();
+    var nx=nr.left+nr.width/2-er.left, ny=nr.top+nr.height/2-er.top;
+    var dist=Math.hypot(nx-cx,ny-cy);
+    // a line whose length is way off the intended ring radius is reading a stale/
+    // transitional layout — hide it rather than paint it to a garbled position
+    if(dist>Rpx*1.35||dist<Rpx*0.65){
+      ln.style.opacity='0';
+      return;
+    }
+    ln.style.opacity='';
+    ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);
+    ln.setAttribute('x2',nx);ln.setAttribute('y2',ny);
+  });
+  return {cx:cx,cy:cy};
+}
+function relinkEco(){
+  if(STATE==='drilled'){
+    var hubBtn=eco.querySelector('.mod.hub');
+    if(hubBtn)relinkRing(hubBtn,hubRingFrac());
+  }else{
+    relinkRing(core,0.40);
+  }
+}
+var relinkTimer=null;
+function relinkEcoDebounced(){
+  clearTimeout(relinkTimer);
+  relinkTimer=setTimeout(function(){
+    relinkEco();
+    setTimeout(relinkEco,300); // trailing safety pass once layout has fully settled
+  },150);
+}
+window.addEventListener('resize',relinkEcoDebounced);
+
+/* ---------- Slide 4b: Atlas app modules selector ---------- */
+var APPMODS=[
+ {name:'People',fn:'PEOPLE & PAYROLL',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:['Onboarding','Employee Records','Medical Management','Leave','Timesheets','Performance Management','Employee Development','Payroll Integration']},
+ {name:'Learn',fn:'LEARNING & DEVELOPMENT',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:['Inductions','E-Learning','Courses','Competencies','Certifications','Toolbox Talks','Compliance','Skills Matrix']},
+ {name:'Tenders',fn:'TENDER MANAGEMENT',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Pipeline Tracking','Opportunities','Tenders','Supporting Invitations','Approvals','Go/Get','Win History','Customer History']},
+ {name:'Projects',fn:'PROJECT DELIVERY',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Daily Diary','Cost Allocation','Procurement','Progress Claims','Variations','Forecasting','Accruals','Monthly Reporting']},
+ {name:'Operations',fn:'RESOURCES & SCHEDULING',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Scheduling','People','Plant','Tracking','Resource Requests','Utilisation','Mobilisation','Subcontractors']},
+ {name:'Finance',fn:'FINANCE & REPORTING',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['Journals','MPR Administration','Cashflow','EoM Control','Board Reports','Invoicing','Reconciliation','Accounts Payable']},
+ {name:'Admin',fn:'SYSTEM ADMINISTRATION',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access','Email Notifications','Roles & Permissions','Audit Log']}
+];
+(function(){
+  var chips=document.getElementById('modChips');
+  var mFn=document.getElementById('mFn'),mName=document.getElementById('mName'),
+      mDesc=document.getElementById('mDesc'),mFeats=document.getElementById('mFeats');
+  if(!chips)return;
+  var btns=[];
+  function show(i){
+    var m=APPMODS[i];
+    mFn.textContent=m.fn;mName.textContent=m.name;mDesc.textContent=m.desc;
+    mFeats.innerHTML=m.feats.map(function(f){return '<span>'+f+'</span>';}).join('');
+    btns.forEach(function(b,j){b.classList.toggle('on',j===i);});
+  }
+  APPMODS.forEach(function(m,i){
+    var b=document.createElement('button');b.textContent=m.name;b.setAttribute('role','tab');
+    b.addEventListener('click',function(){show(i);});
+    chips.appendChild(b);btns.push(b);
+  });
+  show(0);
+})();
+
+var CAD=[
+ ["Q3 2026","01","MPR Auto-Generation",true],
+ ["Q4 2026","02","Cost Coding Control"],
+ ["Q1 2027","03","Registers & Quick Links"],
+ ["Q2 2027","04","Plant Scheduling & Cost Alloc."],
+ ["Q3 2027","05","Progress Claims (Upstream)"],
+ ["Q4 2027","06","Subcontractor Claims"],
+ ["Q1 2028","07","Daily Diary"],
+ ["Q2 2028","08","Cost to Complete Forecast"],
+ ["Q3 2028","09","Cashflow Forecast"],
+ ["Q4 2028","10","Resource Mgmt & Planning"]
+];
+var tl=document.getElementById('tlSvg');
+var NS='http://www.w3.org/2000/svg';
+var X0=70, X1=1290, MIDY=260;
+var tickGroups=[];
+CAD.forEach(function(c,i){
+  var x=X0+i*(X1-X0)/9, up=(i%2===0);
+  var g=document.createElementNS(NS,'g');
+  g.setAttribute('class','tick');
+  g.dataset.x=x;
+  var stem=document.createElementNS(NS,'line');
+  stem.setAttribute('x1',x);stem.setAttribute('x2',x);
+  stem.setAttribute('y1',MIDY);stem.setAttribute('y2',up?MIDY-58:MIDY+58);
+  stem.setAttribute('stroke','rgba(var(--acc2-rgb),.4)');stem.setAttribute('stroke-width','1.5');
+  g.appendChild(stem);
+  var dot=document.createElementNS(NS,'circle');
+  dot.setAttribute('cx',x);dot.setAttribute('cy',MIDY);dot.setAttribute('r',c[3]?11:9);
+  g.appendChild(dot);
+  var ck=document.createElementNS(NS,'text');
+  ck.setAttribute('x',x);ck.setAttribute('y',MIDY+4.5);
+  ck.setAttribute('text-anchor','middle');ck.setAttribute('class','ck');
+  ck.textContent='✓';g.appendChild(ck);
+  function txt(content,y,cls){
+    var t=document.createElementNS(NS,'text');
+    t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('text-anchor','middle');t.setAttribute('class',cls);
+    t.textContent=content;return t;
+  }
+  var baseY = up? MIDY-70 : MIDY+82;
+  g.appendChild(txt(c[0], up? baseY-38 : baseY+2 ,'q'));
+  var words=('M'+c[1]+' · '+c[2]);
+  if(words.length>22){
+    var br=words.lastIndexOf(' ',Math.ceil(words.length/2)+3);
+    g.appendChild(txt(words.slice(0,br), up? baseY-18: baseY+22,'mn'));
+    g.appendChild(txt(words.slice(br+1), up? baseY-1 : baseY+39,'mn2'));
+  }else{
+    g.appendChild(txt(words, up? baseY-10: baseY+28,'mn'));
+  }
+  tl.appendChild(g);
+  tickGroups.push(g);
+});
+var spineFill=document.getElementById('spineFill');
+var spineLen=1360-40;
+spineFill.setAttribute('stroke-dasharray',spineLen);
+spineFill.setAttribute('stroke-dashoffset',spineLen);
+var ph=document.createElementNS(NS,'g');
+ph.setAttribute('class','playhead');
+ph.innerHTML='<line x1="0" x2="0" y1="'+(MIDY-30)+'" y2="'+(MIDY+30)+'"/>'+
+  '<circle cx="0" cy="'+MIDY+'" r="6"/>'+
+  '<text x="0" y="'+MIDY+'" text-anchor="middle" dy="-40"></text>';
+tl.appendChild(ph);
+var phLabel=ph.querySelector('text');
+var cadence={raf:null,running:false,t0:0};
+var SWEEP=14000, HOLD=2200;
+function cadenceFrame(ts){
+  if(!cadence.running)return;
+  var t=(ts-cadence.t0)%(SWEEP+HOLD);
+  var p=Math.min(1,t/SWEEP);
+  var x=40+(1360-40)*p;
+  ph.setAttribute('transform','translate('+x+',0)');
+  ph.style.opacity = p<1 ? 1 : 0;
+  spineFill.setAttribute('stroke-dashoffset',spineLen*(1-p));
+  var lbl='';
+  tickGroups.forEach(function(g,i){
+    var tx=+g.dataset.x;
+    var hit = x>=tx-2;
+    g.classList.toggle('delivered',hit);
+    if(hit)lbl=CAD[i][0];
+  });
+  phLabel.textContent = p<1 ? (lbl||'2026') : '';
+  cadence.raf=requestAnimationFrame(cadenceFrame);
+}
+function cadenceStart(){
+  if(RM){
+    tickGroups.forEach(function(g){g.classList.add('delivered');});
+    spineFill.setAttribute('stroke-dashoffset',0);
+    return;
+  }
+  cadence.running=true;cadence.t0=performance.now();
+  cadence.raf=requestAnimationFrame(cadenceFrame);
+}
+function cadenceStop(){
+  cadence.running=false;
+  if(cadence.raf)cancelAnimationFrame(cadence.raf);
+}
+
+/* ---------- Production line (slide 6) ---------- */
+var line={timers:[],running:false,modIdx:0};
+var token=document.getElementById('modToken');
+var tokenLabel=document.getElementById('tokenLabel');
+var tokenName=document.getElementById('tokenName');
+var shelf=document.getElementById('shelf');
+var stationEls=Array.prototype.slice.call(document.querySelectorAll('#stations .station'));
+function stationCenters(){
+  var wrap=document.querySelector('.lineWrap').getBoundingClientRect();
+  return stationEls.map(function(st){
+    var r=st.getBoundingClientRect();
+    return ((r.left-wrap.left)+r.width/2)/wrap.width*100;
+  });
+}
+function lt(fn,ms){line.timers.push(setTimeout(fn,ms));}
+function clearShelfChips(){
+  Array.prototype.slice.call(shelf.querySelectorAll('.dchip')).forEach(function(c){c.remove();});
+}
+function runModule(){
+  if(!line.running)return;
+  var m=MODS[line.modIdx%MODS.length];
+  var centers=stationCenters();
+  // reset stations
+  stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
+  // new shelf cycle when back at module 01
+  if(line.modIdx%MODS.length===0)clearShelfChips();
+  // token enters
+  tokenLabel.textContent='M'+m.n;
+  tokenName.textContent=m.name;
+  token.classList.remove('flying');
+  token.style.transition='none';
+  token.style.left='-8%';
+  token.style.opacity='0';
+  void token.offsetWidth; // reflow
+  token.style.transition='';
+  token.style.opacity='1';
+  var t=200;
+  var MOVE=850, DWELL=1500;
+  centers.forEach(function(cx,i){
+    lt(function(){token.style.left=cx+'%';},t);
+    t+=MOVE;
+    lt(function(){
+      stationEls[i].classList.add('active');
+      // fill ring
+      var start=performance.now();
+      (function fill(){
+        if(!line.running)return;
+        var p=Math.min(1,(performance.now()-start)/DWELL);
+        stationEls[i].style.setProperty('--pr',Math.round(p*100));
+        if(p<1)requestAnimationFrame(fill);
+      })();
+    },t);
+    t+=DWELL;
+    lt(function(){
+      stationEls[i].classList.remove('active');
+      stationEls[i].classList.add('done');
+    },t);
+  });
+  // release: fly off and land on shelf
+  lt(function(){
+    token.classList.add('flying');
+    token.style.left='108%';
+  },t);
+  t+=650;
+  lt(function(){
+    var chip=document.createElement('span');
+    chip.className='dchip';
+    chip.textContent='M'+m.n+' · '+m.name;
+    shelf.appendChild(chip);
+    // keep shelf tidy: max 5 chips visible
+    var chips=shelf.querySelectorAll('.dchip');
+    if(chips.length>5)chips[0].remove();
+  },t);
+  t+=550;
+  lt(function(){
+    line.modIdx++;
+    runModule();
+  },t);
+}
+function lineStart(){
+  if(RM){
+    stationEls.forEach(function(st){st.classList.add('done');st.style.setProperty('--pr',100);});
+    clearShelfChips();
+    MODS.slice(0,3).forEach(function(m){
+      var chip=document.createElement('span');
+      chip.className='dchip';chip.textContent='M'+m.n+' · '+m.name;
+      shelf.appendChild(chip);
+    });
+    return;
+  }
+  line.running=true;line.modIdx=0;
+  runModule();
+}
+function lineStop(){
+  line.running=false;
+  line.timers.forEach(clearTimeout);
+  line.timers=[];
+  token.style.opacity='0';
+  stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
+  clearShelfChips();
+}
+
+/* ---------- Fragments ---------- */
+function frags(slide){return Array.prototype.slice.call(slide.querySelectorAll('.frag'));}
+function nextFrag(slide){
+  var f=frags(slide).filter(function(x){return !x.classList.contains('shown');});
+  if(f.length){f[0].classList.add('shown');return true;}
+  return false;
+}
+function prevFrag(slide){
+  var f=frags(slide).filter(function(x){return x.classList.contains('shown');});
+  if(f.length){f[f.length-1].classList.remove('shown');return true;}
+  return false;
+}
+
+/* ---------- Progress bar ---------- */
+var prog=document.getElementById('progress');
+var segEls=[];
+slides.forEach(function(s,i){
+  if(i>0 && s.dataset.act!==slides[i-1].dataset.act){
+    var gap=document.createElement('span');gap.className='actGap';prog.appendChild(gap);
+  }
+  var b=document.createElement('button');
+  b.className='seg';
+  b.setAttribute('aria-label','Slide '+(i+1)+': '+s.dataset.label);
+  b.innerHTML='<span class="tip">'+(i+1)+' · '+s.dataset.label+'</span>';
+  b.addEventListener('click',function(){goTo(i);});
+  prog.appendChild(b);segEls.push(b);
+});
+
+/* ---------- Navigation core ---------- */
+var counter=document.getElementById('counter');
+function onEnter(s){
+  if(s.id==='s3')requestAnimationFrame(function(){requestAnimationFrame(sizeAtlasL);});
+  if(s.id==='s4')requestAnimationFrame(function(){requestAnimationFrame(relinkEco);});
+  if(s.id==='s5')cadenceStart();
+  if(s.id==='s6')lineStart();
+  if(RM)frags(s).forEach(function(f){f.classList.add('shown');});
+}
+function onLeave(s){
+  if(s.id==='s5')cadenceStop();
+  if(s.id==='s6')lineStop();
+}
+function goTo(i,skipFragReset){
+  if(i<0||i>=slides.length||(i===cur&&slides[i].classList.contains('active')))return;
+  var old=slides[cur];
+  onLeave(old);
+  old.classList.remove('active');
+  setTimeout(function(){
+    if(old.classList.contains('active'))return;
+    old.classList.remove('entered');
+    if(!skipFragReset)frags(old).forEach(function(f){f.classList.remove('shown');});
+  },700);
+  old.classList.toggle('prior',i>cur);
+  cur=i;
+  var s=slides[cur];
+  s.classList.remove('prior');
+  s.classList.add('active');
+  requestAnimationFrame(function(){requestAnimationFrame(function(){s.classList.add('entered');});});
+  onEnter(s);
+  counter.textContent=(cur+1)+' / '+slides.length;
+  segEls.forEach(function(b,j){
+    b.classList.toggle('cur',j===cur);
+    b.classList.toggle('done',j<cur);
+  });
+}
+function fwd(){
+  var s=slides[cur];
+  if(!RM && nextFrag(s))return;
+  goTo(cur+1);
+}
+function back(){
+  var s=slides[cur];
+  if(!RM && prevFrag(s))return;
+  goTo(cur-1);
+}
+
+document.getElementById('btnNext').addEventListener('click',fwd);
+function toggleTheme(){
+  var r=document.documentElement;
+  r.dataset.theme = r.dataset.theme==='light' ? 'dark' : 'light';
+}
+document.getElementById('btnTheme').addEventListener('click',toggleTheme);
+document.getElementById('btnPrev').addEventListener('click',back);
+
+document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='A')return;
+  switch(e.key){
+    case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault();fwd();break;
+    case 'ArrowLeft': case 'PageUp': e.preventDefault();back();break;
+    case 'Home': e.preventDefault();goTo(0);break;
+    case 'End': e.preventDefault();goTo(slides.length-1);break;
+    case 't': case 'T': toggleTheme();break;
+    case 'f': case 'F':
+      if(document.fullscreenElement){document.exitFullscreen();}
+      else{document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}
+      break;
+  }
+});
+
+/* init */
+/* Size the Atlas L-background to wrap rows 1-2, notch aligned to External cell */
+function sizeAtlasL(){
+  var stack=document.querySelector('.railStack');
+  var L=document.querySelector('.atlasL');
+  var path=document.getElementById('atlasPath');
+  var svg=document.getElementById('atlasSvg');
+  var flow=document.getElementById('flowSvg');
+  if(!stack||!L||!path)return;
+  var rows=stack.querySelectorAll('.railRow');
+  var ex=stack.querySelector('.exN');
+  var intl=rows[0].querySelectorAll('.rcell')[0];  // Internal
+  var cc=rows[1].querySelectorAll('.rcell')[0];    // Capture & Control
+  var reg=rows[1].querySelectorAll('.rcell')[1];   // Registers
+  var fin=rows[2].querySelector('.rcell');         // Financial Decisions
+  if(!ex||!intl||!cc||!reg||!fin)return;
+  var sRect=stack.getBoundingClientRect();
+  function R(el){var r=el.getBoundingClientRect();return{l:r.left-sRect.left,t:r.top-sRect.top,r:r.right-sRect.left,b:r.bottom-sRect.top};}
+  var PAD=5;
+  // atlasL covers whole stack; SVG viewBox = stack size
+  var W=sRect.width, Hh=sRect.height;
+  svg.setAttribute('viewBox','0 0 '+W+' '+Hh);
+  // enclosed cards = Internal, Capture&Control, Registers, Financial (NOT External)
+  var enc=[R(intl),R(cc),R(reg),R(fin)];
+  var minL=Math.min.apply(null,enc.map(function(c){return c.l;}))-PAD;
+  var minT=Math.min.apply(null,enc.map(function(c){return c.t;}))-PAD;
+  var maxR=Math.max.apply(null,enc.map(function(c){return c.r;}))-0+PAD;
+  var maxB=Math.max.apply(null,enc.map(function(c){return c.b;}))+PAD;
+  // notch inner corner: hug Internal's right side (vertical cut) and Registers' top (horizontal cut)
+  var ir=R(intl), rg=R(reg);
+  var nx=ir.r+PAD;          // notch vertical cut = right of Internal + pad
+  var ny=rg.t-PAD;          // notch horizontal cut = top of Registers - pad
+  var r=14, ri=10;
+  var d='M '+(minL+r)+' '+minT
+    +' L '+(nx-ri)+' '+minT
+    +' Q '+nx+' '+minT+' '+nx+' '+(minT+ri)
+    +' L '+nx+' '+(ny-ri)
+    +' Q '+nx+' '+ny+' '+(nx+ri)+' '+ny
+    +' L '+(maxR-r)+' '+ny
+    +' Q '+maxR+' '+ny+' '+maxR+' '+(ny+r)
+    +' L '+maxR+' '+(maxB-r)
+    +' Q '+maxR+' '+maxB+' '+(maxR-r)+' '+maxB
+    +' L '+(minL+r)+' '+maxB
+    +' Q '+minL+' '+maxB+' '+minL+' '+(maxB-r)
+    +' L '+minL+' '+(minT+r)
+    +' Q '+minL+' '+minT+' '+(minL+r)+' '+minT+' Z';
+  path.setAttribute('d',d);
+  // place ATLAS label just inside the outline's bottom-left
+  var tagEl=L.querySelector('.atlasTag');
+  if(tagEl){tagEl.style.left=(minL+16)+'px';tagEl.style.bottom=(Hh-maxB+12)+'px';}
+
+  // ---- flow rails: cardinal, constant-speed evenly-spaced travelling dots ----
+  if(!flow)return;
+  flow.setAttribute('viewBox','0 0 '+sRect.width+' '+sRect.height);
+  flow.innerHTML='';
+  var svgNS='http://www.w3.org/2000/svg';
+  function C(el,cx,cy){var r=el.getBoundingClientRect();return{x:r.left-sRect.left+r.width*cx,y:r.top-sRect.top+r.height*cy};}
+  function pathStr(pts){var s='M '+pts[0].x+' '+pts[0].y;for(var i=1;i<pts.length;i++)s+=' L '+pts[i].x+' '+pts[i].y;return s;}
+  function plen(pts){var L=0;for(var i=1;i<pts.length;i++){L+=Math.abs(pts[i].x-pts[i-1].x)+Math.abs(pts[i].y-pts[i-1].y);}return L;}
+  var SPEED=45;        // px per second — constant for every rail
+  var SPACING=70;      // px between dots — constant for every rail
+  function flowRail(pts,recon,label,lpos){
+    var clean=pts.filter(function(p,i,a){return i===0||p.x!==a[i-1].x||p.y!==a[i-1].y;});
+    var d=pathStr(clean), L=plen(clean);
+    var dur=L/SPEED;                       // constant speed
+    var n=Math.max(1,Math.round(L/SPACING));
+    var rail=document.createElementNS(svgNS,'path');rail.setAttribute('d',d);
+    rail.setAttribute('class','frail'+(recon?' recon':''));
+    flow.appendChild(rail);
+    for(var k=0;k<n;k++){
+      var dot=document.createElementNS(svgNS,'circle');dot.setAttribute('r','4');
+      dot.setAttribute('class','fdot'+(recon?' recon':''));
+      var am=document.createElementNS(svgNS,'animateMotion');
+      am.setAttribute('dur',dur.toFixed(2)+'s');am.setAttribute('repeatCount','indefinite');am.setAttribute('path',d);
+      am.setAttribute('begin',(-dur*k/n).toFixed(2)+'s');   // even spacing
+      dot.appendChild(am);flow.appendChild(dot);
+    }
+    if(label&&lpos){
+      var lines=label.split('|');
+      var t=document.createElementNS(svgNS,'text');
+      t.setAttribute('x',lpos.x);t.setAttribute('y',lpos.y);
+      t.setAttribute('text-anchor',lpos.anchor||'middle');
+      t.setAttribute('class','flowLbl'+(recon?' recon':''));
+      lines.forEach(function(ln,i){
+        var ts=document.createElementNS(svgNS,'tspan');
+        ts.setAttribute('x',lpos.x);ts.setAttribute('dy',i===0?'0':'1.15em');
+        ts.textContent=ln;t.appendChild(ts);
+      });
+      flow.appendChild(t);
+    }
+  }
+  var rows=stack.querySelectorAll('.railRow');
+  var intl=rows[0].querySelectorAll('.rcell')[0];  // Internal
+  var cc=rows[1].querySelectorAll('.rcell')[0];    // Capture & Control
+  var reg=rows[1].querySelectorAll('.rcell')[1];   // Registers
+  var fin=rows[2].querySelector('.rcell');         // Financial Decisions
+  var pro=rows[3].querySelector('.rcell');         // Pronto (Financial Ledger)
+  // helper: y at the visible gap between two stacked rows (row bottom → next row top midpoint)
+  function gapY(a,b){return (C(a,.5,1).y + C(b,.5,0).y)/2;}
+  // 1. Internal ↓ Capture & Control — "Internal Project Costs"
+  if(intl&&cc){var ax=C(cc,.5,.5).x;flowRail([{x:ax,y:C(intl,.5,.5).y},{x:ax,y:C(cc,.5,.5).y}],false,'Internal Project Costs',{x:ax-9,y:gapY(intl,cc)+1,anchor:'end'});}
+  // 2. External ↓ Registers — "Project External Data"
+  if(ex&&reg){var ax=C(reg,.5,.5).x;flowRail([{x:ax,y:C(ex,.5,.5).y},{x:ax,y:C(reg,.5,.5).y}],false,'Project External Data',{x:ax+10,y:gapY(ex,reg)-2,anchor:'start'});}
+  // 3. Capture & Control → Registers — (no label)
+  if(cc&&reg){var ay=C(cc,.5,.5).y;flowRail([{x:C(cc,.5,.5).x,y:ay},{x:C(reg,.5,.5).x,y:ay}]);}
+  // 4. Registers ↓ Financial Decisions — "Consolidated Facts"
+  if(reg&&fin){var ax=C(reg,.5,.5).x;flowRail([{x:ax,y:C(reg,.5,.5).y},{x:ax,y:C(fin,.78,.5).y}],false,'Consolidated Facts',{x:ax-10,y:gapY(reg,fin)-2,anchor:'end'});}
+  // 5. Financial Decisions ↓ Pronto — "Data-Backed Results"
+  if(fin&&pro){var ax=C(fin,.5,.5).x;flowRail([{x:ax,y:C(fin,.5,.5).y},{x:ax,y:C(pro,.5,.5).y}],false,'Data-Backed Results',{x:ax+10,y:gapY(fin,pro)-2,anchor:'start'});}
+  // gap-centred vertical lanes, measured off ATLAS tag, Financial card, and Atlas box edges
+  var tag=stack.querySelector('.atlasTag');
+  var Lbox=stack.querySelector('.atlasL');
+  var tagR=tag?tag.getBoundingClientRect().right - sRect.left:C(fin,0,0).x-120;
+  var finL=fin.getBoundingClientRect().left - sRect.left;
+  var finR=fin.getBoundingClientRect().right - sRect.left;
+  var atlasR=Lbox?Lbox.getBoundingClientRect().right - sRect.left:sRect.width;
+  // 6. Capture & Control ↓ Pronto — "Allocated Costs"
+  if(cc&&pro){var lx=(tagR+finL)/2;var my=(C(cc,.5,1).y+C(pro,0,0).y)/2;flowRail([{x:lx,y:C(cc,.5,1).y},{x:lx,y:C(pro,0,0).y}],false,'Allocated|Costs',{x:lx-9,y:my-6,anchor:'end'});}
+  // 7. Pronto ↑ Registers — "Reconciled data" (reconciliation, grey)
+  if(pro&&reg){var rx=(finR+atlasR)/2;var my=(C(pro,1,0).y+C(reg,.5,1).y)/2;flowRail([{x:rx,y:C(pro,1,0).y},{x:rx,y:C(reg,.5,1).y}],true,'Reconciled|data',{x:rx+9,y:my-6,anchor:'start'});}
+}
+window.addEventListener('resize',sizeAtlasL);
+
+slides[0].classList.add('active');
+requestAnimationFrame(function(){requestAnimationFrame(function(){slides[0].classList.add('entered');});});
+segEls[0].classList.add('cur');
+if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('shown');});});
+})();
+</script>
+</body>
+</html>
