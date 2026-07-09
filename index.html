@@ -296,7 +296,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s4.slide{overflow-x:hidden;}
 #s4 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,1fr);gap:2.2vw;align-items:center;}
 #s4 .head{margin-bottom:1.4vh;}
-.eco{position:relative;width:100%;aspect-ratio:1.18/1;max-height:60vh;margin:0 auto;}
+.eco{position:relative;width:100%;height:60vh;margin:0 auto;}
 .eco svg.links{position:absolute;inset:0;width:100%;height:100%;}
 .eco svg.links line{stroke:rgba(86,148,205,.22);stroke-width:1;transition:opacity .2s ease;}
 .eco svg.links line.atlasLine{stroke:rgba(17,83,138,.35);stroke-width:1.4;}
@@ -314,7 +314,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   z-index:0;cursor:default;
 }
 .eco.drilled .core{
-  --coreD:clamp(140px,min(13vw,20vh),260px);
+  --coreD:clamp(140px,min(13vw,20vh),225px);
   left:calc(var(--coreD)/2 + 16px);top:50%;cursor:pointer;
   background-color:transparent;border-color:transparent;
 }
@@ -357,7 +357,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .mod{cursor:pointer;}
 .mod.hub{z-index:4;}
 .mod.hub .node{
-  width:clamp(90px,min(8.8vw,14vh),190px);height:clamp(90px,min(8.8vw,14vh),190px);
+  width:clamp(90px,min(8.8vw,14vh),165px);height:clamp(90px,min(8.8vw,14vh),165px);
   background:#0a4673;
   border-color:transparent;color:#fff;position:relative;overflow:hidden;
   font-weight:800;font-size:clamp(16px,1.6vw,34px);letter-spacing:-.01em;cursor:default;
@@ -370,13 +370,13 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   letter-spacing:-.01em;color:#8fd0ff;line-height:1.05;}
 .mod.out{opacity:0!important;pointer-events:none;}
 .mod.fan .node{width:clamp(36px,3.8vw,70px);height:clamp(36px,3.8vw,70px);font-size:clamp(7.5px,.56vw,13px);color:var(--sec);}
-.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),115px);height:clamp(48px,min(6.2vw,9.6vh),115px);font-size:clamp(8.5px,.76vw,16px);}
+.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),98px);height:clamp(48px,min(6.2vw,9.6vh),98px);font-size:clamp(8.5px,.76vw,14px);}
 .eco.dense10 .mod .node{width:clamp(56px,min(5.4vw,8.6vh),78px);height:clamp(56px,min(5.4vw,8.6vh),78px);font-size:clamp(8.5px,.66vw,10.5px);}
 .eco.dense20 .mod .node{width:clamp(42px,min(4vw,6.4vh),58px);height:clamp(42px,min(4vw,6.4vh),58px);font-size:clamp(6.8px,.54vw,8.3px);padding:.35em;}
 .detail{
   background:rgba(var(--srf-rgb),.05);border:1px solid rgba(var(--brd-rgb),.25);
 
-  border-radius:18px;padding:3vh 1.9vw;min-height:52vh;display:flex;flex-direction:column;justify-content:center;
+  border-radius:18px;padding:2vh 1.2vw;min-height:60vh;display:flex;flex-direction:column;justify-content:center;
 
   backdrop-filter:blur(4px);
 }
@@ -617,7 +617,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   #counter{right:calc(2.4vw + 110px);font-size:11px;}
   .seg{height:4px;}
   .head h2{font-size:clamp(16px,2.4vw,28px)!important;}
-  #s4 .eco{max-height:36vh;}
+  #s4 .eco{height:36vh;}
   #s4 .detail{min-height:0;max-height:44vh;overflow-y:auto;}
   #s4 .wrap{gap:1.4vw;}
   .mod .node{width:clamp(32px,min(7.6vw,7.6vh),112px)!important;height:clamp(32px,min(7.6vw,7.6vh),112px)!important;font-size:7px!important;}
@@ -1138,8 +1138,16 @@ var core = eco.querySelector('.core');
 var coreLabel=document.getElementById('coreLabel'),coreSub=document.getElementById('coreSub');
 var roadDetail=document.getElementById('roadDetail'),rdNum=document.getElementById('rdNum'),
     rdName=document.getElementById('rdName'),rdBody=document.getElementById('rdBody'),rdHint=document.getElementById('rdHint');
-var ECO_AR = 1.18;  // .eco aspect-ratio (width/height) — keeps orbit a true circle
-var HUB_X_DRILLED = 63; // hub's % x-position once drilled — shifted right to leave the on-screen giant Atlas circle room on the left
+// .eco's rendered aspect ratio (width/height) — read live since .eco now simply
+// fills its grid cell (width:100%, height:60vh) rather than holding a fixed
+// aspect-ratio, so the width:height relationship varies a lot more by viewport.
+// Used only for initial/one-shot % placement (fan-out); ring placements are
+// corrected afterward to a true circle via relinkRing's px-based math.
+function ecoAR(){
+  var r=eco.getBoundingClientRect();
+  return (r.width && r.height) ? r.width/r.height : 1.18;
+}
+var HUB_X_GUESS = 63; // rough initial % x-guess for feature nodes before the hub's actual (dynamically computed) position lands and relinkRing corrects them
 var selBtn=null, STATE='root', genID=0;
 function showDetail(node,label){
   rdNum.textContent=(label||'Feature');
@@ -1182,7 +1190,7 @@ function spawnFeatures(m,myGen){
       var ang = BASE_ANG + slot*(360/nSlots);
       var rad = ang*Math.PI/180;
       var R = window.matchMedia('(max-height:600px)').matches ? 46 : 26;
-      var x = HUB_X_DRILLED + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+      var x = HUB_X_GUESS + R*Math.cos(rad), y = 50 + R*ecoAR()*Math.sin(rad);
       var b = document.createElement('button');
       b.className='mod';
       b.dataset.kind='feature';
@@ -1206,8 +1214,8 @@ function spawnFeatures(m,myGen){
       'No features currently mapped to this module.');
   }
   if(hubBtn){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID)relinkRing(hubBtn,hubRingFrac());});});
-    setTimeout(function(){if(myGen===genID)relinkRing(hubBtn,hubRingFrac());},1100);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();}});});
+    setTimeout(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();}},1100);
   }
 }
 function renderRoot(){
@@ -1222,7 +1230,7 @@ function renderRoot(){
     var ang = -90 + i*(360/FEATURE_MODS.length);
     var rad = ang*Math.PI/180;
     var R = 42;
-    var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+    var x = 50 + R*Math.cos(rad), y = 50 + R*ecoAR()*Math.sin(rad);
     var b = document.createElement('button');
     b.className='mod';
     b.dataset.kind='module';
@@ -1262,24 +1270,39 @@ function drillInto(m,btn){
   var n=others.length;
   var er=eco.getBoundingClientRect();
   var vw=window.innerWidth, vh=window.innerHeight;
-  var giantD=Math.min(260,Math.max(140,Math.min(0.13*vw,0.20*vh)));
+  var giantD=Math.min(225,Math.max(140,Math.min(0.13*vw,0.20*vh)));
   var atlasCxPct=(((giantD/2)+16)/er.width)*100;    // Atlas's own centre, % of eco width
   var atlasRPct=((giantD/2)/er.width)*100;          // Atlas's own radius, % of eco width
   var ARC_R=atlasRPct+9;                            // just outside Atlas's edge
   var ARC_START=-58, ARC_END=58;                    // degrees either side of due-east (facing the hub)
+  // the module directly on the due-east slot (angle 0, if n is odd) sits on the
+  // exact same axis as the circle-to-hub line, so it's the tightest possible
+  // fit: circle radius + gap + chip diameter + gap + hub radius must not
+  // exceed the circle-to-hub distance. Mirror the hub/chip CSS clamp() formulas
+  // here so the hub is pushed only as far right as actually necessary — a
+  // fixed % would eventually run into this on some viewport no matter what
+  // constant was picked. Cap it against the feature ring's own reach on the
+  // *right* side too, so fixing the left doesn't push the ring off-canvas.
+  var hubOuterD=Math.min(165,Math.max(90,Math.min(0.088*vw,0.14*vh)))+12;
+  var chipOuterD=Math.min(98,Math.max(48,Math.min(0.062*vw,0.096*vh)))+12;
+  var GAP=10;
+  var neededHubCenterPx=(giantD/2+16)+giantD/2+GAP+chipOuterD+GAP+hubOuterD/2;
+  var ringRadiusPx=Math.min(er.width,er.height)*hubRingFrac();
+  var rightMaxHubCenterPx=er.width-14-ringRadiusPx-chipOuterD/2;
+  var hubXPct=Math.max(63,(Math.min(neededHubCenterPx,rightMaxHubCenterPx)/er.width)*100);
   others.forEach(function(b,i){
     b.classList.remove('hub','sel');
     b.classList.add('fan');
     b.innerHTML='<span class="node">'+b._mod.name+'</span>';
     var ang = n>1 ? ARC_START + i*((ARC_END-ARC_START)/(n-1)) : (ARC_START+ARC_END)/2;
     var rad = ang*Math.PI/180;
-    var x = atlasCxPct + ARC_R*Math.cos(rad), y = 50 + ARC_R*ECO_AR*Math.sin(rad);
+    var x = atlasCxPct + ARC_R*Math.cos(rad), y = 50 + ARC_R*ecoAR()*Math.sin(rad);
     placeAt(b,x,y);
   });
   // the clicked module morphs in place into the central hub
   btn.classList.remove('fan');
   btn.classList.add('hub');
-  placeAt(btn,HUB_X_DRILLED,50);
+  placeAt(btn,hubXPct,50);
   btn.setAttribute('aria-label','Module: '+m.name);
   btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'<span class="hubA">Atlas</span><span class="hubName">'+m.name+'</span></span>';
   clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>','');
@@ -1374,11 +1397,60 @@ function positionAtlasLine(){
   atlasLn.setAttribute('x1',edgeX);atlasLn.setAttribute('y1',edgeY);
   atlasLn.setAttribute('x2',hx);atlasLn.setAttribute('y2',hy);
 }
+function relinkFan(){
+  // the "other module" chips fan out just outside the giant circle's edge,
+  // facing the hub — their initial angle/radius (drillInto) is a good guess,
+  // but circle/hub sizes both scale with viewport, so at some combinations
+  // the gap between them is too tight for a chip to sit in cleanly. Clamp
+  // each chip's actual on-screen radius (same angle, same centre) so it never
+  // sits closer than a safe margin to either the circle or the hub — the
+  // circle-facing angle (0°, "just outside" the circle) is the tight case,
+  // since that's the same axis the circle and hub sit on.
+  if(STATE!=='drilled')return;
+  var hubBtn=eco.querySelector('.mod.hub');if(!hubBtn)return;
+  var er=eco.getBoundingClientRect();if(!er.width)return;
+  var hr=hubBtn.getBoundingClientRect(), cr=core.getBoundingClientRect();
+  var hcx=hr.left+hr.width/2-er.left, hcy=hr.top+hr.height/2-er.top, hRad=hr.width/2;
+  var ccx=cr.left+cr.width/2-er.left, ccy=cr.top+cr.height/2-er.top, cRad=cr.width/2;
+  var GAP=10;
+  [].slice.call(eco.querySelectorAll('.mod.fan')).forEach(function(b){
+    var n=b.querySelector('.node');if(!n)return;
+    var nr=n.getBoundingClientRect(), bRad=nr.width/2;
+    var bx=nr.left+nr.width/2-er.left, by=nr.top+nr.height/2-er.top;
+    var dx=bx-ccx, dy=by-ccy;
+    var curR=Math.hypot(dx,dy);
+    if(curR<1)return; // node collapsed mid-transition — skip, next pass will catch it
+    var ang=Math.atan2(dy,dx), dirx=Math.cos(ang), diry=Math.sin(ang);
+    var minR=cRad+bRad+GAP;
+    // farthest this chip can sit along its ray from the circle's centre before
+    // it starts crossing into the hub's circle (ray/circle intersection);
+    // Infinity if this ray never reaches the hub at all
+    var ox=ccx-hcx, oy=ccy-hcy, need=hRad+bRad+GAP;
+    var B=2*(ox*dirx+oy*diry), C=(ox*ox+oy*oy)-need*need;
+    var disc=B*B-4*C, maxR=Infinity;
+    if(disc>=0){
+      var sq=Math.sqrt(disc), r1=(-B+sq)/2, r2=(-B-sq)/2;
+      var pos=[r1,r2].filter(function(v){return v>0;});
+      if(pos.length)maxR=Math.min.apply(null,pos)-1;
+    }
+    var targetR=Math.max(curR,minR);
+    if(maxR<targetR)targetR=Math.max(minR,maxR);
+    if(Math.abs(targetR-curR)>0.5){
+      var tx=ccx+targetR*dirx, ty=ccy+targetR*diry;
+      var br=b.getBoundingClientRect();
+      var offX=(nr.left+nr.width/2)-(br.left+br.width/2);
+      var offY=(nr.top+nr.height/2)-(br.top+br.height/2);
+      b.style.left=(((tx-offX)/er.width)*100)+'%';
+      b.style.top=(((ty-offY)/er.height)*100)+'%';
+    }
+  });
+}
 function relinkEco(){
   if(STATE==='drilled'){
     var hubBtn=eco.querySelector('.mod.hub');
     if(hubBtn)relinkRing(hubBtn,hubRingFrac());
     positionAtlasLine();
+    relinkFan();
   }else{
     relinkRing(core,0.40);
   }
