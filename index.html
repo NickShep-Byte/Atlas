@@ -371,7 +371,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   letter-spacing:-.01em;color:#8fd0ff;line-height:1.05;}
 .mod.out{opacity:0!important;pointer-events:none;}
 .mod.fan .node{width:clamp(36px,3.8vw,70px);height:clamp(36px,3.8vw,70px);font-size:clamp(7.5px,.56vw,13px);color:var(--sec);}
-.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),98px);height:clamp(48px,min(6.2vw,9.6vh),98px);font-size:clamp(8.5px,.76vw,14px);}
+.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),98px);height:clamp(48px,min(6.2vw,9.6vh),98px);font-size:clamp(7px,.6vw,11px);}
 .eco.dense10 .mod .node{width:clamp(56px,min(5.4vw,8.6vh),78px);height:clamp(56px,min(5.4vw,8.6vh),78px);font-size:clamp(8.5px,.66vw,10.5px);}
 .eco.dense20 .mod .node{width:clamp(42px,min(4vw,6.4vh),58px);height:clamp(42px,min(4vw,6.4vh),58px);font-size:clamp(6.8px,.54vw,8.3px);padding:.35em;}
 .detail{
@@ -382,7 +382,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   backdrop-filter:blur(4px);
 }
 .detail .dnum{font-size:clamp(11px,1vw,17px);letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--blue-bright);margin-bottom:.8vh;}
-.detail h3{font-size:clamp(18px,2.1vw,36px);font-weight:800;margin-bottom:1.8vh;line-height:1.15;}
+.detail h3{font-size:clamp(18px,1.7vw,28px);font-weight:800;margin-bottom:1.8vh;line-height:1.15;}
 .detail .chip{margin-bottom:1.2vh;align-self:flex-start;}
 .dSec{margin-bottom:1.7vh;}
 .dSec:last-of-type{margin-bottom:0;}
@@ -758,7 +758,7 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
       <h2 style="margin-top:1.2vh;">Every cost captured and coded in Atlas, before it lands in the ledger.</h2>
     </div>
     <div class="railStack rv d1">
-      <div class="atlasL" aria-hidden="true"><svg id="atlasSvg" preserveAspectRatio="none"><path class="atlasFill" id="atlasPath"/></svg><span class="atlasTag">ATLAS</span></div>
+      <div class="atlasL" aria-hidden="true"><svg id="atlasSvg" preserveAspectRatio="none"><path class="atlasFill" id="atlasPath"/></svg><span class="atlasTag">Atlas</span></div>
       <svg class="flowLayer" id="flowSvg" aria-hidden="true"></svg>
 
       <div class="railRow" data-row="1">
@@ -991,7 +991,7 @@ var MODS = [
    shows its pain/scope/benefit in the panel below. Data sourced from
    Atlas_Description_Text_updated.docx. */
 var FEATURE_MODS=[
- {name:'People',fn:'PEOPLE & PAYROLL',desc:'A single platform to manage the entire employee lifecycle — from recruitment and onboarding through payroll, performance and workforce management.',feats:[
+ {name:'People',fn:'People & Payroll',desc:'A single platform to manage the entire employee lifecycle — from recruitment and onboarding through payroll, performance and workforce management.',feats:[
   {n:'01',name:'Employee Profile & Core HR',
    pain:'Employee information is spread across multiple systems and spreadsheets, making it difficult to maintain a complete, accurate view of each employee and identify actions requiring attention.',
    scope:'A single employee profile covering personal, employment, contract and compliance information, supported by dashboards for Line Managers and Administrators to manage key activities such as probation, medical expiries and required actions.',
@@ -1017,8 +1017,8 @@ var FEATURE_MODS=[
    scope:'Digital management of goals, KPIs, performance reviews, probation, development plans and succession planning.',
    ben:'Consistent performance management, stronger succession planning and improved employee development.'}
  ]},
- {name:'Learn',fn:'LEARNING & DEVELOPMENT',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:[
-  {n:'01',name:'Learning & Training',
+ {name:'Learn',fn:'Learning & Development',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:[
+  {n:'01',name:'E-Learning',
    pain:'Training records and compliance/recertification training are managed outside core systems via Acorn, making them hard to track and report on.',
    scope:'Provides an LMS course catalogue, compliance and recertification training, and a structured training record for every employee, replacing and decommissioning Acorn.',
    ben:'One source of truth for training compliance, easier recertification tracking, and reporting that ties training directly to the workforce.'},
@@ -1026,86 +1026,90 @@ var FEATURE_MODS=[
    pain:'Site and company inductions are tracked manually across spreadsheets and paper sign-offs, making it hard to confirm who is actually cleared to be on site.',
    scope:'Digitises company and site induction sign-off with a structured, auditable record for every worker, linked to their employee profile.',
    ben:'A defensible, always-current induction record, faster site access for compliant workers, and one less manual check for site teams.'},
-  {n:'03',name:'Courses',
+  {n:'03',name:'Course Requests',
    pain:'Course enrolments and completions sit in disconnected systems and spreadsheets, with no easy way to see who has done what.',
    scope:'A structured course catalogue with enrolment, progress tracking and completion records, tied directly to each employee\u2019s training history.',
    ben:'Clear visibility of course completion across the workforce, easier planning of upcoming training, and one record instead of many.'}
  ]},
- {name:'Tenders',fn:'TENDER MANAGEMENT',desc:'The whole pipeline, driven — every opportunity from first lead to job won, built on our existing Tender Management Application as the framework\u2019s basis.',feats:[
-  {n:'01',name:'Pipeline Tracking',
+ {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won, built on our existing Tender Management Application as the framework\u2019s basis.',feats:[
+  {n:'01',name:'Tender/ Project Histories',
+   pain:'Win/loss outcomes and customer relationship history both exist in the TMA, but neither is easy to trace back against actual project performance or connected to who the client is.',
+   scope:'Connects the TMA’s existing win/loss outcomes and customer history to the original opportunity, submission and delivered project for one combined view.',
+   ben:'Win/loss history and customer relationship context sit next to actual project performance in the same platform, so the next submission is informed by exactly how past jobs for that client actually performed.'},
+  {n:'02',name:'Pipeline Tracking',
    pain:'Pipeline visibility already exists in the TMA, but it sits in its own environment, separate from project and financial data, so leadership has to check it apart from everything else.',
    scope:'Brings the TMA\u2019s existing pipeline view into Atlas, surfaced alongside project and financial data rather than as a separate system to check.',
    ben:'Leadership sees the pipeline in the same place as live project and financial performance — one platform to judge capacity and cash flow against what\u2019s coming, instead of stitching two systems together.'},
-  {n:'02',name:'Opportunities',
-   pain:'Opportunities are already captured in the TMA, but that record is disconnected from the rest of the business, making it hard to trace a lead through to the project it becomes.',
-   scope:'Connects the TMA\u2019s existing opportunity records into Atlas, linking each one through to delivery once it\u2019s won.',
-   ben:'A won opportunity flows straight into the same environment where the project will actually be delivered — no re-keying, and a direct line from the tender to the numbers that follow it.'},
-  {n:'03',name:'Approvals',
-   pain:'Go/no-go and submission approvals happen around the TMA rather than in it, tracked over email with no consistent, auditable record.',
-   scope:'Adds a structured approval workflow on top of the existing TMA data, giving go/no-go and submission decisions a clear sign-off trail.',
-   ben:'Approvals sit alongside the same governance and financial records used everywhere else in Atlas, so a go/no-go decision can be made with cost, capacity and risk data already in view.'},
-  {n:'04',name:'Win History',
-   pain:'Win/loss outcomes already exist in the TMA but aren\u2019t easy to analyse alongside the reasons behind them, so patterns are hard to see.',
-   scope:'Draws on the TMA\u2019s existing outcome data and connects it back to the original opportunity and submission for analysis.',
-   ben:'Win/loss history sits next to actual project performance in the same platform, so we can see which wins genuinely paid off — not just which tenders were won.'},
-  {n:'05',name:'Customer History',
-   pain:'Customer relationship context sits outside the TMA, in people\u2019s heads and scattered files, disconnected from the tender record itself.',
-   scope:'Connects customer history to the TMA\u2019s existing tender and project records, showing past work and relationship context in one place.',
-   ben:'A customer\u2019s tender, project and financial history all live in the same environment, so the next submission is informed by exactly how past jobs for that client actually performed.'}
+  {n:'03',name:'Opportunity Tracking',
+   pain:'Opportunities are captured in the TMA and go/no-go approvals happen around it over email, so there is no single, auditable trail from a captured opportunity through to a signed-off submission.',
+   scope:'Connects the TMA\u2019s existing opportunity records into Atlas and adds a structured go/no-go and submission approval workflow on top, linking each opportunity through to delivery once it\u2019s won.',
+   ben:'A won opportunity flows straight into the same environment where the project will actually be delivered, with a clear, auditable approval trail alongside the same governance and financial records used everywhere else in Atlas.'},
+  {n:'04',name:'Risk Identification',
+   pain:'Tender-stage risks are identified informally and rarely captured in a structured way, so they aren\u2019t visible again until they resurface during delivery.',
+   scope:'A structured risk identification step at tender stage, capturing risks against each opportunity so they carry through into the project\u2019s own risk register once won.',
+   ben:'Risks are visible from the tender stage onward, with a clear line from what was flagged at submission to what’s actually managed during delivery.'},
+  {n:'05',name:'Unified Status',
+   pain:'Tender and project status is spread across Pronto, the TMA, SharePoint and other systems, with no single source of truth, so different people report different states of the same opportunity or project.',
+   scope:'Draws status directly from Pronto, the TMA, SharePoint and other connected systems into one consistent, always-current status view for every opportunity and project.',
+   ben:'One trusted status for every opportunity and project, removing the inconsistency of checking multiple systems that don\u2019t agree with each other.'}
  ]},
- {name:'Projects',fn:'PROJECT DELIVERY',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:[
-  {n:'01',name:'Monthly Project Report Auto-Generation',
-   pain:'MPRs are generated manually. Slow, time-consuming, and out of sync with the EoM timelines.',
-   scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
-   ben:'Major reduction in Project Reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'},
-  {n:'02',name:'Cost Coding Control',
+ {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:[
+  {n:'01',name:'Cost Coding Control',
    pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
    scope:'Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.',
    ben:'Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking. Builds on the Finance module\u2019s journaling framework to give project teams more control of their costs.'},
-  {n:'03',name:'Registers & Quick Links',
-   pain:'Qualitative project data lives in disconnected Excel registers of varying quality.',
-   scope:'A Risk & Opportunity Register, a basic Procurement Register, the already-built Digital Dockets, and quick links to Safety 2, Procore, Hammertech, SharePoint and Pronto.',
-   ben:'One delivery workspace, register data accessible via AI, and qualitative data connected to the numbers (contingency, variations and more).'},
+  {n:'02',name:'Revenue Management',
+   pain:'Revenue \u2014 contract value, variations and claims \u2014 is tracked in disconnected Excel registers with no direct link to what\u2019s actually been billed or recognised.',
+   scope:'A structured revenue register covering contract value, variations and claims, connected directly to Progress Claims and Profit Recognition.',
+   ben:'One accurate view of revenue position per project, less manual reconciliation, and a clear line from contract to what\u2019s actually claimed.'},
+  {n:'03',name:'Procurement Controls',
+   pain:'Procurement commitments and purchase orders are tracked in a basic Excel register, disconnected from budget and cost data.',
+   scope:'A structured procurement register that tracks commitments and purchase orders against budget, integrated with Cost Coding Control.',
+   ben:'Clear visibility of committed spend against budget, fewer surprises at cost-to-complete, and one place to check procurement status.'},
   {n:'04',name:'Progress Claims (Upstream)',
    pain:'80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.',
    scope:'Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.',
    ben:'Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable.'},
-  {n:'05',name:'Subcontractor Claims',
-   pain:'Subcontractor claims arrive in personal mailboxes under strict SoPA rules, often left unprocessed and captured in error-prone Excel.',
-   scope:'Ingests, standardises and evaluates subcontractor claims for one consistent view of what subcontractors are claiming.',
-   ben:'Standardised capture, clearer evaluation, better subcontractor-exposure visibility and improved SoPA compliance.'},
-  {n:'06',name:'Daily Diary',
+  {n:'05',name:'Vendor Claim Validation',
+   pain:'Vendor claims arrive in personal mailboxes under strict compliance rules, often left unprocessed and captured in error-prone Excel.',
+   scope:'Ingests, standardises and validates vendor claims for one consistent view of what vendors are claiming.',
+   ben:'Standardised capture, clearer validation, better vendor-exposure visibility and improved compliance.'},
+  {n:'06',name:'Productivity Analysis',
+   pain:'Labour and plant productivity on site is difficult to measure, so under-performance against budgeted hours or output isn\u2019t identified until well after the fact.',
+   scope:'Analyses labour and plant productivity against budgeted rates and output using data already captured in Daily Diary and Cost Coding Control.',
+   ben:'Earlier visibility of productivity issues, better-informed resourcing decisions, and a clearer link between site performance and cost outcomes.'},
+  {n:'07',name:'Daily Diary',
    pain:'Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.',
    scope:'Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.',
    ben:'Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool.'},
-  {n:'07',name:'Cost to Complete Forecast',
+  {n:'08',name:'Cost to Complete Forecast',
    pain:'Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.',
    scope:'Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.',
    ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'}
  ]},
- {name:'Operations',fn:'RESOURCES & SCHEDULING',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
-  {n:'01',name:'Plant Scheduling & Cost Allocation',
-   pain:'Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility. Most streams complete the scheduling elsewhere then copy it into the trackers, as the workbooks aren\u2019t user friendly enough.',
-   scope:'Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant, and as the source of truth for all plant-related data.',
-   ben:'Retires fragile macros, speeds up plant-cost processing, feeds Cost Coding Control, and is the critical enabler of an accurate Daily Diary.'},
-  {n:'02',name:'Resource Management & Planning',
-   pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
-   scope:'Expands Plant Scheduling & Cost Allocation for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
-   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
-  {n:'03',name:'Skills Matrix',
+ {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
+  {n:'01',name:'Resource Requests',
+   pain:"Requesting extra plant or people happens over email and phone calls, with no record of what's been asked for, approved, or already committed to another project.",
+   scope:'A structured request-and-approval workflow for additional plant or labour, checked against live Plant Allocation & Scheduling and Resource Management & Planning data before it’s approved.',
+   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'},
+  {n:'02',name:'Skills Matrix',
    pain:'Who can actually do what — tickets, licences, competencies — lives in scattered spreadsheets and is rarely up to date, making resourcing a guessing game.',
    scope:'A live skills and competency matrix per worker, drawing on licences and training records, so resourcing decisions are made against real, current capability.',
    ben:'Faster, safer resourcing decisions, clear visibility of skills gaps across the workforce, and one place to check who is qualified for a task.'},
-  {n:'04',name:'Resource Requests',
-   pain:"Requesting extra plant or people happens over email and phone calls, with no record of what's been asked for, approved, or already committed to another project.",
-   scope:'A structured request-and-approval workflow for additional plant or labour, checked against live Plant Scheduling & Cost Allocation and Resource Management & Planning data before it’s approved.',
-   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'},
+  {n:'03',name:'Plant Allocation & Scheduling',
+   pain:'Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility. Most streams complete the scheduling elsewhere then copy it into the trackers, as the workbooks aren\u2019t user friendly enough.',
+   scope:'Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant, and as the source of truth for all plant-related data.',
+   ben:'Retires fragile macros, speeds up plant-cost processing, feeds Cost Coding Control, and is the critical enabler of an accurate Daily Diary. Integrated with the same system that holds upcoming jobs, so plant is allocated against what’s actually coming up, not just what’s already on foot.'},
+  {n:'04',name:'Resource Management & Planning',
+   pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
+   scope:'Expands Plant Allocation & Scheduling for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
+   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
   {n:'05',name:'Mobilisation',
    pain:'Getting plant and people onto site — inductions, licences, transport, accommodation — is coordinated informally, so mobilisation delays are common and hard to see coming.',
    scope:'Tracks each mobilisation step from resource allocation through to on-site readiness, drawing on the same scheduling, licence and skills data already in Atlas.',
    ben:'Fewer mobilisation delays, early visibility of what’s blocking a start date, and a single record of readiness for every project.'}
  ]},
- {name:'Finance',fn:'FINANCE & REPORTING',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
+ {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
   {n:'01',name:'General Ledger Journaling',
    pain:'GL journals are prepared manually across spreadsheets and re-keyed into Pronto, with no structured workflow, audit trail, or easy way to review what was posted.',
    scope:'Standardises and automates the creation, review and posting of general ledger journals straight into Pronto, with validation and an auditable record of every entry.',
@@ -1547,13 +1551,13 @@ window.addEventListener('resize',relinkEcoDebounced);
 
 /* ---------- Slide 4b: Atlas app modules selector ---------- */
 var APPMODS=[
- {name:'People',fn:'PEOPLE & PAYROLL',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:['Onboarding','Employee Records','Medical Management','Leave','Timesheets','Performance Management','Employee Development','Payroll Integration']},
- {name:'Learn',fn:'LEARNING & DEVELOPMENT',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:['Inductions','E-Learning','Courses','Competencies','Certifications','Toolbox Talks','Compliance','Skills Matrix']},
- {name:'Tenders',fn:'TENDER MANAGEMENT',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Pipeline Tracking','Opportunities','Tenders','Supporting Invitations','Approvals','Go/Get','Win History','Customer History']},
- {name:'Projects',fn:'PROJECT DELIVERY',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Daily Diary','Cost Allocation','Procurement','Progress Claims','Variations','Forecasting','Accruals','Monthly Reporting']},
- {name:'Operations',fn:'RESOURCES & SCHEDULING',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Scheduling','People','Plant','Tracking','Resource Requests','Utilisation','Mobilisation','Subcontractors']},
- {name:'Finance',fn:'FINANCE & REPORTING',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['Journals','MPR Administration','Cashflow','EoM Control','Board Reports','Invoicing','Reconciliation','Accounts Payable']},
- {name:'Admin',fn:'SYSTEM ADMINISTRATION',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access','Email Notifications','Roles & Permissions','Audit Log']}
+ {name:'People',fn:'People & Payroll',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:['Onboarding','Employee Records','Medical Management','Leave','Timesheets','Performance Management','Employee Development','Payroll Integration']},
+ {name:'Learn',fn:'Learning & Development',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:['Inductions','E-Learning','Courses','Competencies','Certifications','Toolbox Talks','Compliance','Skills Matrix']},
+ {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Pipeline Tracking','Opportunities','Tenders','Supporting Invitations','Approvals','Go/Get','Win History','Customer History']},
+ {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Daily Diary','Cost Allocation','Procurement','Progress Claims','Variations','Forecasting','Accruals','Monthly Reporting']},
+ {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Scheduling','People','Plant','Tracking','Resource Requests','Utilisation','Mobilisation','Subcontractors']},
+ {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['Journals','MPR Administration','Cashflow','EoM Control','Board Reports','Invoicing','Reconciliation','Accounts Payable']},
+ {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access','Email Notifications','Roles & Permissions','Audit Log']}
 ];
 (function(){
   var chips=document.getElementById('modChips');
@@ -1576,16 +1580,16 @@ var APPMODS=[
 })();
 
 var CAD=[
- ["Q3 2026","01","MPR Auto-Generation",true],
- ["Q4 2026","02","Cost Coding Control"],
- ["Q1 2027","03","Registers & Quick Links"],
- ["Q2 2027","04","Plant Scheduling & Cost Alloc."],
- ["Q3 2027","05","Progress Claims (Upstream)"],
- ["Q4 2027","06","Subcontractor Claims"],
- ["Q1 2028","07","Daily Diary"],
- ["Q2 2028","08","Cost to Complete Forecast"],
- ["Q3 2028","09","Cashflow Forecast"],
- ["Q4 2028","10","Resource Mgmt & Planning"]
+ ["Q3 2026","Cost Coding Control",true],
+ ["Q4 2026","Revenue Management"],
+ ["Q1 2027","Procurement Controls"],
+ ["Q2 2027","Plant Allocation & Scheduling"],
+ ["Q3 2027","Progress Claims (Upstream)"],
+ ["Q4 2027","Vendor Claim Validation"],
+ ["Q1 2028","Daily Diary"],
+ ["Q2 2028","Cost to Complete Forecast"],
+ ["Q3 2028","Cashflow Forecast"],
+ ["Q4 2028","Resource Management & Planning"]
 ];
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
@@ -1602,7 +1606,7 @@ CAD.forEach(function(c,i){
   stem.setAttribute('stroke','rgba(var(--acc2-rgb),.4)');stem.setAttribute('stroke-width','1.5');
   g.appendChild(stem);
   var dot=document.createElementNS(NS,'circle');
-  dot.setAttribute('cx',x);dot.setAttribute('cy',MIDY);dot.setAttribute('r',c[3]?11:9);
+  dot.setAttribute('cx',x);dot.setAttribute('cy',MIDY);dot.setAttribute('r',c[2]?11:9);
   g.appendChild(dot);
   var ck=document.createElementNS(NS,'text');
   ck.setAttribute('x',x);ck.setAttribute('y',MIDY+4.5);
@@ -1616,7 +1620,7 @@ CAD.forEach(function(c,i){
   }
   var baseY = up? MIDY-70 : MIDY+82;
   g.appendChild(txt(c[0], up? baseY-38 : baseY+2 ,'q'));
-  var words=('M'+c[1]+' · '+c[2]);
+  var words=c[1];
   if(words.length>22){
     var br=words.lastIndexOf(' ',Math.ceil(words.length/2)+3);
     g.appendChild(txt(words.slice(0,br), up? baseY-18: baseY+22,'mn'));
