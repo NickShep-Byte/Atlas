@@ -1227,8 +1227,8 @@ function spawnFeatures(m,myGen){
       'No features currently mapped to this module.');
   }
   if(hubBtn){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();}});});
-    setTimeout(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();}},1100);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();relinkFeatureAngles();}});});
+    setTimeout(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();relinkFeatureAngles();}},1100);
   }
 }
 function renderRoot(){
@@ -1469,12 +1469,68 @@ function relinkFan(){
     }
   });
 }
+function relinkFeatureAngles(){
+  // the feature ring surrounds the hub on all sides (a full circle), but the
+  // module chips sit between the hub and the giant circle — so feature nodes
+  // on that side of the ring can end up close to a module chip. Nudge each
+  // feature node's angle (same radius, same hub centre — relinkRing already
+  // made this a true circle) away from whichever module chip it's closest
+  // to, starting from its original angle so repeated calls don't drift.
+  if(STATE!=='drilled')return;
+  var hubBtn=eco.querySelector('.mod.hub');if(!hubBtn)return;
+  var er=eco.getBoundingClientRect();if(!er.width)return;
+  var hr=hubBtn.getBoundingClientRect();
+  var cx=hr.left+hr.width/2-er.left, cy=hr.top+hr.height/2-er.top;
+  var Rpx=Math.min(er.width,er.height)*hubRingFrac();
+  var fanChips=[].slice.call(eco.querySelectorAll('.mod.fan')).map(function(b){
+    var n=b.querySelector('.node');if(!n)return null;
+    var nr=n.getBoundingClientRect();
+    return {cx:nr.left+nr.width/2-er.left, cy:nr.top+nr.height/2-er.top, r:nr.width/2};
+  }).filter(Boolean);
+  if(!fanChips.length)return;
+  var GAP=10;
+  var lines=[].slice.call(linksSvg.querySelectorAll('line')).filter(function(ln){
+    return ln._btn && ln._btn.dataset.kind==='feature';
+  });
+  lines.forEach(function(ln){
+    var b=ln._btn, n=b.querySelector('.node');if(!n)return;
+    var bRad=n.getBoundingClientRect().width/2;
+    var baseAng=ln._ang;
+    function minGapAt(ang){
+      var px=cx+Rpx*Math.cos(ang), py=cy+Rpx*Math.sin(ang);
+      var mg=Infinity;
+      fanChips.forEach(function(c){
+        var g=Math.hypot(px-c.cx,py-c.cy)-(c.r+bRad);
+        if(g<mg)mg=g;
+      });
+      return {ang:ang,gap:mg};
+    }
+    var best=minGapAt(baseAng);
+    if(best.gap<GAP){
+      for(var d=2; d<=70 && best.gap<GAP; d+=2){
+        [1,-1].forEach(function(sign){
+          var cand=minGapAt(baseAng+sign*d*Math.PI/180);
+          if(cand.gap>best.gap)best=cand;
+        });
+      }
+    }
+    var chosen=best.ang;
+    var tx=cx+Rpx*Math.cos(chosen), ty=cy+Rpx*Math.sin(chosen);
+    var br=b.getBoundingClientRect(), nr=n.getBoundingClientRect();
+    var offX=(nr.left+nr.width/2)-(br.left+br.width/2);
+    var offY=(nr.top+nr.height/2)-(br.top+br.height/2);
+    b.style.left=(tx-offX)+'px'; b.style.top=(ty-offY)+'px';
+    ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);
+    ln.setAttribute('x2',tx);ln.setAttribute('y2',ty);
+  });
+}
 function relinkEco(){
   if(STATE==='drilled'){
     var hubBtn=eco.querySelector('.mod.hub');
     if(hubBtn)relinkRing(hubBtn,hubRingFrac());
     positionAtlasLine();
     relinkFan();
+    relinkFeatureAngles();
   }else{
     relinkRing(core,0.40);
   }
