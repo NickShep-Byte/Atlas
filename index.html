@@ -1250,13 +1250,7 @@ function renderRoot(){
     b.innerHTML='<span class="node">'+m.name+'</span>';
     b.addEventListener('click',function(e){
       e.stopPropagation();
-      if(b.classList.contains('hub')){
-        // already the active/drilled-in module — reload its feature ring
-        // instead of no-oping (position/content wouldn't otherwise change)
-        var myGen=++genID;
-        spawnFeatures(m,myGen);
-        return;
-      }
+      if(b.classList.contains('hub'))return; // already the active/drilled-in module — no-op
       drillInto(m,b);
     });
     eco.appendChild(b);
