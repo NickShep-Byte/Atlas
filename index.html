@@ -514,6 +514,31 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s6 .cap{text-align:center;margin-top:2vh;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;}
 
 /* ============================================================
+   SLIDE 8: Business consultation structure
+   ============================================================ */
+#s8 .head{text-align:center;margin-bottom:4vh;}
+.roundsWrap{position:relative;width:min(1380px,92vw);margin:0 auto;}
+.roundsTrack{
+  position:absolute;left:3%;right:3%;top:34px;height:2px;
+  background:rgba(var(--acc2-rgb),.4);
+}
+.rounds{display:flex;justify-content:space-between;gap:1.4vw;position:relative;padding:96px 0 1vh;}
+.round{
+  flex:0 1 30vw;min-width:220px;border-radius:16px;text-align:center;
+  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);
+  padding:2.4vh 1.4vw 2.2vh;position:relative;
+}
+.round .rNum{
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;
+}
+.round h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;margin:.8vh 0 .4vh;}
+.round .rOwn{font-size:clamp(10px,.82vw,13px);font-weight:700;letter-spacing:.06em;color:var(--soft);}
+.round p{font-size:clamp(11.5px,.95vw,15px);color:var(--soft);line-height:1.5;margin-top:1vh;}
+#s8 .cap{text-align:center;margin-top:2vh;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;}
+
+/* ============================================================
    SLIDE 7: Proof (design to ~90%, prototype, walkthrough link)
    ============================================================ */
 #s7{background:transparent;}
@@ -894,6 +919,40 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
     </div>
     <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
     <div class="cap rv d3">"The same four steps, module after module."</div>
+  </div>
+</section>
+
+<!-- Slide 8: Business consultation structure -->
+<section class="slide" id="s8" data-label="Consultation" data-act="4">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Consultation</span>
+      <h2 style="margin-top:1.4vh;">Three rounds of consultation, before any module reaches development.</h2>
+    </div>
+    <div class="roundsWrap rv d1">
+      <div class="roundsTrack" aria-hidden="true"></div>
+      <div class="rounds">
+        <div class="round">
+          <div class="rNum">1</div>
+          <h3>End User / Site Feedback Workshop</h3>
+          <div class="rOwn">Random selection of module users</div>
+          <p>Frontline and site staff who’ll actually use the module review it directly and give feedback before the design is locked in.</p>
+        </div>
+        <div class="round">
+          <div class="rNum">2</div>
+          <h3>SME Architecture Workshop</h3>
+          <div class="rOwn">MPR, Kosti, Greg — at least one person per stream (EGM nominated)</div>
+          <p>Subject-matter experts examine the architecture and design in depth, making sure the build reflects real operational needs across every stream.</p>
+        </div>
+        <div class="round">
+          <div class="rNum">3</div>
+          <h3>Executive Briefing</h3>
+          <div class="rOwn">Optional attendance</div>
+          <p>A quick 30-minute show-and-tell for executives — the final gate before development starts.</p>
+        </div>
+      </div>
+    </div>
+    <div class="cap rv d3">Group membership is indicative only — to be confirmed with Jacob.</div>
   </div>
 </section>
 
