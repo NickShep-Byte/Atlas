@@ -460,7 +460,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .station .sNum{
   position:absolute;top:-18px;left:50%;transform:translateX(-50%);
   width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;
+  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;color:var(--title);
   transition:all .5s var(--ease);
 }
 .station h3{font-size:clamp(14px,1.3vw,21px);font-weight:800;margin:.8vh 0 .4vh;}
@@ -680,7 +680,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 }
 
 /* ---------- Atlas theme layer ---------- */
-h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
+h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 .eyebrow,.chip,.lt,.sbt,.dt,.own,.sl,.expand,#counter,#hintbar,.seg .tip,.dnum,.vlbl,.tkn,.theme p,#msLogo .ms2,#s1 .prep,.shelf span.dchip{font-family:var(--font-util);}
 #s5 .tick .q{font-family:var(--font-util);}
 #s5 .tick line{stroke:rgba(var(--acc2-rgb),.4);}
