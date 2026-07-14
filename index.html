@@ -1216,19 +1216,15 @@ var FEATURE_MODS=[
    pain:'Course assignments, competency requirements and training pathways are managed ad hoc, with no central owner keeping them current.',
    scope:'A dedicated admin screen for managing courses, competency requirements and training pathways that feed the Learn module.',
    ben:'Training content stays current and consistently assigned, without relying on one person’s memory.'},
-  {n:'05',name:'User Access',
-   pain:'Granting or revoking system access happens through scattered requests to whoever administers each system, with no single record of who has access to what.',
-   scope:'A single screen to provision, modify and revoke user access across every Atlas module from one place.',
-   ben:'Faster onboarding and offboarding, and a clear, current record of who can access what.'},
-  {n:'06',name:'Email Notifications',
+  {n:'05',name:'User Access & Permissions',
+   pain:'Granting or revoking system access happens through scattered requests to whoever administers each system, and access levels are granted individually per person rather than by role, so both provisioning and permissions drift out of sync with what someone should actually have.',
+   scope:'A single screen to provision, modify and revoke user access across every Atlas module, built on role-based permission sets that control what each user can see and do — assigned once per role rather than per person.',
+   ben:'Faster onboarding and offboarding, a clear, current record of who can access what, and consistent, easy-to-audit permissions that scale as the workforce changes.'},
+  {n:'06',name:'Atlas Alerts',
    pain:'Automated emails and alerts are hardcoded per feature, so changing wording, recipients or triggers means a development request.',
-   scope:'A configurable notification centre for managing email templates, triggers and recipient rules across all Atlas modules.',
-   ben:'Business users can adjust notifications themselves, without waiting on development changes.'},
-  {n:'07',name:'Roles & Permissions',
-   pain:'Access levels are granted individually per person rather than by role, so permissions drift out of sync with what someone should actually have.',
-   scope:'Role-based permission sets that control what each user can see and do across Atlas, assigned once per role rather than per person.',
-   ben:'Consistent, easy-to-audit permissions that scale as the workforce changes.'},
-  {n:'08',name:'Audit Log',
+   scope:'A configurable notification centre for managing alert templates, triggers and recipient rules across all Atlas modules — alerts surface both in Atlas itself and as an email notification.',
+   ben:'Business users can adjust notifications themselves, without waiting on development changes, and nothing gets missed whether someone is in Atlas or checking email.'},
+  {n:'07',name:'Audit Log',
    pain:'There’s no consolidated record of who changed what and when across Atlas, making it hard to investigate errors or unauthorised changes.',
    scope:'A system-wide audit trail capturing every material change across Atlas modules, searchable by user, date and record.',
    ben:'Full traceability for compliance and troubleshooting, without digging through individual module logs.'}
@@ -1651,7 +1647,7 @@ var APPMODS=[
  {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast']},
  {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Resource Requests','Skills Matrix','Plant Allocation & Scheduling','Resource Management & Planning','Mobilisation']},
  {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']},
- {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access','Email Notifications','Roles & Permissions','Audit Log']}
+ {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access & Permissions','Atlas Alerts','Audit Log']}
 ];
 (function(){
   var chips=document.getElementById('modChips');
