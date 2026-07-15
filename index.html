@@ -263,11 +263,11 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s9 .head{text-align:center;margin-bottom:1.6vh;}
 .transCanvas{position:relative;width:min(1500px,96vw);height:58vh;margin:0 auto;}
 .transLinks{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
-.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.6);stroke-width:.4;stroke-linejoin:round;transition:opacity .5s ease;}
-.transLinks path.warn{stroke:#E0664C;stroke-width:.5;}
+.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .5s ease;}
+.transLinks path.warn{stroke:#E0664C;stroke-width:2;}
 .transLinks path.gone{opacity:0;}
 .transLinks path.settle-line{opacity:0;}
-.transCanvas.settled .transLinks path.settle-line{opacity:1;}
+.transLinks path.settle-line.in{opacity:1;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -292,8 +292,8 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .tCard.hidden.revealed{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
 .atlasBoxOutline{
   position:absolute;border-radius:16px;z-index:0;
-  border:1.5px dashed rgba(var(--acc2-rgb),.3);background:rgba(var(--sec-rgb),.03);
-  opacity:0;transition:border-color .6s ease,border-style .6s ease,background .6s ease,opacity .6s ease;
+  border:1.5px dashed rgba(var(--acc2-rgb),.5);background:rgba(var(--sec-rgb),.05);
+  opacity:0;transition:border-color .5s ease,border-style .5s ease,background .5s ease,opacity .5s ease;
 }
 .transCanvas.building .atlasBoxOutline{opacity:1;}
 .transCanvas.settled .atlasBoxOutline{border-style:solid;border-color:var(--teal);background:rgba(var(--sec-rgb),.1);}
@@ -918,9 +918,9 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <h2 style="margin-top:1.4vh;">Today's scattered tools, absorbed one by one into Atlas.</h2>
     </div>
     <div class="transCanvas rv d1" id="transCanvas">
-      <svg class="transLinks" id="transLinks" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg class="transLinks" id="transLinks">
         <defs>
-          <marker id="tArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <marker id="tArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
             <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
           </marker>
         </defs>
@@ -1959,13 +1959,15 @@ function lineStop(){
 }
 
 /* ---------- Slide 9: Today → Atlas absorption ---------- */
-// Single canvas, shared 0-100 coordinate space. Starts laid out like the
-// current-state process map (today's tools converging on Pronto through
-// controlled/uncontrolled hand-offs) and, as each tool is absorbed one by
-// one, the Atlas box fills in with the consolidated map's own nodes and
-// arrows until only Pronto/MicrOpay remain outside it, matching the
-// with-Atlas map exactly.
-var TRANS_HW=4.2, TRANS_HH=6; // approx half card width/height, in canvas %
+// Single canvas. Starts laid out like the current-state process map
+// (today's tools converging on Pronto through controlled/uncontrolled
+// hand-offs). Each tool is absorbed one by one; once the canvas is
+// clear, the with-Atlas map's own nodes and arrows appear as one clean
+// unit, with Pronto/MicrOpay sliding to the two positions they keep
+// talking to Atlas from. Connector paths are computed from each card's
+// real measured position (getBoundingClientRect), so arrows are always
+// edge-anchored and never distorted, the same technique the ecosystem
+// diagram on the Features slide already uses.
 var TRANS_CARDS=[
  {id:'rfq',label:'Request for Quote',fam:'blue',x:6,y:10,into:'a-procreg'},
  {id:'procreg',label:'Procurement Register',fam:'green',branch:true,x:22,y:10,into:'a-procreg'},
@@ -2014,17 +2016,12 @@ var TRANS_AFTER_LINKS=[
  ['a-timesheets','a-dailydiary',false],['a-resourcesched','a-dailydiary',false],
  ['a-resourcesched','a-timesheets',false]
 ];
-var TRANS_BOX={left:4,top:6,width:58,height:74};
 var SVGNS='http://www.w3.org/2000/svg';
 var transCanvasEl=document.getElementById('transCanvas');
 var transLinksEl=document.getElementById('transLinks');
 var atlasBoxOutlineEl=document.getElementById('atlasBoxOutline');
 var transNoteEl=document.getElementById('transNote');
 var trans={running:false,timers:[],idx:0};
-var TRANS_POS={}; // id -> live {x,y} used for line endpoints, incl. moving fixed nodes
-TRANS_CARDS.forEach(function(c){TRANS_POS[c.id]={x:c.x,y:c.y};});
-TRANS_FIXED.forEach(function(c){TRANS_POS[c.id]={x:c.before.x,y:c.before.y};});
-TRANS_AFTER_NODES.forEach(function(n){TRANS_POS[n.id]={x:n.x,y:n.y};});
 function transCard(pos){
   var d=document.createElement('div');
   d.className='tCard fam-'+pos.fam+(pos.dashed?' dashed':'')+(pos.branch?' branch':'');
@@ -2033,73 +2030,71 @@ function transCard(pos){
   d.textContent=pos.label;
   return d;
 }
-// Generic Manhattan-style elbow: exits the source toward the target
-// vertically, crosses at the halfway row, then enters the target
-// vertically — always a clean 90-degree-bend connector, anchored at
-// card edges rather than centres. Same-row/same-column pairs just get
-// a single straight segment between their facing edges.
-function transElbow(a,b,overrideMidY){
-  var dx=b.x-a.x, dy=b.y-a.y;
-  if(Math.abs(dy)<2){
+// Every connector is anchored to the real rendered edges of its two
+// cards (not their centres), measured live via getBoundingClientRect —
+// the same approach the Features-slide ecosystem diagram already uses,
+// so arrows are never distorted regardless of viewport size.
+function transRect(id){
+  var el=transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');
+  if(!el)return null;
+  var cr=transCanvasEl.getBoundingClientRect(),r=el.getBoundingClientRect();
+  return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
+          cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
+}
+// Manhattan-style elbow: same row/column pairs get one straight segment
+// between their facing edges; everything else exits vertically, crosses
+// at the halfway row, then enters the target vertically — a clean
+// 90-degree-bend connector every time.
+function transElbowPts(a,b){
+  var dx=b.cx-a.cx,dy=b.cy-a.cy;
+  if(Math.abs(dy)<4){
     var dir=dx>=0?1:-1;
-    return [{x:a.x+dir*TRANS_HW,y:a.y},{x:b.x-dir*TRANS_HW,y:b.y}];
+    return [{x:dir>0?a.right:a.left,y:a.cy},{x:dir>0?b.left:b.right,y:b.cy}];
   }
-  if(Math.abs(dx)<2){
-    var vdir=dy>=0?1:-1;
-    return [{x:a.x,y:a.y+vdir*TRANS_HH},{x:b.x,y:b.y-vdir*TRANS_HH}];
+  if(Math.abs(dx)<4){
+    var down=dy>=0;
+    return [{x:a.cx,y:down?a.bottom:a.top},{x:b.cx,y:down?b.top:b.bottom}];
   }
-  var vdir2=dy>=0?1:-1;
-  var midY=overrideMidY!==undefined?overrideMidY:(a.y+dy/2);
+  var down2=dy>=0,midY=(a.cy+b.cy)/2;
   return [
-    {x:a.x,y:a.y+vdir2*TRANS_HH},
-    {x:a.x,y:midY},
-    {x:b.x,y:midY},
-    {x:b.x,y:b.y-vdir2*TRANS_HH}
+    {x:a.cx,y:down2?a.bottom:a.top},{x:a.cx,y:midY},
+    {x:b.cx,y:midY},{x:b.cx,y:down2?b.top:b.bottom}
   ];
 }
-function pathD(points){
-  return 'M'+points.map(function(p){return p.x+','+p.y;}).join(' L ');
-}
-function transLine(a,b,idA,idB,warn,settle,midY){
-  var pts=transElbow(a,b,midY);
+function pathD(points){return 'M'+points.map(function(p){return p.x+','+p.y;}).join(' L ');}
+function transDrawPts(pts,warn,cls){
   var l=document.createElementNS(SVGNS,'path');
   l.setAttribute('d',pathD(pts));
   l.setAttribute('marker-end','url(#tArrow)');
-  l.setAttribute('class','tLink'+(warn?' warn':'')+(settle?' settle-line':''));
-  if(idA)l.dataset.a=idA;
-  if(idB)l.dataset.b=idB;
+  l.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:''));
   transLinksEl.appendChild(l);
+  return l;
+}
+function transLine(idA,idB,warn,cls){
+  var a=transRect(idA),b=transRect(idB);
+  if(!a||!b)return null;
+  var pts;
+  if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
+    // Invoice Validation sits directly between these two on the same
+    // row, so dip below it instead of cutting straight through.
+    var dipY=Math.max(a.bottom,b.bottom)+26;
+    pts=[{x:a.cx,y:a.bottom},{x:a.cx,y:dipY},{x:b.cx,y:dipY},{x:b.cx,y:b.bottom}];
+  } else {
+    pts=transElbowPts(a,b);
+  }
+  var l=transDrawPts(pts,warn,cls);
+  l.dataset.a=idA;l.dataset.b=idB;
   return l;
 }
 function transBuild(){
   TRANS_CARDS.forEach(function(c){transCanvasEl.appendChild(transCard(c));});
   TRANS_FIXED.forEach(function(c){transCanvasEl.appendChild(transCard({id:c.id,label:c.label,fam:c.fam,x:c.before.x,y:c.before.y}));});
-  TRANS_LINKS.forEach(function(link){
-    // costtracker-caaps has invoiceval sitting directly between them on the
-    // same row, so dip a row below to clear it instead of cutting through.
-    var midY=(link[0]==='costtracker'&&link[1]==='caaps')?(TRANS_POS.costtracker.y+12):undefined;
-    transLine(TRANS_POS[link[0]],TRANS_POS[link[1]],link[0],link[1],link[2],false,midY);
-  });
   TRANS_AFTER_NODES.forEach(function(n){
     var el=transCard({id:n.id,label:n.label,fam:'atlas',x:n.x,y:n.y});
     el.classList.add('hidden');
     transCanvasEl.appendChild(el);
   });
-  TRANS_AFTER_LINKS.forEach(function(link){
-    transLine(TRANS_POS[link[0]],TRANS_POS[link[1]],link[0],link[1],link[2],true);
-  });
-  // External settle-links: Atlas box edge -> MicrOpay / Pronto's after spot.
-  transLine({x:TRANS_BOX.left+16,y:TRANS_BOX.top+TRANS_BOX.height},{x:70,y:88},null,null,false,true);
-  transLine({x:TRANS_BOX.left+TRANS_BOX.width,y:44},{x:78,y:44},null,null,false,true);
-  atlasBoxOutlineEl.style.left=TRANS_BOX.left+'%';
-  atlasBoxOutlineEl.style.top=TRANS_BOX.top+'%';
-  atlasBoxOutlineEl.style.width=TRANS_BOX.width+'%';
-  atlasBoxOutlineEl.style.height=TRANS_BOX.height+'%';
-}
-function transReveal(id){
-  if(!id)return;
-  var el=transCanvasEl.querySelector('.tCard.hidden[data-id="'+id+'"]');
-  if(el)el.classList.add('revealed');
+  TRANS_LINKS.forEach(function(link){transLine(link[0],link[1],link[2],'beforeLink');});
 }
 function transHideLinksFor(id){
   transLinksEl.querySelectorAll('path[data-a="'+id+'"],path[data-b="'+id+'"]').forEach(function(l){
@@ -2109,12 +2104,65 @@ function transHideLinksFor(id){
 function transMoveFixed(which,to){
   var el=transCanvasEl.querySelector('.tCard[data-id="'+which+'"]');
   if(el){el.style.left=to.x+'%';el.style.top=to.y+'%';}
-  TRANS_POS[which]=to;
+}
+// Fits the Atlas box outline snugly around whichever after-nodes are
+// currently revealed, measured live rather than hard-coded, so it
+// always actually contains them.
+function transFitBox(){
+  var rects=TRANS_AFTER_NODES.map(function(n){return transRect(n.id);}).filter(Boolean);
+  if(!rects.length)return null;
+  var left=Math.min.apply(null,rects.map(function(r){return r.left;}))-28;
+  var top=Math.min.apply(null,rects.map(function(r){return r.top;}))-40;
+  var right=Math.max.apply(null,rects.map(function(r){return r.right;}))+28;
+  var bottom=Math.max.apply(null,rects.map(function(r){return r.bottom;}))+28;
+  atlasBoxOutlineEl.style.left=left+'px';
+  atlasBoxOutlineEl.style.top=top+'px';
+  atlasBoxOutlineEl.style.width=(right-left)+'px';
+  atlasBoxOutlineEl.style.height=(bottom-top)+'px';
+  return {left:left,top:top,right:right,bottom:bottom,cx:(left+right)/2,cy:(top+bottom)/2};
+}
+function transDrawAfterLinks(){
+  TRANS_AFTER_LINKS.forEach(function(link){transLine(link[0],link[1],link[2],'afterLink settle-line');});
+}
+function transDrawExternalLinks(box){
+  var micro=transRect('micropay'),pron=transRect('pronto');
+  if(micro){
+    var anchor1={left:box.left+40,right:box.left+40,top:box.bottom,bottom:box.bottom,cx:box.left+40,cy:box.bottom};
+    transDrawPts(transElbowPts(anchor1,micro),false,'afterLink settle-line');
+  }
+  if(pron){
+    // Straight line into Pronto's own facing edge, ignoring the box's
+    // overall centre so it doesn't dog-leg for a few px of misalignment.
+    transDrawPts([{x:box.right,y:pron.cy},{x:pron.left,y:pron.cy}],false,'afterLink settle-line');
+  }
+}
+function transRevealAfterState(instant){
+  TRANS_AFTER_NODES.forEach(function(n,i){
+    ltTrans(function(){
+      var el=transCanvasEl.querySelector('.tCard.hidden[data-id="'+n.id+'"]');
+      if(el)el.classList.add('revealed');
+    },instant?0:i*90);
+  });
+  ltTrans(function(){
+    transFitBox();
+    transCanvasEl.classList.add('building');
+    transDrawAfterLinks();
+    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
+  },instant?0:1300);
+  ltTrans(function(){
+    var box=transFitBox();
+    transDrawExternalLinks(box);
+    transLinksEl.querySelectorAll('.settle-line').forEach(function(l){l.classList.add('in');});
+    transCanvasEl.classList.add('settled');
+    transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
+    transNoteEl.classList.add('clean');
+  },instant?0:2150);
 }
 function transReset(){
   transCanvasEl.querySelectorAll('.tCard').forEach(function(el){el.classList.remove('active','consumed','retired');});
   transCanvasEl.querySelectorAll('.tCard.hidden').forEach(function(el){el.classList.remove('revealed');});
-  transLinksEl.querySelectorAll('path.gone').forEach(function(l){l.classList.remove('gone');});
+  transLinksEl.querySelectorAll('.beforeLink.gone').forEach(function(l){l.classList.remove('gone');});
+  transLinksEl.querySelectorAll('.afterLink').forEach(function(l){l.remove();});
   TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.before);});
   transCanvasEl.classList.remove('settled','building');
   transNoteEl.textContent='Multiple uncontrolled hand-offs between systems.';
@@ -2123,22 +2171,13 @@ function transReset(){
 function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
 function transStep(){
   if(!trans.running)return;
-  if(trans.idx===0)transCanvasEl.classList.add('building');
   if(trans.idx>=TRANS_CARDS.length){
-    ltTrans(function(){transReveal('a-productivity');},250);
-    ltTrans(function(){
-      TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-    },900);
-    ltTrans(function(){
-      transCanvasEl.classList.add('settled');
-      transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
-      transNoteEl.classList.add('clean');
-    },1700);
+    transRevealAfterState(false);
     ltTrans(function(){
       trans.idx=0;
       transReset();
       transStep();
-    },4600);
+    },5900);
     return;
   }
   var c=TRANS_CARDS[trans.idx];
@@ -2149,11 +2188,10 @@ function transStep(){
     el.classList.add(c.into?'consumed':'retired');
     transHideLinksFor(c.id);
   },650);
-  ltTrans(function(){transReveal(c.into);},900);
   ltTrans(function(){
     trans.idx++;
     transStep();
-  },1350);
+  },1100);
 }
 function transStart(){
   if(RM){
@@ -2161,13 +2199,8 @@ function transStart(){
       var el=transCanvasEl.querySelector('.tCard[data-id="'+c.id+'"]');
       el.classList.add(c.into?'consumed':'retired');
       transHideLinksFor(c.id);
-      transReveal(c.into);
     });
-    transReveal('a-productivity');
-    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-    transCanvasEl.classList.add('building','settled');
-    transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
-    transNoteEl.classList.add('clean');
+    transRevealAfterState(true);
     return;
   }
   trans.running=true;trans.idx=0;
