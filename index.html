@@ -256,6 +256,38 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   font-family:var(--font-util);font-size:clamp(14px,1.4vw,22px);font-weight:700;letter-spacing:.14em;
   color:var(--acc2);}
 [data-theme="light"] .atlasL .atlasFill{fill:rgba(var(--sec-rgb),.07);}
+
+/* ============================================================
+   SLIDE: Today vs With Atlas transition
+   ============================================================ */
+#s9 .head{text-align:center;margin-bottom:3vh;}
+.transWrap{display:grid;grid-template-columns:1fr auto 1fr;gap:1.6vw;align-items:stretch;width:min(1320px,92vw);margin:0 auto;}
+.transPanel{
+  border-radius:18px;padding:3vh 1.8vw;
+  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);
+  display:flex;flex-direction:column;
+}
+.transPanel.after{background:rgba(var(--sec-rgb),.1);border-color:rgba(var(--acc2-rgb),.55);}
+.transTitle{font-size:clamp(11px,.95vw,15px);font-weight:700;letter-spacing:.2em;color:var(--blue-bright);}
+.transSub{font-size:clamp(13px,1.15vw,17px);color:var(--soft);line-height:1.5;margin-top:1vh;}
+.transChips{display:flex;flex-wrap:wrap;gap:.5vw;margin-top:2vh;}
+.transChips span{font-size:clamp(10.5px,.86vw,13.5px);font-weight:600;padding:.42em .95em;border-radius:8px;
+  background:rgba(var(--srf-rgb),.07);border:1px solid rgba(var(--brd-rgb),.3);color:var(--txt);}
+.transPanel.after .transChips span{background:rgba(var(--acc2-rgb),.14);border-color:rgba(var(--acc2-rgb),.4);}
+.transFlags{display:flex;flex-direction:column;gap:.8vh;margin-top:auto;padding-top:2vh;}
+.transFlags .flag{font-size:clamp(10.5px,.88vw,13px);font-weight:600;display:flex;align-items:center;gap:.6em;}
+.transFlags .flag::before{content:"";width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.transFlags .flag.warn{color:#E0664C;}
+.transFlags .flag.warn::before{background:#E0664C;}
+.transFlags .flag.good{color:var(--teal);}
+.transFlags .flag.good::before{background:var(--teal);}
+.transArrow{align-self:center;font-size:clamp(28px,3vw,48px);font-weight:800;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+@media (max-width:820px){
+  .transWrap{grid-template-columns:1fr;}
+  .transArrow{transform:rotate(90deg);}
+}
+
 /* data-flow arrows (SVG overlay) — house style: solid rail + travelling glow dots, cardinal only */
 .flowLayer{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:visible;}
 .flowLayer .frail{fill:none;stroke:rgba(var(--acc2-rgb),.4);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;}
@@ -845,6 +877,42 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
               <span>Procure-to-Pay</span><span>Invoice Automation</span><span>Cost Breakdown Structure</span><span>Budget</span><span>Actuals</span><span>Margin</span><span>Profit</span><span>WIP Balances</span><span>Debtor Master</span><span>Creditor Master</span><span>GL</span><span>P&amp;L</span>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide: Today vs With Atlas transition -->
+<section class="slide" id="s9" data-label="Transition" data-act="2">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Shift</span>
+      <h2 style="margin-top:1.4vh;">From scattered tools and manual handoffs to one shared database.</h2>
+    </div>
+    <div class="transWrap rv d1">
+      <div class="transPanel before">
+        <div class="transTitle">Today</div>
+        <div class="transSub">Procurement, cost and resourcing data lives across a dozen disconnected tools, stitched together by hand and passed between platforms one file at a time.</div>
+        <div class="transChips">
+          <span>Excel</span><span>Specific Applications</span><span>Outlook</span><span>Jotform</span><span>Format Varies</span>
+        </div>
+        <div class="transFlags">
+          <span class="flag warn">Process branches across platforms</span>
+          <span class="flag warn">Uncontrolled transfers between systems</span>
+          <span class="flag warn">Process not always completed separately</span>
+        </div>
+      </div>
+      <div class="transArrow" aria-hidden="true">&rarr;</div>
+      <div class="transPanel after">
+        <div class="transTitle">With Atlas</div>
+        <div class="transSub">Procurement, invoicing, daily diary, forecasting, productivity and timesheets all live in one shared database, reconciled once at the source.</div>
+        <div class="transChips">
+          <span>Procurement Register</span><span>Invoice Validation &amp; Accruals</span><span>Daily Diary</span><span>CTC Forecasting</span><span>Productivity Analysis</span><span>Timesheets</span><span>Resource Scheduler</span>
+        </div>
+        <div class="transFlags">
+          <span class="flag good">One controlled handoff to Pronto</span>
+          <span class="flag good">Clean handoff to MicrOpay</span>
         </div>
       </div>
     </div>
