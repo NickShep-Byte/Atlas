@@ -258,33 +258,55 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 [data-theme="light"] .atlasL .atlasFill{fill:rgba(var(--sec-rgb),.07);}
 
 /* ============================================================
-   SLIDE: Today vs With Atlas transition
+   SLIDE: Today vs With Atlas transition (one-by-one absorption)
    ============================================================ */
-#s9 .head{text-align:center;margin-bottom:3vh;}
-.transWrap{display:grid;grid-template-columns:1fr auto 1fr;gap:1.6vw;align-items:stretch;width:min(1320px,92vw);margin:0 auto;}
-.transPanel{
-  border-radius:18px;padding:3vh 1.8vw;
-  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);
-  display:flex;flex-direction:column;
+#s9 .head{text-align:center;margin-bottom:2.4vh;}
+.transStage{display:grid;grid-template-columns:minmax(0,1.35fr) auto minmax(280px,1fr);gap:1.6vw;align-items:center;width:min(1400px,94vw);margin:0 auto;}
+.transBefore{display:grid;grid-template-columns:repeat(3,1fr);gap:.65vw;}
+.tCard{
+  position:relative;border-radius:10px;padding:.85em .5em;text-align:center;
+  font-size:clamp(9.5px,.76vw,12.5px);font-weight:700;line-height:1.25;color:var(--txt);
+  border:1.5px solid transparent;
+  transition:opacity .5s var(--ease),transform .5s var(--ease),border-color .3s ease,box-shadow .3s ease;
 }
-.transPanel.after{background:rgba(var(--sec-rgb),.1);border-color:rgba(var(--acc2-rgb),.55);}
-.transTitle{font-size:clamp(11px,.95vw,15px);font-weight:700;letter-spacing:.2em;color:var(--blue-bright);}
-.transSub{font-size:clamp(13px,1.15vw,17px);color:var(--soft);line-height:1.5;margin-top:1vh;}
-.transChips{display:flex;flex-wrap:wrap;gap:.5vw;margin-top:2vh;}
-.transChips span{font-size:clamp(10.5px,.86vw,13.5px);font-weight:600;padding:.42em .95em;border-radius:8px;
-  background:rgba(var(--srf-rgb),.07);border:1px solid rgba(var(--brd-rgb),.3);color:var(--txt);}
-.transPanel.after .transChips span{background:rgba(var(--acc2-rgb),.14);border-color:rgba(var(--acc2-rgb),.4);}
-.transFlags{display:flex;flex-direction:column;gap:.8vh;margin-top:auto;padding-top:2vh;}
-.transFlags .flag{font-size:clamp(10.5px,.88vw,13px);font-weight:600;display:flex;align-items:center;gap:.6em;}
-.transFlags .flag::before{content:"";width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.transFlags .flag.warn{color:#E0664C;}
-.transFlags .flag.warn::before{background:#E0664C;}
-.transFlags .flag.good{color:var(--teal);}
-.transFlags .flag.good::before{background:var(--teal);}
-.transArrow{align-self:center;font-size:clamp(28px,3vw,48px);font-weight:800;
+.tCard.fam-green{background:rgba(70,190,120,.16);border-color:rgba(70,190,120,.4);}
+.tCard.fam-pink{background:rgba(230,120,140,.16);border-color:rgba(230,120,140,.4);}
+.tCard.fam-blue{background:rgba(120,170,230,.16);border-color:rgba(120,170,230,.4);}
+.tCard.fam-yellow{background:rgba(230,200,90,.18);border-color:rgba(230,200,90,.45);}
+.tCard.fam-orange{background:rgba(230,160,90,.18);border-color:rgba(230,160,90,.45);}
+.tCard.fam-purple{background:rgba(150,130,220,.18);border-color:rgba(150,130,220,.45);}
+.tCard.dashed{border-style:dashed;}
+.tCard.branch{border-color:#E0664C;border-width:2px;}
+.tCard.active{transform:scale(1.1);box-shadow:0 8px 24px rgba(var(--sec-rgb),.35);border-color:var(--teal);z-index:1;}
+.tCard.consumed{opacity:0;transform:scale(.35);pointer-events:none;}
+.tCard.retired{opacity:0;transform:scale(.35) rotate(8deg);pointer-events:none;}
+.transArrow{font-size:clamp(24px,2.6vw,42px);font-weight:800;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.transAfter{display:flex;flex-direction:column;gap:1.6vh;align-items:center;}
+.atlasBox{width:100%;border-radius:18px;padding:2vh 1.4vw;min-height:180px;
+  background:rgba(var(--sec-rgb),.1);border:1.5px solid rgba(var(--acc2-rgb),.55);
+  transition:border-color .5s ease,background .5s ease;}
+.transStage.settled .atlasBox{border-color:var(--teal);}
+.atlasBoxTitle{font-size:clamp(13px,1.2vw,18px);font-weight:800;color:var(--title);text-align:center;}
+.atlasBoxTitle span{display:block;font-size:clamp(9px,.76vw,11.5px);font-weight:700;letter-spacing:.16em;color:var(--soft);margin-top:.3vh;}
+.atlasChips{display:flex;flex-wrap:wrap;gap:.45vw;justify-content:center;margin-top:1.4vh;min-height:60px;align-content:flex-start;}
+.atlasChips .achip{font-size:clamp(9.5px,.8vw,12.5px);font-weight:700;padding:.4em .85em;border-radius:8px;
+  background:rgba(var(--acc2-rgb),.16);border:1px solid rgba(var(--acc2-rgb),.45);color:var(--txt);
+  animation:chipIn .5s var(--ease) forwards;}
+.transExternal{display:flex;gap:.7vw;}
+.transExternal .tCard{min-width:88px;flex:none;}
+.transNote{font-size:clamp(9.5px,.8vw,12px);color:#E0664C;font-weight:600;text-align:center;font-style:italic;min-height:2.4em;transition:color .4s ease;}
+.transNote.clean{color:var(--teal);}
+.transLegend{display:flex;flex-wrap:wrap;gap:1vw;justify-content:center;margin-top:2vh;font-size:clamp(9.5px,.8vw,12px);font-weight:600;color:var(--soft);}
+.transLegend span{display:inline-flex;align-items:center;gap:.4em;}
+.transLegend .sw{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.transLegend .sw.fam-green{background:rgba(70,190,120,.6);}
+.transLegend .sw.fam-pink{background:rgba(230,120,140,.6);}
+.transLegend .sw.fam-blue{background:rgba(120,170,230,.6);}
+.transLegend .sw.fam-yellow{background:rgba(230,200,90,.65);}
+.transLegend .sw.fam-orange{background:rgba(230,160,90,.65);}
 @media (max-width:820px){
-  .transWrap{grid-template-columns:1fr;}
+  .transStage{grid-template-columns:1fr;}
   .transArrow{transform:rotate(90deg);}
 }
 
@@ -888,33 +910,29 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The Shift</span>
-      <h2 style="margin-top:1.4vh;">From scattered tools and manual handoffs to one shared database.</h2>
+      <h2 style="margin-top:1.4vh;">Today's scattered tools, absorbed one by one into Atlas.</h2>
     </div>
-    <div class="transWrap rv d1">
-      <div class="transPanel before">
-        <div class="transTitle">Today</div>
-        <div class="transSub">Procurement, cost and resourcing data lives across a dozen disconnected tools, stitched together by hand and passed between platforms one file at a time.</div>
-        <div class="transChips">
-          <span>Excel</span><span>Specific Applications</span><span>Outlook</span><span>Jotform</span><span>Format Varies</span>
-        </div>
-        <div class="transFlags">
-          <span class="flag warn">Process branches across platforms</span>
-          <span class="flag warn">Uncontrolled transfers between systems</span>
-          <span class="flag warn">Process not always completed separately</span>
-        </div>
-      </div>
+    <div class="transStage rv d1" id="transStage">
+      <div class="transBefore" id="transBefore"></div>
       <div class="transArrow" aria-hidden="true">&rarr;</div>
-      <div class="transPanel after">
-        <div class="transTitle">With Atlas</div>
-        <div class="transSub">Procurement, invoicing, daily diary, forecasting, productivity and timesheets all live in one shared database, reconciled once at the source.</div>
-        <div class="transChips">
-          <span>Procurement Register</span><span>Invoice Validation &amp; Accruals</span><span>Daily Diary</span><span>CTC Forecasting</span><span>Productivity Analysis</span><span>Timesheets</span><span>Resource Scheduler</span>
+      <div class="transAfter">
+        <div class="atlasBox">
+          <div class="atlasBoxTitle">Atlas<span>Shared Database</span></div>
+          <div class="atlasChips" id="atlasChips"></div>
         </div>
-        <div class="transFlags">
-          <span class="flag good">One controlled handoff to Pronto</span>
-          <span class="flag good">Clean handoff to MicrOpay</span>
+        <div class="transExternal">
+          <div class="tCard fam-purple">Pronto</div>
+          <div class="tCard fam-blue">MicrOpay</div>
         </div>
+        <div class="transNote" id="transNote">Multiple uncontrolled hand-offs between systems.</div>
       </div>
+    </div>
+    <div class="transLegend rv d2">
+      <span><i class="sw fam-green"></i>Excel</span>
+      <span><i class="sw fam-pink"></i>Specific application</span>
+      <span><i class="sw fam-blue"></i>Outlook</span>
+      <span><i class="sw fam-yellow"></i>Jotform</span>
+      <span><i class="sw fam-orange"></i>Format varies</span>
     </div>
   </div>
 </section>
@@ -1936,6 +1954,115 @@ function lineStop(){
   clearShelfChips();
 }
 
+/* ---------- Slide 9: Today → Atlas absorption ---------- */
+var TRANS_CARDS=[
+ {id:'rfq',label:'Request for Quote',fam:'blue',into:'Procurement Register'},
+ {id:'procreg',label:'Procurement Register',fam:'green',branch:true,into:'Procurement Register'},
+ {id:'f111',label:'F111 Requisition',fam:'yellow',into:'Procurement Register'},
+ {id:'reqappr',label:'Requisition Approval',fam:'blue',branch:true,into:'Procurement Register'},
+ {id:'connx',label:'Connx',fam:'pink',into:'Timesheets'},
+ {id:'docket',label:'Docket / Delivery Register',fam:'green',dashed:true,into:'Daily Diary'},
+ {id:'dailydiary',label:'Daily Diary',fam:'green',into:'Daily Diary'},
+ {id:'costtracker',label:'Cost Tracker',fam:'green',into:'CTC Forecasting'},
+ {id:'forecasting',label:'Forecasting',fam:'green',into:'CTC Forecasting'},
+ {id:'caaps',label:'CAAPS',fam:'pink',into:'Invoice Validation & Accruals'},
+ {id:'invoiceval',label:'Invoice Validation / Approval',fam:'orange',into:'Invoice Validation & Accruals'},
+ {id:'planttracker',label:'Plant Tracker',fam:'green',into:'Resource Scheduler'},
+ {id:'simpro',label:'Simpro',fam:'green',into:null}
+];
+var TRANS_BONUS_CHIP='Productivity Analysis';
+var transStageEl=document.getElementById('transStage');
+var transBeforeEl=document.getElementById('transBefore');
+var atlasChipsEl=document.getElementById('atlasChips');
+var transNoteEl=document.getElementById('transNote');
+var trans={running:false,timers:[],idx:0};
+function transBuild(){
+  transBeforeEl.innerHTML='';
+  TRANS_CARDS.forEach(function(c){
+    var d=document.createElement('div');
+    d.className='tCard fam-'+c.fam+(c.dashed?' dashed':'')+(c.branch?' branch':'');
+    d.dataset.id=c.id;
+    d.textContent=c.label;
+    transBeforeEl.appendChild(d);
+  });
+}
+function transAddChip(name){
+  var existing=atlasChipsEl.querySelector('[data-name="'+name+'"]');
+  if(existing){
+    existing.style.animation='none';
+    void existing.offsetWidth;
+    existing.style.animation='';
+    return;
+  }
+  var chip=document.createElement('span');
+  chip.className='achip';
+  chip.dataset.name=name;
+  chip.textContent=name;
+  atlasChipsEl.appendChild(chip);
+}
+function transReset(){
+  transBeforeEl.querySelectorAll('.tCard').forEach(function(el){el.classList.remove('active','consumed','retired');});
+  atlasChipsEl.innerHTML='';
+  transStageEl.classList.remove('settled');
+  transNoteEl.textContent='Multiple uncontrolled hand-offs between systems.';
+  transNoteEl.classList.remove('clean');
+}
+function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
+function transStep(){
+  if(!trans.running)return;
+  if(trans.idx>=TRANS_CARDS.length){
+    ltTrans(function(){transAddChip(TRANS_BONUS_CHIP);},250);
+    ltTrans(function(){
+      transStageEl.classList.add('settled');
+      transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
+      transNoteEl.classList.add('clean');
+    },950);
+    ltTrans(function(){
+      trans.idx=0;
+      transReset();
+      transStep();
+    },3800);
+    return;
+  }
+  var c=TRANS_CARDS[trans.idx];
+  var el=transBeforeEl.querySelector('[data-id="'+c.id+'"]');
+  ltTrans(function(){el.classList.add('active');},0);
+  ltTrans(function(){
+    el.classList.remove('active');
+    el.classList.add(c.into?'consumed':'retired');
+  },650);
+  ltTrans(function(){
+    if(c.into)transAddChip(c.into);
+  },900);
+  ltTrans(function(){
+    trans.idx++;
+    transStep();
+  },1350);
+}
+function transStart(){
+  transBuild();
+  if(RM){
+    TRANS_CARDS.forEach(function(c){
+      var el=transBeforeEl.querySelector('[data-id="'+c.id+'"]');
+      el.classList.add(c.into?'consumed':'retired');
+      if(c.into)transAddChip(c.into);
+    });
+    transAddChip(TRANS_BONUS_CHIP);
+    transStageEl.classList.add('settled');
+    transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
+    transNoteEl.classList.add('clean');
+    return;
+  }
+  trans.running=true;trans.idx=0;
+  transReset();
+  transStep();
+}
+function transStop(){
+  trans.running=false;
+  trans.timers.forEach(clearTimeout);
+  trans.timers=[];
+}
+
 /* ---------- Fragments ---------- */
 function frags(slide){return Array.prototype.slice.call(slide.querySelectorAll('.frag'));}
 function nextFrag(slide){
@@ -1971,11 +2098,13 @@ function onEnter(s){
   if(s.id==='s4')requestAnimationFrame(function(){requestAnimationFrame(relinkEco);});
   if(s.id==='s5')cadenceStart();
   if(s.id==='s6')lineStart();
+  if(s.id==='s9')transStart();
   if(RM)frags(s).forEach(function(f){f.classList.add('shown');});
 }
 function onLeave(s){
   if(s.id==='s5')cadenceStop();
   if(s.id==='s6')lineStop();
+  if(s.id==='s9')transStop();
 }
 function goTo(i,skipFragReset){
   if(i<0||i>=slides.length||(i===cur&&slides[i].classList.contains('active')))return;
