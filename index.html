@@ -1968,21 +1968,36 @@ function lineStop(){
 // real measured position (getBoundingClientRect), so arrows are always
 // edge-anchored and never distorted, the same technique the ecosystem
 // diagram on the Features slide already uses.
+// Every tool is a "primary" (it physically moves + relabels into its
+// Atlas position), a "mergeInto" secondary (it moves to the SAME spot
+// as its primary, then fades — reading as flowing in and merging), or
+// a retiree (Simpro: no Atlas equivalent, just fades in place). Nothing
+// ever vanishes and reappears elsewhere — cards slide to where they're
+// going, the same DOM element throughout.
 var TRANS_CARDS=[
- {id:'rfq',label:'Request for Quote',fam:'blue',x:6,y:10,into:'a-procreg'},
- {id:'procreg',label:'Procurement Register',fam:'green',branch:true,x:22,y:10,into:'a-procreg'},
- {id:'f111',label:'F111 Requisition',fam:'yellow',x:38,y:10,into:'a-procreg'},
- {id:'connx',label:'Connx',fam:'pink',x:54,y:10,into:'a-timesheets'},
- {id:'simpro',label:'Simpro',fam:'green',x:86,y:10,into:null},
- {id:'reqappr',label:'Requisition Approval',fam:'blue',branch:true,x:38,y:36,into:'a-procreg'},
- {id:'docket',label:'Docket / Delivery Register',fam:'green',dashed:true,x:70,y:36,into:'a-dailydiary'},
- {id:'dailydiary',label:'Daily Diary',fam:'green',x:86,y:36,into:'a-dailydiary'},
- {id:'caaps',label:'CAAPS',fam:'pink',x:38,y:62,into:'a-invoiceval'},
- {id:'invoiceval',label:'Invoice Validation / Approval',fam:'orange',x:54,y:62,into:'a-invoiceval'},
- {id:'costtracker',label:'Cost Tracker',fam:'green',x:70,y:62,into:'a-ctcforecast'},
- {id:'forecasting',label:'Forecasting',fam:'green',x:86,y:62,into:'a-ctcforecast'},
- {id:'planttracker',label:'Plant Tracker',fam:'green',x:38,y:88,into:'a-resourcesched'}
+ {id:'procreg',label:'Procurement Register',fam:'green',branch:true,x:22,y:10,
+  primary:true,afterLabel:'Procurement Register',afterX:20,afterY:16},
+ {id:'rfq',label:'Request for Quote',fam:'blue',x:6,y:10,mergeInto:'procreg'},
+ {id:'f111',label:'F111 Requisition',fam:'yellow',x:38,y:10,mergeInto:'procreg'},
+ {id:'reqappr',label:'Requisition Approval',fam:'blue',branch:true,x:38,y:36,mergeInto:'procreg'},
+ {id:'connx',label:'Connx',fam:'pink',x:54,y:10,
+  primary:true,afterLabel:'Timesheets',afterX:12,afterY:62},
+ {id:'dailydiary',label:'Daily Diary',fam:'green',x:86,y:36,
+  primary:true,afterLabel:'Daily Diary',afterX:30,afterY:40},
+ {id:'docket',label:'Docket / Delivery Register',fam:'green',dashed:true,x:70,y:36,mergeInto:'dailydiary'},
+ {id:'invoiceval',label:'Invoice Validation / Approval',fam:'orange',x:54,y:62,
+  primary:true,afterLabel:'Invoice Validation & Accruals',afterX:12,afterY:40},
+ {id:'caaps',label:'CAAPS',fam:'pink',x:38,y:62,mergeInto:'invoiceval'},
+ {id:'costtracker',label:'Cost Tracker',fam:'green',x:70,y:62,
+  primary:true,afterLabel:'CTC Forecasting',afterX:42,afterY:16},
+ {id:'forecasting',label:'Forecasting',fam:'green',x:86,y:62,mergeInto:'costtracker'},
+ {id:'planttracker',label:'Plant Tracker',fam:'green',x:38,y:88,
+  primary:true,afterLabel:'Resource Scheduler',afterX:38,afterY:62},
+ {id:'simpro',label:'Simpro',fam:'green',x:86,y:10,retire:true}
 ];
+// Productivity Analysis has no today-tool equivalent — a genuinely new
+// capability, so it just fades in fresh once everything else has landed.
+var TRANS_BONUS_NODE={id:'productivity',label:'Productivity Analysis',fam:'atlas',x:48,y:40};
 // Pronto and MicrOpay exist in both states, just in different spots —
 // they slide from their today position to their with-Atlas position once
 // everything else has been absorbed.
@@ -1998,23 +2013,14 @@ var TRANS_LINKS=[
  ['caaps','pronto',false],['invoiceval','pronto',false],
  ['planttracker','pronto',false],['forecasting','pronto',true]
 ];
-// Atlas nodes: hidden at start, revealed one by one as their mapped
-// before-card is absorbed, positioned to match the with-Atlas map.
-var TRANS_AFTER_NODES=[
- {id:'a-procreg',label:'Procurement Register',x:20,y:16},
- {id:'a-ctcforecast',label:'CTC Forecasting',x:42,y:16},
- {id:'a-invoiceval',label:'Invoice Validation & Accruals',x:12,y:40},
- {id:'a-dailydiary',label:'Daily Diary',x:30,y:40},
- {id:'a-productivity',label:'Productivity Analysis',x:48,y:40},
- {id:'a-timesheets',label:'Timesheets',x:12,y:62},
- {id:'a-resourcesched',label:'Resource Scheduler',x:38,y:62}
-];
+// With-Atlas links, referencing the SAME cards (now relabelled/moved)
+// plus the bonus Productivity Analysis node.
 var TRANS_AFTER_LINKS=[
- ['a-invoiceval','a-procreg',false],['a-procreg','a-ctcforecast',false],
- ['a-procreg','a-dailydiary',false],['a-invoiceval','a-dailydiary',false],
- ['a-dailydiary','a-ctcforecast',false],['a-dailydiary','a-productivity',false],
- ['a-timesheets','a-dailydiary',false],['a-resourcesched','a-dailydiary',false],
- ['a-resourcesched','a-timesheets',false]
+ ['invoiceval','procreg',false],['procreg','costtracker',false],
+ ['procreg','dailydiary',false],['invoiceval','dailydiary',false],
+ ['dailydiary','costtracker',false],['dailydiary','productivity',false],
+ ['connx','dailydiary',false],['planttracker','dailydiary',false],
+ ['planttracker','connx',false]
 ];
 var SVGNS='http://www.w3.org/2000/svg';
 var transCanvasEl=document.getElementById('transCanvas');
@@ -2041,6 +2047,8 @@ function transRect(id){
   return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
           cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
 }
+function transPxX(pct){return transCanvasEl.getBoundingClientRect().width*pct/100;}
+function transPxY(pct){return transCanvasEl.getBoundingClientRect().height*pct/100;}
 // Manhattan-style elbow: same row/column pairs get one straight segment
 // between their facing edges; everything else exits vertically, crosses
 // at the halfway row, then enters the target vertically — a clean
@@ -2079,6 +2087,14 @@ function transLine(idA,idB,warn,cls){
     // row, so dip below it instead of cutting straight through.
     var dipY=Math.max(a.bottom,b.bottom)+26;
     pts=[{x:a.cx,y:a.bottom},{x:a.cx,y:dipY},{x:b.cx,y:dipY},{x:b.cx,y:b.bottom}];
+  } else if(idA==='planttracker'&&idB==='pronto'){
+    // Plant Tracker has to cross the whole CAAPS/Invoice/Cost/Forecasting
+    // row to reach Pronto — go around the left of that row, then cross
+    // at the clear gap above Requisition Approval's row and drop into
+    // Pronto from the top, rather than cutting through Requisition
+    // Approval at Pronto's own row height.
+    var corridor=transPxX(14),gapY=transPxY(23);
+    pts=[{x:a.left,y:a.cy},{x:corridor,y:a.cy},{x:corridor,y:gapY},{x:b.cx,y:gapY},{x:b.cx,y:b.top}];
   } else {
     pts=transElbowPts(a,b);
   }
@@ -2089,11 +2105,9 @@ function transLine(idA,idB,warn,cls){
 function transBuild(){
   TRANS_CARDS.forEach(function(c){transCanvasEl.appendChild(transCard(c));});
   TRANS_FIXED.forEach(function(c){transCanvasEl.appendChild(transCard({id:c.id,label:c.label,fam:c.fam,x:c.before.x,y:c.before.y}));});
-  TRANS_AFTER_NODES.forEach(function(n){
-    var el=transCard({id:n.id,label:n.label,fam:'atlas',x:n.x,y:n.y});
-    el.classList.add('hidden');
-    transCanvasEl.appendChild(el);
-  });
+  var prodEl=transCard(TRANS_BONUS_NODE);
+  prodEl.classList.add('hidden');
+  transCanvasEl.appendChild(prodEl);
   TRANS_LINKS.forEach(function(link){transLine(link[0],link[1],link[2],'beforeLink');});
 }
 function transHideLinksFor(id){
@@ -2105,11 +2119,12 @@ function transMoveFixed(which,to){
   var el=transCanvasEl.querySelector('.tCard[data-id="'+which+'"]');
   if(el){el.style.left=to.x+'%';el.style.top=to.y+'%';}
 }
-// Fits the Atlas box outline snugly around whichever after-nodes are
-// currently revealed, measured live rather than hard-coded, so it
+// Fits the Atlas box outline snugly around the now-relabelled primaries
+// plus the bonus node, measured live rather than hard-coded, so it
 // always actually contains them.
 function transFitBox(){
-  var rects=TRANS_AFTER_NODES.map(function(n){return transRect(n.id);}).filter(Boolean);
+  var ids=TRANS_CARDS.filter(function(c){return c.primary;}).map(function(c){return c.id;}).concat(['productivity']);
+  var rects=ids.map(transRect).filter(Boolean);
   if(!rects.length)return null;
   var left=Math.min.apply(null,rects.map(function(r){return r.left;}))-28;
   var top=Math.min.apply(null,rects.map(function(r){return r.top;}))-40;
@@ -2136,31 +2151,31 @@ function transDrawExternalLinks(box){
     transDrawPts([{x:box.right,y:pron.cy},{x:pron.left,y:pron.cy}],false,'afterLink settle-line');
   }
 }
-function transRevealAfterState(instant){
-  TRANS_AFTER_NODES.forEach(function(n,i){
-    ltTrans(function(){
-      var el=transCanvasEl.querySelector('.tCard.hidden[data-id="'+n.id+'"]');
-      if(el)el.classList.add('revealed');
-    },instant?0:i*90);
-  });
-  ltTrans(function(){
-    transFitBox();
-    transCanvasEl.classList.add('building');
-    transDrawAfterLinks();
-    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-  },instant?0:1300);
-  ltTrans(function(){
-    var box=transFitBox();
-    transDrawExternalLinks(box);
-    transLinksEl.querySelectorAll('.settle-line').forEach(function(l){l.classList.add('in');});
-    transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
-    transNoteEl.classList.add('clean');
-  },instant?0:2150);
+function transSettle(){
+  var el=transCanvasEl.querySelector('.tCard.hidden[data-id="productivity"]');
+  if(el)el.classList.add('revealed');
+  transFitBox();
+  transCanvasEl.classList.add('building');
+  transDrawAfterLinks();
+  TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
+}
+function transFinish(){
+  var box=transFitBox();
+  transDrawExternalLinks(box);
+  transLinksEl.querySelectorAll('.settle-line').forEach(function(l){l.classList.add('in');});
+  transCanvasEl.classList.add('settled');
+  transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
+  transNoteEl.classList.add('clean');
 }
 function transReset(){
-  transCanvasEl.querySelectorAll('.tCard').forEach(function(el){el.classList.remove('active','consumed','retired');});
-  transCanvasEl.querySelectorAll('.tCard.hidden').forEach(function(el){el.classList.remove('revealed');});
+  TRANS_CARDS.forEach(function(c){
+    var el=transCanvasEl.querySelector('.tCard[data-id="'+c.id+'"]');
+    el.className='tCard fam-'+c.fam+(c.dashed?' dashed':'')+(c.branch?' branch':'');
+    el.textContent=c.label;
+    el.style.left=c.x+'%';el.style.top=c.y+'%';
+  });
+  var prod=transCanvasEl.querySelector('[data-id="productivity"]');
+  if(prod)prod.classList.remove('revealed');
   transLinksEl.querySelectorAll('.beforeLink.gone').forEach(function(l){l.classList.remove('gone');});
   transLinksEl.querySelectorAll('.afterLink').forEach(function(l){l.remove();});
   TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.before);});
@@ -2172,12 +2187,13 @@ function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
 function transStep(){
   if(!trans.running)return;
   if(trans.idx>=TRANS_CARDS.length){
-    transRevealAfterState(false);
+    ltTrans(transSettle,300);
+    ltTrans(transFinish,1150);
     ltTrans(function(){
       trans.idx=0;
       transReset();
       transStep();
-    },5900);
+    },4150);
     return;
   }
   var c=TRANS_CARDS[trans.idx];
@@ -2185,22 +2201,45 @@ function transStep(){
   ltTrans(function(){el.classList.add('active');},0);
   ltTrans(function(){
     el.classList.remove('active');
-    el.classList.add(c.into?'consumed':'retired');
     transHideLinksFor(c.id);
+    if(c.retire){
+      el.classList.add('retired');
+    } else if(c.primary){
+      el.classList.remove('fam-'+c.fam,'branch','dashed');
+      el.classList.add('fam-atlas');
+      el.textContent=c.afterLabel;
+      el.style.left=c.afterX+'%';el.style.top=c.afterY+'%';
+    } else if(c.mergeInto){
+      var prim=TRANS_CARDS.filter(function(x){return x.id===c.mergeInto;})[0];
+      el.style.left=prim.afterX+'%';el.style.top=prim.afterY+'%';
+    }
   },650);
+  if(c.mergeInto)ltTrans(function(){el.classList.add('consumed');},1450);
   ltTrans(function(){
     trans.idx++;
     transStep();
-  },1100);
+  },1600);
 }
 function transStart(){
   if(RM){
     TRANS_CARDS.forEach(function(c){
       var el=transCanvasEl.querySelector('.tCard[data-id="'+c.id+'"]');
-      el.classList.add(c.into?'consumed':'retired');
       transHideLinksFor(c.id);
+      if(c.retire){
+        el.classList.add('retired');
+      } else if(c.primary){
+        el.classList.remove('fam-'+c.fam,'branch','dashed');
+        el.classList.add('fam-atlas');
+        el.textContent=c.afterLabel;
+        el.style.left=c.afterX+'%';el.style.top=c.afterY+'%';
+      } else if(c.mergeInto){
+        var prim=TRANS_CARDS.filter(function(x){return x.id===c.mergeInto;})[0];
+        el.style.left=prim.afterX+'%';el.style.top=prim.afterY+'%';
+        el.classList.add('consumed');
+      }
     });
-    transRevealAfterState(true);
+    transSettle();
+    transFinish();
     return;
   }
   trans.running=true;trans.idx=0;
