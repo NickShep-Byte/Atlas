@@ -2086,16 +2086,16 @@ function transElbowPts(a,b){
   ];
 }
 function pathD(points){return 'M'+points.map(function(p){return p.x+','+p.y;}).join(' L ');}
-function transDrawPts(pts,warn,cls){
+function transDrawPts(pts,warn,cls,skipFade){
   var l=document.createElementNS(SVGNS,'path');
   l.setAttribute('d',pathD(pts));
   l.setAttribute('marker-end','url(#tArrow)');
-  l.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:'')+' fresh');
+  l.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:'')+(skipFade?'':' fresh'));
   transLinksEl.appendChild(l);
-  requestAnimationFrame(function(){requestAnimationFrame(function(){l.classList.remove('fresh');});});
+  if(!skipFade)requestAnimationFrame(function(){requestAnimationFrame(function(){l.classList.remove('fresh');});});
   return l;
 }
-function transLine(idA,idB,warn,cls){
+function transLine(idA,idB,warn,cls,skipFade){
   var a=transRect(idA),b=transRect(idB);
   if(!a||!b)return null;
   var pts;
@@ -2115,7 +2115,7 @@ function transLine(idA,idB,warn,cls){
   } else {
     pts=transElbowPts(a,b);
   }
-  var l=transDrawPts(pts,warn,cls);
+  var l=transDrawPts(pts,warn,cls,skipFade);
   l.dataset.a=idA;l.dataset.b=idB;
   return l;
 }
@@ -2162,16 +2162,22 @@ function transFitBox(){
 // Redraws every connector from scratch based on current card state —
 // called after every highlight/move/merge/land so lines are always
 // correct for exactly what's on screen right now, not just at the end.
-function transRelinkAll(){
+// A card mid-merge is still "today" as far as its connections go — it
+// keeps its links to whatever it was linked to right up until it's
+// actually landed/faded, so nothing disappears the instant a card
+// starts moving. transStartLiveFollow keeps calling this every frame
+// while anything's in flight, so those links visually travel with it.
+function transStillLinkable(id){return transState[id]==='today'||transState[id]==='merging';}
+function transRelinkAll(live){
   transLinksEl.querySelectorAll('path').forEach(function(l){l.remove();});
   TRANS_LINKS.forEach(function(link){
-    if(transState[link[0]]==='today'&&transState[link[1]]==='today'){
-      transLine(link[0],link[1],link[2],'beforeLink');
+    if(transStillLinkable(link[0])&&transStillLinkable(link[1])){
+      transLine(link[0],link[1],link[2],'beforeLink',live);
     }
   });
   TRANS_AFTER_LINKS.forEach(function(link){
     if(transState[link[0]]==='atlas'&&transState[link[1]]==='atlas'){
-      transLine(link[0],link[1],link[2],'afterLink');
+      transLine(link[0],link[1],link[2],'afterLink',live);
     }
   });
   var box=transFitBox();
@@ -2179,14 +2185,27 @@ function transRelinkAll(){
     var micro=transRect('micropay'),pron=transRect('pronto');
     if(micro){
       var anchor1={left:box.left+40,right:box.left+40,top:box.bottom,bottom:box.bottom,cx:box.left+40,cy:box.bottom};
-      transDrawPts(transElbowPts(anchor1,micro),false,'afterLink');
+      transDrawPts(transElbowPts(anchor1,micro),false,'afterLink',live);
     }
     if(pron){
       // Straight line into Pronto's own facing edge, ignoring the box's
       // overall centre so it doesn't dog-leg for a few px of misalignment.
-      transDrawPts([{x:box.right,y:pron.cy},{x:pron.left,y:pron.cy}],false,'afterLink');
+      transDrawPts([{x:box.right,y:pron.cy},{x:pron.left,y:pron.cy}],false,'afterLink',live);
     }
   }
+}
+// Keeps calling transRelinkAll every frame for `ms`, so links visually
+// travel with whatever card(s) are mid-transition instead of only
+// updating in discrete jumps before/after the move.
+function transStartLiveFollow(ms){
+  var start=null;
+  function step(ts){
+    if(start===null)start=ts;
+    transRelinkAll(true);
+    if(trans.running&&ts-start<ms)requestAnimationFrame(step);
+    else transRelinkAll();
+  }
+  requestAnimationFrame(step);
 }
 function transReset(){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){
@@ -2205,12 +2224,14 @@ function transReset(){
   transRelinkAll();
 }
 function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
-// Runs one group at a time: each secondary highlights, slides onto its
-// primary's current (still-today) spot and fades — reading as flowing
-// in and merging — then the primary itself highlights, relabels and
-// carries the merged result into its Atlas position, at which point
-// the box regrows and any newly-valid links appear.
-function transRunGroup(gi,step){
+// Runs one group at a time: every secondary in the group is selected
+// (highlighted) together, slides as one onto the primary's current
+// (still-today) spot together, and fades together — reading as the
+// whole set merging at once rather than one after another. Once
+// they're merged, the primary itself highlights, relabels and carries
+// the merged result into its Atlas position, at which point the box
+// regrows and any newly-valid links appear.
+function transRunGroup(gi){
   if(!trans.running)return;
   var g=TRANS_GROUPS[gi];
   if(g.retire){
@@ -2226,64 +2247,68 @@ function transRunGroup(gi,step){
     return;
   }
   var secs=g.secondaries;
-  if(step<secs.length){
-    var sid=secs[step],sEl=transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');
-    var primPos=TRANS_CARD_DATA[g.primary];
-    ltTrans(function(){sEl.classList.add('active');},0);
+  var primPos=TRANS_CARD_DATA[g.primary];
+  var secEls=secs.map(function(sid){return transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');});
+  if(secs.length){
+    secEls.forEach(function(el){ltTrans(function(){el.classList.add('active');},0);});
     ltTrans(function(){
-      sEl.classList.remove('active');
-      transState[sid]='merging';
+      secs.forEach(function(sid,i){
+        secEls[i].classList.remove('active');
+        transState[sid]='merging';
+        secEls[i].style.left=primPos.x+'%';secEls[i].style.top=primPos.y+'%';
+      });
       transRelinkAll();
-      sEl.style.left=primPos.x+'%';sEl.style.top=primPos.y+'%';
+      transStartLiveFollow(850);
     },650);
     ltTrans(function(){
-      sEl.classList.add('consumed');
-      transState[sid]='gone';
-    },1450);
-    ltTrans(function(){transRunGroup(gi,step+1);},1600);
-    return;
+      secs.forEach(function(sid,i){
+        secEls[i].classList.add('consumed');
+        transState[sid]='gone';
+      });
+      transRelinkAll();
+    },1500);
   }
-  // all secondaries merged (or none) — the primary carries the group into Atlas
+  var pDelay=secs.length?1650:0;
   var pEl=transCanvasEl.querySelector('.tCard[data-id="'+g.primary+'"]');
-  ltTrans(function(){pEl.classList.add('active');},0);
+  ltTrans(function(){pEl.classList.add('active');},pDelay);
   ltTrans(function(){
     pEl.classList.remove('active');
     transState[g.primary]='merging';
-    transRelinkAll();
     pEl.classList.remove('fam-'+TRANS_CARD_DATA[g.primary].fam,'branch','dashed');
     pEl.classList.add('fam-atlas');
     pEl.textContent=g.afterLabel;
     pEl.style.left=g.afterX+'%';pEl.style.top=g.afterY+'%';
-  },650);
+    transRelinkAll();
+    transStartLiveFollow(850);
+  },pDelay+650);
   ltTrans(function(){
     transState[g.primary]='atlas';
     transRelinkAll();
-  },1500);
-  ltTrans(function(){transNextGroup(gi);},1750);
+  },pDelay+1500);
+  ltTrans(function(){transNextGroup(gi);},pDelay+1750);
 }
 function transNextGroup(gi){
-  if(gi+1<TRANS_GROUPS.length){transRunGroup(gi+1,0);return;}
-  // everything's landed — reveal the bonus node, then move Pronto/MicrOpay
-  // across to their with-Atlas spots and settle.
+  if(gi+1<TRANS_GROUPS.length){transRunGroup(gi+1);return;}
+  // everything's landed — move Pronto/MicrOpay across to their with-Atlas
+  // spots first (clearing the area near Productivity Analysis's fixed
+  // spot), then reveal the bonus node, then settle.
+  ltTrans(function(){
+    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
+    transStartLiveFollow(850);
+  },300);
   ltTrans(function(){
     var el=transCanvasEl.querySelector('.tCard.hidden[data-id="productivity"]');
     if(el)el.classList.add('revealed');
     transState.productivity='atlas';
-    transRelinkAll();
-  },300);
-  ltTrans(function(){
-    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-  },900);
-  ltTrans(function(){
     transState.pronto='atlas';transState.micropay='atlas';
     transRelinkAll();
     transCanvasEl.classList.add('settled');
     transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
     transNoteEl.classList.add('clean');
-  },1750);
+  },1150);
   ltTrans(function(){
     transReset();
-    transRunGroup(0,0);
+    transRunGroup(0);
   },4750);
 }
 function transStart(){
@@ -2322,7 +2347,7 @@ function transStart(){
   }
   trans.running=true;
   transReset();
-  transRunGroup(0,0);
+  transRunGroup(0);
 }
 function transStop(){
   trans.running=false;
