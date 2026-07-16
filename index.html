@@ -2016,7 +2016,9 @@ var TRANS_LINKS=[
  ['docket','costtracker',false],['dailydiary','costtracker',false],
  ['costtracker','caaps',false],['costtracker','forecasting',false],
  ['caaps','pronto',false],['invoiceval','pronto',false],
- ['planttracker','pronto',false],['forecasting','pronto',true]
+ ['planttracker','pronto',false],['forecasting','pronto',true],
+ ['planttracker','dailydiary',false],['procreg','forecasting',false],
+ ['procreg','dailydiary',false]
 ];
 function transHasBeforeLink(idA,idB){
   return TRANS_LINKS.some(function(l){return l[0]===idA&&l[1]===idB;});
@@ -2033,8 +2035,7 @@ var TRANS_AFTER_LINKS=[
  ['dailydiary','invoiceval',false],
  ['dailydiary','forecasting',false],
  ['dailydiary','costtracker',false],
- ['connx','dailydiary',false],['planttracker','dailydiary',false],
- ['planttracker','connx',false]
+ ['connx','dailydiary',false],['planttracker','dailydiary',false]
 ];
 var SVGNS='http://www.w3.org/2000/svg';
 var transCanvasEl=document.getElementById('transCanvas');
@@ -2109,6 +2110,40 @@ function transComputePts(idA,idB){
   var a=transRect(idA),b=transRect(idB);
   if(!a||!b)return null;
   var sA=transState[idA],sB=transState[idB];
+  // These three pairs are wanted continuously across every state
+  // combination — before, after, and the mixed window where one side
+  // has landed in Atlas while the other hasn't moved yet — so they
+  // compute a route directly from live positions instead of being
+  // routed through the mixed-state bypass below (which exists for pairs
+  // whose hand-tuned routes assume a single settled layout).
+  if(idA==='planttracker'&&idB==='dailydiary'){
+    var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
+    return [{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
+  }
+  if(idA==='procreg'&&idB==='dailydiary'){
+    // Procurement's bottom edge is shared with Invoice Validation ->
+    // Procurement (offset -14 there), and Daily Diary's top edge is
+    // shared with Daily Diary -> CTC Forecasting (offset +14 there) —
+    // offset both ends the other way.
+    var down2p=b.cy>=a.cy,midYp=(a.cy+b.cy)/2,exitXp=a.cx+14,entryXp=b.cx-14;
+    return [{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
+  }
+  if(idA==='procreg'&&idB==='forecasting'){
+    if(Math.abs(b.cy-a.cy)<4){
+      // With-Atlas state: same row, one straight segment — no needless
+      // bend just because the before-state has them on different rows.
+      return [{x:a.right,y:a.cy},{x:b.left,y:b.cy}];
+    }
+    // Procurement always sits above Forecasting whenever they're not
+    // aligned. F111/Connx sit in Procurement's own row and Requisition
+    // Approval/Docket/Daily Diary sit in the row below — dip below both
+    // (a height nothing else occupies) before crossing over. Enters
+    // Forecasting's top edge offset from centre, since Forecasting ->
+    // Pronto exits from dead-centre-top and Cost Tracker -> Forecasting
+    // enters at centre-left.
+    var exitXpf=a.cx+30,dipYpf=transPxY(49),entryXpf=b.cx-20;
+    return [{x:exitXpf,y:a.bottom},{x:exitXpf,y:dipYpf},{x:entryXpf,y:dipYpf},{x:entryXpf,y:b.top}];
+  }
   var pureBefore=(sA==='today'||sA==='merging')&&(sB==='today'||sB==='merging');
   var pureAfter=sA==='atlas'&&sB==='atlas';
   if(!pureBefore&&!pureAfter){
@@ -2164,13 +2199,12 @@ function transComputePts(idA,idB){
     var down2df=b.cy>=a.cy,midYdf=(a.cy+b.cy)/2,exitXdf=a.cx+14;
     return [{x:exitXdf,y:down2df?a.bottom:a.top},{x:exitXdf,y:midYdf},{x:b.cx,y:midYdf},{x:b.cx,y:down2df?b.top:b.bottom}];
   }
-  if(idA==='procreg'&&idB==='dailydiary'){
-    // Procurement's bottom edge is shared with Invoice Validation ->
-    // Procurement (offset -14 there), and Daily Diary's top edge is
-    // shared with Daily Diary -> CTC Forecasting (offset +14 there) —
-    // offset both ends the other way.
-    var down2p=b.cy>=a.cy,midYp=(a.cy+b.cy)/2,exitXp=a.cx+14,entryXp=b.cx-14;
-    return [{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
+  if(idA==='costtracker'&&idB==='forecasting'){
+    // Shares Forecasting's left edge with Procurement -> Forecasting
+    // (which enters at dead-centre once the two are aligned) — offset
+    // down slightly so they're never exactly on top of each other.
+    var ycf=a.cy+10;
+    return [{x:a.right,y:ycf},{x:b.left,y:ycf}];
   }
   if(idA==='procreg'&&idB==='invoiceval'){
     // Shares Procurement's bottom edge with Procurement -> Daily Diary
@@ -2183,10 +2217,6 @@ function transComputePts(idA,idB){
     // Diary (offset +14 there) — offset the other way.
     var down2c=b.cy>=a.cy,midYcx=(a.cy+b.cy)/2,entryXcx=b.cx-14;
     return [{x:a.cx,y:down2c?a.bottom:a.top},{x:a.cx,y:midYcx},{x:entryXcx,y:midYcx},{x:entryXcx,y:down2c?b.top:b.bottom}];
-  }
-  if(idA==='planttracker'&&idB==='dailydiary'){
-    var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
-    return [{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
   }
   return transElbowPts(a,b,idA+'|'+idB);
 }
@@ -2206,6 +2236,7 @@ function transUpsertPath(key,pts,warn,cls){
   el=document.createElementNS(SVGNS,'path');
   el.setAttribute('marker-end','url(#tArrow)');
   el.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:'')+' fresh');
+  el.dataset.key=key;
   el.setAttribute('d',d);
   transLinksEl.appendChild(el);
   requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.remove('fresh');});});
@@ -2330,13 +2361,20 @@ function transRelinkAll(){
   if(box){
     var pron=transRect('pronto');
     if(pron){
-      // Corner-anchor both legs (bottom for outbound, top for inbound)
-      // rather than at Pronto's own mid-height, which would graze
-      // Productivity Analysis / CTC Forecasting's row.
-      var anchorOut={left:box.right-30,right:box.right-30,top:box.bottom,bottom:box.bottom,cx:box.right-30,cy:box.bottom};
-      var anchorIn={left:box.right-60,right:box.right-60,top:box.top,bottom:box.top,cx:box.right-60,cy:box.top};
-      transUpsertPath('EXTERNAL_PRONTO_OUT',transElbowPts(anchorOut,pron,'EXTERNAL_PRONTO_OUT'),false,'afterLink');
-      transUpsertPath('EXTERNAL_PRONTO_IN',transElbowPts(pron,anchorIn,'EXTERNAL_PRONTO_IN'),false,'afterLink');
+      // Enters/exits Pronto's LEFT edge (facing the box) rather than its
+      // bottom, which already carries three other before-links
+      // (caaps/invoiceval/forecasting -> pronto) — and offsets the two
+      // legs from each other and from Pronto's dead-centre so neither
+      // ever lands on the same point as those or as each other. Stays at
+      // the box's own safe bottom/top height (clear of every card,
+      // including Productivity Analysis/CTC Forecasting in the box's
+      // right column) until past the box's right edge, only rising to
+      // Pronto's height in the open gap where nothing else sits.
+      var yOut=pron.cy-12,yIn=pron.cy+12;
+      var anchorOutX=box.right-30,anchorInX=box.right-60;
+      var midXo=box.right+15,midXi=box.right+30;
+      transUpsertPath('EXTERNAL_PRONTO_OUT',[{x:anchorOutX,y:box.bottom},{x:midXo,y:box.bottom},{x:midXo,y:yOut},{x:pron.left,y:yOut}],false,'afterLink');
+      transUpsertPath('EXTERNAL_PRONTO_IN',[{x:pron.left,y:yIn},{x:midXi,y:yIn},{x:midXi,y:box.top},{x:anchorInX,y:box.top}],false,'afterLink');
     }
   } else {
     transRemovePath('EXTERNAL_PRONTO_OUT');
