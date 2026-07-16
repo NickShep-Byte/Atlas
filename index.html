@@ -1983,7 +1983,7 @@ var TRANS_CARD_DATA={
  dailydiary:{label:'Daily Diary',fam:'green',x:86,y:36},
  docket:{label:'Docket / Delivery Register',fam:'green',dashed:true,x:70,y:36},
  invoiceval:{label:'Invoice Validation / Approval',fam:'orange',x:54,y:62},
- caaps:{label:'CAAPS',fam:'pink',x:46,y:74},
+ caaps:{label:'CAAPS',fam:'pink',x:62,y:84},
  costtracker:{label:'Cost Tracker',fam:'green',x:70,y:62},
  forecasting:{label:'Forecasting',fam:'green',x:86,y:62},
  planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88}
@@ -2117,15 +2117,22 @@ function transComputePts(idA,idB){
   // routed through the mixed-state bypass below (which exists for pairs
   // whose hand-tuned routes assume a single settled layout).
   if(idA==='planttracker'&&idB==='dailydiary'){
-    var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
-    return [{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
+    // Dedicated fixed crossing lane (not a dynamic midpoint) so it never
+    // coincidentally lands on the same height as another pair's own
+    // midpoint-based crossing — with several pairs now crossing the
+    // same row gaps, two independently-averaged heights collide often.
+    // Offsets its own exit from Plant Tracker's dead-centre too — while
+    // Plant Tracker is mid-merge, Plant Tracker -> Pronto's generic
+    // fallback route also leaves from that same centre point.
+    var down2pd=b.cy>=a.cy,midYpd=transPxY(54),exitXpd=a.cx+12,entryXpd=b.cx+14;
+    return [{x:exitXpd,y:down2pd?a.bottom:a.top},{x:exitXpd,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
   }
   if(idA==='procreg'&&idB==='dailydiary'){
     // Procurement's bottom edge is shared with Invoice Validation ->
     // Procurement (offset -14 there), and Daily Diary's top edge is
     // shared with Daily Diary -> CTC Forecasting (offset +14 there) —
-    // offset both ends the other way.
-    var down2p=b.cy>=a.cy,midYp=(a.cy+b.cy)/2,exitXp=a.cx+14,entryXp=b.cx-14;
+    // offset both ends the other way. Fixed crossing lane, see above.
+    var down2p=b.cy>=a.cy,midYp=transPxY(26),exitXp=a.cx+14,entryXp=b.cx-14;
     return [{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
   }
   if(idA==='procreg'&&idB==='forecasting'){
@@ -2141,10 +2148,16 @@ function transComputePts(idA,idB){
     // Forecasting's top edge offset from centre, since Forecasting ->
     // Pronto exits from dead-centre-top and Cost Tracker -> Forecasting
     // enters at centre-left.
-    var exitXpf=a.cx+30,dipYpf=transPxY(49),entryXpf=b.cx-20;
+    var exitXpf=a.cx+30,dipYpf=transPxY(51),entryXpf=b.cx-20;
     return [{x:exitXpf,y:a.bottom},{x:exitXpf,y:dipYpf},{x:entryXpf,y:dipYpf},{x:entryXpf,y:b.top}];
   }
-  var pureBefore=(sA==='today'||sA==='merging')&&(sB==='today'||sB==='merging');
+  // Strictly "today" / "atlas" here, not "merging" — the hand-tuned
+  // routes below assume BOTH cards are sitting still in a genuinely
+  // settled position. A card that's mid-flight toward its own merge
+  // target can pass anywhere on the canvas along the way (including
+  // right through a neighbour), so any pair with one side moving falls
+  // back to the generic live elbow instead, same as a fully mixed pair.
+  var pureBefore=sA==='today'&&sB==='today';
   var pureAfter=sA==='atlas'&&sB==='atlas';
   if(!pureBefore&&!pureAfter){
     // One side has already landed in Atlas while the other hasn't moved
@@ -2155,30 +2168,48 @@ function transComputePts(idA,idB){
     return transElbowPts(a,b,idA+'|'+idB);
   }
   if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
-    // Invoice Validation sits directly between these two on the same
-    // row, so dip below it instead of cutting straight through.
-    var dipY=Math.max(a.bottom,b.bottom)+26;
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipY},{x:b.cx,y:dipY},{x:b.cx,y:b.bottom}];
+    // CAAPS sits below and to the left of Cost Tracker today — dip below
+    // CAAPS's row entirely on a fixed lane (not a dynamic one derived
+    // from their own live positions, which drifts into other pairs'
+    // fixed lanes whenever either card is mid-merge).
+    var dipYcc=transPxY(96);
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipYcc},{x:b.cx,y:dipYcc},{x:b.cx,y:b.bottom}];
+  }
+  if(idA==='docket'&&idB==='costtracker'){
+    // Dedicated fixed crossing lane rather than the generic elbow, which
+    // otherwise lands on the same height as other pairs crossing this
+    // same row gap. Docket and Cost Tracker sit in the same column, and
+    // so does Cost Tracker -> CAAPS's own dip route below — offset both
+    // ends so this doesn't run straight up that same column.
+    var down2dc=b.cy>=a.cy,midYdc=transPxY(56),exitXdc=a.cx+10,entryXdc=b.cx-10;
+    return [{x:exitXdc,y:down2dc?a.bottom:a.top},{x:exitXdc,y:midYdc},{x:entryXdc,y:midYdc},{x:entryXdc,y:down2dc?b.top:b.bottom}];
   }
   if(idA==='planttracker'&&idB==='pronto'){
     // Plant Tracker has to cross the whole CAAPS/Invoice/Cost/Forecasting
     // row to reach Pronto — go around the left of that row, then cross
     // at the clear gap above Requisition Approval's row and drop into
     // Pronto from the top, rather than cutting through Requisition
-    // Approval at Pronto's own row height.
-    var corridor=transPxX(14),gapY=transPxY(23);
-    return [{x:a.left,y:a.cy},{x:corridor,y:a.cy},{x:corridor,y:gapY},{x:b.cx,y:gapY},{x:b.cx,y:b.top}];
+    // Approval at Pronto's own row height. Offset from centre since
+    // Procurement -> Pronto also enters the top edge.
+    var corridor=transPxX(14),gapY=transPxY(23),entryXpt=b.cx-15;
+    return [{x:a.left,y:a.cy},{x:corridor,y:a.cy},{x:corridor,y:gapY},{x:entryXpt,y:gapY},{x:entryXpt,y:b.top}];
+  }
+  if(idA==='procreg'&&idB==='pronto'){
+    // Shares Pronto's top edge with Plant Tracker -> Pronto (offset -15
+    // there) — offset the other way.
+    var down2pp=b.cy>=a.cy,midYpp=transPxY(29),entryXpp=b.cx+15;
+    return [{x:a.cx,y:down2pp?a.bottom:a.top},{x:a.cx,y:midYpp},{x:entryXpp,y:midYpp},{x:entryXpp,y:down2pp?b.top:b.bottom}];
   }
   if(idA==='caaps'&&idB==='pronto'){
     // Three connectors converge on Pronto from below (CAAPS, Invoice
     // Validation, Forecasting) — give each a distinct entry point along
     // Pronto's bottom edge instead of all three funnelling through its
     // centre, where they'd sit exactly on top of one another.
-    var midYc=(a.cy+b.cy)/2,entryXc=b.cx-18;
+    var midYc=transPxY(40),entryXc=b.cx-18;
     return [{x:a.cx,y:a.top},{x:a.cx,y:midYc},{x:entryXc,y:midYc},{x:entryXc,y:b.bottom}];
   }
   if(idA==='forecasting'&&idB==='pronto'){
-    var midYf=(a.cy+b.cy)/2,entryXf=b.cx+18;
+    var midYf=transPxY(46),entryXf=b.cx+18;
     return [{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
   }
   if(idA==='dailydiary'&&idB==='costtracker'){
@@ -2186,17 +2217,18 @@ function transComputePts(idA,idB){
       // With-Atlas state: Daily Diary -> Productivity Analysis, same row.
       return [{x:a.right,y:a.cy},{x:b.left,y:b.cy}];
     }
-    // Before state: shares its crossing row with Forecasting -> Pronto
-    // (both run between x:70-86 at the same halfway height) — cross at
-    // a different height and offset both ends off-centre.
-    var down2d=b.cy>=a.cy,midYd=a.cy+(b.cy-a.cy)*0.32;
-    var exitXd=a.cx+14,entryXd=b.cx+14;
+    // Before state: fixed crossing lane, distinct from the other pairs
+    // also crossing between this row and the one below. Exits Daily
+    // Diary's bottom edge at +28 rather than +14, since Plant Tracker ->
+    // Daily Diary already enters that same edge at +14.
+    var down2d=b.cy>=a.cy,midYd=transPxY(52);
+    var exitXd=a.cx+28,entryXd=b.cx+14;
     return [{x:exitXd,y:down2d?a.bottom:a.top},{x:exitXd,y:midYd},{x:entryXd,y:midYd},{x:entryXd,y:down2d?b.top:b.bottom}];
   }
   if(idA==='dailydiary'&&idB==='forecasting'){
     // Shares Daily Diary's top edge with Procurement Register -> Daily
     // Diary (offset -14 there) — offset the other way.
-    var down2df=b.cy>=a.cy,midYdf=(a.cy+b.cy)/2,exitXdf=a.cx+14;
+    var down2df=b.cy>=a.cy,midYdf=transPxY(28),exitXdf=a.cx+14;
     return [{x:exitXdf,y:down2df?a.bottom:a.top},{x:exitXdf,y:midYdf},{x:b.cx,y:midYdf},{x:b.cx,y:down2df?b.top:b.bottom}];
   }
   if(idA==='costtracker'&&idB==='forecasting'){
@@ -2209,13 +2241,13 @@ function transComputePts(idA,idB){
   if(idA==='procreg'&&idB==='invoiceval'){
     // Shares Procurement's bottom edge with Procurement -> Daily Diary
     // (offset +14 there) — offset the other way.
-    var down2i=b.cy>=a.cy,midYi=(a.cy+b.cy)/2,exitXi=a.cx-14;
+    var down2i=b.cy>=a.cy,midYi=transPxY(24),exitXi=a.cx-14;
     return [{x:exitXi,y:down2i?a.bottom:a.top},{x:exitXi,y:midYi},{x:b.cx,y:midYi},{x:b.cx,y:down2i?b.top:b.bottom}];
   }
   if(idA==='connx'&&idB==='dailydiary'){
     // Shares Daily Diary's bottom edge with Plant Tracker -> Daily
     // Diary (offset +14 there) — offset the other way.
-    var down2c=b.cy>=a.cy,midYcx=(a.cy+b.cy)/2,entryXcx=b.cx-14;
+    var down2c=b.cy>=a.cy,midYcx=transPxY(50),entryXcx=b.cx-14;
     return [{x:a.cx,y:down2c?a.bottom:a.top},{x:a.cx,y:midYcx},{x:entryXcx,y:midYcx},{x:entryXcx,y:down2c?b.top:b.bottom}];
   }
   return transElbowPts(a,b,idA+'|'+idB);
