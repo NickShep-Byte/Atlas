@@ -1963,8 +1963,8 @@ function lineStop(){
 // (today's tools converging on Pronto through controlled/uncontrolled
 // hand-offs). Each tool is absorbed one by one; once the canvas is
 // clear, the with-Atlas map's own nodes and arrows appear as one clean
-// unit, with Pronto/MicrOpay sliding to the two positions they keep
-// talking to Atlas from. Connector paths are computed from each card's
+// unit, with Pronto sliding to the one position it keeps talking to
+// Atlas from. Connector paths are computed from each card's
 // real measured position (getBoundingClientRect), so arrows are always
 // edge-anchored and never distorted, the same technique the ecosystem
 // diagram on the Features slide already uses.
@@ -1987,8 +1987,7 @@ var TRANS_CARD_DATA={
  caaps:{label:'CAAPS',fam:'pink',x:38,y:62},
  costtracker:{label:'Cost Tracker',fam:'green',x:70,y:62},
  forecasting:{label:'Forecasting',fam:'green',x:86,y:62},
- planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88},
- simpro:{label:'Simpro',fam:'green',x:86,y:10}
+ planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88}
 };
 var TRANS_GROUPS=[
  {primary:'procreg',secondaries:['rfq','f111','reqappr'],afterLabel:'Procurement Register',afterX:20,afterY:16},
@@ -1996,22 +1995,20 @@ var TRANS_GROUPS=[
  {primary:'dailydiary',secondaries:['docket'],afterLabel:'Daily Diary',afterX:30,afterY:40},
  {primary:'invoiceval',secondaries:['caaps'],afterLabel:'Invoice Validation & Accruals',afterX:12,afterY:40},
  {primary:'costtracker',secondaries:['forecasting'],afterLabel:'CTC Forecasting',afterX:42,afterY:16},
- {primary:'planttracker',secondaries:[],afterLabel:'Resource Scheduler',afterX:38,afterY:62},
- {retire:'simpro'}
+ {primary:'planttracker',secondaries:[],afterLabel:'Resource Scheduler',afterX:38,afterY:62}
 ];
 // Productivity Analysis has no today-tool equivalent — a genuinely new
 // capability, so it just fades in fresh once everything else has landed.
 var TRANS_BONUS_NODE={id:'productivity',label:'Productivity Analysis',fam:'atlas',x:48,y:40};
-// Pronto and MicrOpay exist in both states, just in different spots —
-// they slide from their today position to their with-Atlas position once
-// everything else has been absorbed.
+// Pronto exists in both states, just in a different spot — it slides
+// from its today position to its with-Atlas position once everything
+// else has been absorbed.
 var TRANS_FIXED=[
- {id:'micropay',label:'MicrOpay',fam:'blue',before:{x:70,y:10},after:{x:70,y:88}},
  {id:'pronto',label:'Pronto',fam:'purple',before:{x:54,y:36},after:{x:78,y:44}}
 ];
 var TRANS_LINKS=[
  ['rfq','procreg',false],['procreg','f111',false],['f111','reqappr',false],
- ['reqappr','pronto',false],['procreg','pronto',true],['connx','micropay',false],
+ ['reqappr','pronto',false],['procreg','pronto',true],
  ['docket','costtracker',false],['dailydiary','costtracker',false],
  ['costtracker','caaps',false],['costtracker','forecasting',false],
  ['caaps','pronto',false],['invoiceval','pronto',false],
@@ -2041,7 +2038,7 @@ var transState={};
 function transResetState(){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){transState[id]='today';});
   transState.productivity='gone';
-  transState.pronto='today';transState.micropay='today';
+  transState.pronto='today';
 }
 transResetState();
 function transCard(pos){
@@ -2123,11 +2120,34 @@ function transLine(idA,idB,warn,cls,skipFade){
     var midYf=(a.cy+b.cy)/2,entryXf=b.cx+18;
     pts=[{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
   } else if(idA==='dailydiary'&&idB==='costtracker'){
-    // Shares its crossing row with Forecasting -> Pronto (both run
-    // between x:70-86 at the same halfway height) — cross higher so
-    // the two don't trace the same line.
-    var midYd=a.cy+(b.cy-a.cy)*0.32;
-    pts=[{x:a.cx,y:a.bottom},{x:a.cx,y:midYd},{x:b.cx,y:midYd},{x:b.cx,y:b.top}];
+    // Before state, this shares its crossing row with Forecasting ->
+    // Pronto (both run between x:70-86 at the same halfway height); in
+    // the with-Atlas state, Daily Diary's top edge is also shared with
+    // Procurement Register -> Daily Diary. Cross at a different height
+    // and offset both ends off-centre so neither case coincides.
+    var down2d=b.cy>=a.cy,midYd=a.cy+(b.cy-a.cy)*0.32;
+    var exitXd=a.cx+14,entryXd=b.cx+14;
+    pts=[{x:exitXd,y:down2d?a.bottom:a.top},{x:exitXd,y:midYd},{x:entryXd,y:midYd},{x:entryXd,y:down2d?b.top:b.bottom}];
+  } else if(idA==='procreg'&&idB==='dailydiary'){
+    // Procurement Register's bottom edge is shared with Invoice
+    // Validation -> Procurement Register (offset -14 there), and Daily
+    // Diary's top edge is shared with Daily Diary -> CTC Forecasting
+    // (offset +14 there) — offset both ends the other way.
+    var down2p=b.cy>=a.cy,midYp=(a.cy+b.cy)/2,exitXp=a.cx+14,entryXp=b.cx-14;
+    pts=[{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
+  } else if(idA==='invoiceval'&&idB==='procreg'){
+    // Shares Procurement Register's bottom edge with Procurement
+    // Register -> Daily Diary (offset +14 there) — offset the other way.
+    var down2i=b.cy>=a.cy,midYi=(a.cy+b.cy)/2,entryXi=b.cx-14;
+    pts=[{x:a.cx,y:down2i?a.bottom:a.top},{x:a.cx,y:midYi},{x:entryXi,y:midYi},{x:entryXi,y:down2i?b.top:b.bottom}];
+  } else if(idA==='connx'&&idB==='dailydiary'){
+    // Shares Daily Diary's bottom edge with Plant Tracker -> Daily
+    // Diary (offset +14 there) — offset the other way.
+    var down2c=b.cy>=a.cy,midYcx=(a.cy+b.cy)/2,entryXcx=b.cx-14;
+    pts=[{x:a.cx,y:down2c?a.bottom:a.top},{x:a.cx,y:midYcx},{x:entryXcx,y:midYcx},{x:entryXcx,y:down2c?b.top:b.bottom}];
+  } else if(idA==='planttracker'&&idB==='dailydiary'){
+    var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
+    pts=[{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
   } else {
     pts=transElbowPts(a,b);
   }
@@ -2197,16 +2217,14 @@ function transRelinkAll(live){
     }
   });
   var box=transFitBox();
-  if(box&&transState.micropay==='atlas'&&transState.pronto==='atlas'){
-    var micro=transRect('micropay'),pron=transRect('pronto');
-    if(micro){
-      var anchor1={left:box.left+40,right:box.left+40,top:box.bottom,bottom:box.bottom,cx:box.left+40,cy:box.bottom};
-      transDrawPts(transElbowPts(anchor1,micro),false,'afterLink',live);
-    }
+  if(box&&transState.pronto==='atlas'){
+    var pron=transRect('pronto');
     if(pron){
-      // Straight line into Pronto's own facing edge, ignoring the box's
-      // overall centre so it doesn't dog-leg for a few px of misalignment.
-      transDrawPts([{x:box.right,y:pron.cy},{x:pron.left,y:pron.cy}],false,'afterLink',live);
+      // Exit from the box's bottom-right corner — a guaranteed-clear
+      // zone below every node — rather than at Pronto's own height,
+      // which happened to graze Productivity Analysis's row.
+      var anchor2={left:box.right-30,right:box.right-30,top:box.bottom,bottom:box.bottom,cx:box.right-30,cy:box.bottom};
+      transDrawPts(transElbowPts(anchor2,pron),false,'afterLink',live);
     }
   }
 }
@@ -2237,18 +2255,6 @@ function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
 function transRunGroup(gi){
   if(!trans.running)return;
   var g=TRANS_GROUPS[gi];
-  if(g.retire){
-    var rEl=transCanvasEl.querySelector('.tCard[data-id="'+g.retire+'"]');
-    ltTrans(function(){rEl.classList.add('active');},0);
-    ltTrans(function(){
-      rEl.classList.remove('active');
-      transState[g.retire]='gone';
-      rEl.classList.add('retired');
-      transRelinkAll();
-    },650);
-    ltTrans(function(){transNextGroup(gi);},1300);
-    return;
-  }
   var secs=g.secondaries;
   var primPos=TRANS_CARD_DATA[g.primary];
   var secEls=secs.map(function(sid){return transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');});
@@ -2290,9 +2296,9 @@ function transRunGroup(gi){
 }
 function transNextGroup(gi){
   if(gi+1<TRANS_GROUPS.length){transRunGroup(gi+1);return;}
-  // everything's landed — move Pronto/MicrOpay across to their with-Atlas
-  // spots first (clearing the area near Productivity Analysis's fixed
-  // spot), then reveal the bonus node, then settle.
+  // everything's landed — move Pronto across to its with-Atlas spot
+  // first (clearing the area near Productivity Analysis's fixed spot),
+  // then reveal the bonus node, then settle.
   ltTrans(function(){
     TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
   },300);
@@ -2300,10 +2306,10 @@ function transNextGroup(gi){
     var el=transCanvasEl.querySelector('.tCard.hidden[data-id="productivity"]');
     if(el)el.classList.add('revealed');
     transState.productivity='atlas';
-    transState.pronto='atlas';transState.micropay='atlas';
+    transState.pronto='atlas';
     transRelinkAll();
     transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
+    transNoteEl.textContent='One controlled hand-off to Pronto.';
     transNoteEl.classList.add('clean');
   },1150);
   ltTrans(function(){
@@ -2314,12 +2320,6 @@ function transNextGroup(gi){
 function transStart(){
   if(RM){
     TRANS_GROUPS.forEach(function(g){
-      if(g.retire){
-        var rEl=transCanvasEl.querySelector('.tCard[data-id="'+g.retire+'"]');
-        rEl.classList.add('retired');
-        transState[g.retire]='gone';
-        return;
-      }
       g.secondaries.forEach(function(sid){
         var sEl=transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');
         var primPos=TRANS_CARD_DATA[g.primary];
@@ -2338,10 +2338,10 @@ function transStart(){
     if(prodEl)prodEl.classList.add('revealed');
     transState.productivity='atlas';
     TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-    transState.pronto='atlas';transState.micropay='atlas';
+    transState.pronto='atlas';
     transRelinkAll();
     transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One controlled hand-off to Pronto and MicrOpay.';
+    transNoteEl.textContent='One controlled hand-off to Pronto.';
     transNoteEl.classList.add('clean');
     return;
   }
