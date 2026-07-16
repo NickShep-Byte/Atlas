@@ -298,6 +298,15 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .transCanvas.settled .atlasBoxOutline{border-style:solid;border-color:var(--teal);background:rgba(var(--sec-rgb),.1);}
 .atlasBoxOutline span{position:absolute;top:-.9em;left:1.2em;padding:0 .5em;background:var(--bg);
   font-size:clamp(9.5px,.8vw,12px);font-weight:800;letter-spacing:.06em;color:var(--soft);}
+.transPlayPause{
+  position:absolute;top:6px;right:6px;z-index:5;
+  width:32px;height:32px;border-radius:50%;border:1px solid rgba(var(--brd-rgb),.4);
+  background:rgba(var(--srf-rgb),.08);color:var(--txt);font-size:11px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s ease,transform .25s ease;
+}
+.transPlayPause:hover{background:rgba(var(--acc2-rgb),.25);transform:translateY(-2px);}
+.transPlayPause:focus-visible{outline:2px solid var(--blue-bright);outline-offset:2px;}
 .transFoot{display:flex;flex-direction:column;align-items:center;gap:1vh;margin-top:1vh;}
 .transNote{font-size:clamp(9.5px,.8vw,12px);color:#E0664C;font-weight:600;text-align:center;font-style:italic;min-height:1.6em;transition:color .4s ease;}
 .transNote.clean{color:var(--teal);}
@@ -925,6 +934,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
         </defs>
       </svg>
       <div class="atlasBoxOutline" id="atlasBoxOutline"><span>Atlas &middot; Shared Database</span></div>
+      <button class="transPlayPause" id="transPlayPause" type="button" aria-label="Pause animation" title="Pause animation">&#10074;&#10074;</button>
     </div>
     <div class="transFoot rv d2">
       <div class="transNote" id="transNote">Multiple uncontrolled hand-offs between systems.</div>
@@ -2042,7 +2052,8 @@ var transCanvasEl=document.getElementById('transCanvas');
 var transLinksEl=document.getElementById('transLinks');
 var atlasBoxOutlineEl=document.getElementById('atlasBoxOutline');
 var transNoteEl=document.getElementById('transNote');
-var trans={running:false,timers:[],raf:null};
+var trans={running:false,paused:false,timers:[],raf:null};
+var transPlayPauseEl=document.getElementById('transPlayPause');
 // Per-card lifecycle state, driving which links are currently valid:
 // 'today'   — still at its original spot, before-links apply
 // 'merging' — moving toward its primary's spot, no links apply
@@ -2428,7 +2439,19 @@ function transReset(){
   transNoteEl.classList.remove('clean');
   transRelinkAll();
 }
-function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
+// Timers are tracked as {fn,firesAt,id} rather than bare setTimeout ids
+// so a pause can compute exactly how much time was left on each one and
+// resume with that same remaining delay instead of restarting the whole
+// step or skipping ahead.
+function ltTrans(fn,ms){
+  var timer={fn:fn,firesAt:Date.now()+ms};
+  timer.id=setTimeout(function(){
+    var i=trans.timers.indexOf(timer);
+    if(i>-1)trans.timers.splice(i,1);
+    fn();
+  },ms);
+  trans.timers.push(timer);
+}
 // Runs one group at a time: every card in the group — the primary AND
 // all of its secondaries — is selected together, then merges, moves and
 // (for the primary) renames/restyles into the final Atlas position all
@@ -2533,9 +2556,52 @@ function transLiveTick(){
 }
 function transStop(){
   trans.running=false;
-  trans.timers.forEach(clearTimeout);
+  trans.paused=false;
+  trans.timers.forEach(function(t){clearTimeout(t.id);});
   trans.timers=[];
   if(trans.raf){cancelAnimationFrame(trans.raf);trans.raf=null;}
+  transSetPlayPauseUI(false);
+}
+// Pausing clears every pending timer but remembers how much time was
+// left on each (firesAt - now), and cancels the per-frame live-follow
+// loop. Resuming reschedules each one with exactly that remaining delay
+// and restarts the loop, so the sequence picks up from precisely where
+// it left off rather than skipping ahead or restarting a step. Whatever
+// CSS transition was already in flight when paused just finishes
+// playing out (at most ~0.8s) rather than being pinned mid-pixel.
+function transSetPaused(p){
+  if(!trans.running||trans.paused===p)return;
+  trans.paused=p;
+  if(p){
+    var now=Date.now();
+    trans.timers.forEach(function(t){clearTimeout(t.id);t.remaining=t.firesAt-now;});
+    if(trans.raf){cancelAnimationFrame(trans.raf);trans.raf=null;}
+  } else {
+    trans.timers.forEach(function(t){
+      var fn=t.fn;
+      t.id=setTimeout(function(){
+        var i=trans.timers.indexOf(t);
+        if(i>-1)trans.timers.splice(i,1);
+        fn();
+      },Math.max(0,t.remaining||0));
+    });
+    trans.raf=requestAnimationFrame(transLiveTick);
+  }
+  transSetPlayPauseUI(p);
+}
+function transSetPlayPauseUI(paused){
+  if(!transPlayPauseEl)return;
+  transPlayPauseEl.innerHTML=paused?'&#9654;':'&#10074;&#10074;';
+  var label=paused?'Play animation':'Pause animation';
+  transPlayPauseEl.setAttribute('aria-label',label);
+  transPlayPauseEl.title=label;
+}
+if(transPlayPauseEl){
+  if(RM){
+    transPlayPauseEl.style.display='none';
+  } else {
+    transPlayPauseEl.addEventListener('click',function(){transSetPaused(!trans.paused);});
+  }
 }
 transBuild();
 
