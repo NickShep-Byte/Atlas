@@ -1982,23 +1982,23 @@ var TRANS_CARD_DATA={
  dailydiary:{label:'Daily Diary',fam:'green',x:86,y:36},
  docket:{label:'Docket / Delivery Register',fam:'green',dashed:true,x:70,y:36},
  invoiceval:{label:'Invoice Validation / Approval',fam:'orange',x:54,y:62},
- caaps:{label:'CAAPS',fam:'pink',x:38,y:62},
+ caaps:{label:'CAAPS',fam:'pink',x:46,y:74},
  costtracker:{label:'Cost Tracker',fam:'green',x:70,y:62},
  forecasting:{label:'Forecasting',fam:'green',x:86,y:62},
  planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88}
 };
 // Order matches the requested merge/move sequence: Plant Tracker,
-// Procurement, CAAPS + Invoice Validation, Forecasting, Daily Diary,
-// then Cost Tracker (which now becomes Productivity Analysis — the
-// bonus node with no today-tool equivalent is gone; Cost Tracker
-// itself carries that role). Docket has no merge partner any more, so
-// it retires like Simpro used to, rather than merging into Daily Diary.
+// Procurement, CAAPS + Invoice Validation + Docket, Forecasting, Daily
+// Diary, then Cost Tracker (which now becomes Productivity Analysis —
+// the bonus node with no today-tool equivalent is gone; Cost Tracker
+// itself carries that role). Docket has no dedicated Atlas module of
+// its own, so it's absorbed into Invoice Validation & Accruals rather
+// than retiring on its own.
 var TRANS_GROUPS=[
  {primary:'planttracker',secondaries:[],afterLabel:'Resource Scheduler',afterX:38,afterY:62},
  {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:12,afterY:62},
  {primary:'procreg',secondaries:['rfq','f111','reqappr'],afterLabel:'Procurement Portal',afterX:20,afterY:16},
- {primary:'invoiceval',secondaries:['caaps'],afterLabel:'Invoice Validation & Accruals',afterX:12,afterY:40},
- {retire:'docket'},
+ {primary:'invoiceval',secondaries:['caaps','docket'],afterLabel:'Invoice Validation & Accruals',afterX:12,afterY:40},
  {primary:'forecasting',secondaries:[],afterLabel:'CTC Forecasting',afterX:42,afterY:16},
  {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:30,afterY:40},
  {primary:'costtracker',secondaries:[],afterLabel:'Productivity Analysis',afterX:48,afterY:40}
@@ -2023,10 +2023,10 @@ var TRANS_LINKS=[
 // 'costtracker' for the forecasting relationship now target
 // 'forecasting' instead.
 var TRANS_AFTER_LINKS=[
- ['invoiceval','procreg',false],
+ ['procreg','invoiceval',false],
  ['procreg','forecasting',false],
  ['procreg','dailydiary',false],
- ['invoiceval','dailydiary',false],
+ ['dailydiary','invoiceval',false],
  ['dailydiary','forecasting',false],
  ['dailydiary','costtracker',false],
  ['connx','dailydiary',false],['planttracker','dailydiary',false],
@@ -2037,7 +2037,7 @@ var transCanvasEl=document.getElementById('transCanvas');
 var transLinksEl=document.getElementById('transLinks');
 var atlasBoxOutlineEl=document.getElementById('atlasBoxOutline');
 var transNoteEl=document.getElementById('transNote');
-var trans={running:false,timers:[]};
+var trans={running:false,timers:[],raf:null};
 // Per-card lifecycle state, driving which links are currently valid:
 // 'today'   — still at its original spot, before-links apply
 // 'merging' — moving toward its primary's spot, no links apply
@@ -2098,6 +2098,13 @@ function pathD(points){return 'M'+points.map(function(p){return p.x+','+p.y;}).j
 function transComputePts(idA,idB){
   var a=transRect(idA),b=transRect(idB);
   if(!a||!b)return null;
+  if(transState[idA]==='merging'||transState[idB]==='merging'){
+    // A card mid-move doesn't have a stable position for the hand-tuned
+    // special-case routes below (which assume a settled layout) — fall
+    // back to the generic live elbow so the link keeps tracking it
+    // smoothly instead of jumping between routing modes.
+    return transElbowPts(a,b);
+  }
   if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
     // Invoice Validation sits directly between these two on the same
     // row, so dip below it instead of cutting straight through.
@@ -2151,11 +2158,11 @@ function transComputePts(idA,idB){
     var down2p=b.cy>=a.cy,midYp=(a.cy+b.cy)/2,exitXp=a.cx+14,entryXp=b.cx-14;
     return [{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
   }
-  if(idA==='invoiceval'&&idB==='procreg'){
+  if(idA==='procreg'&&idB==='invoiceval'){
     // Shares Procurement's bottom edge with Procurement -> Daily Diary
     // (offset +14 there) — offset the other way.
-    var down2i=b.cy>=a.cy,midYi=(a.cy+b.cy)/2,entryXi=b.cx-14;
-    return [{x:a.cx,y:down2i?a.bottom:a.top},{x:a.cx,y:midYi},{x:entryXi,y:midYi},{x:entryXi,y:down2i?b.top:b.bottom}];
+    var down2i=b.cy>=a.cy,midYi=(a.cy+b.cy)/2,exitXi=a.cx-14;
+    return [{x:exitXi,y:down2i?a.bottom:a.top},{x:exitXi,y:midYi},{x:b.cx,y:midYi},{x:b.cx,y:down2i?b.top:b.bottom}];
   }
   if(idA==='connx'&&idB==='dailydiary'){
     // Shares Daily Diary's bottom edge with Plant Tracker -> Daily
@@ -2246,12 +2253,13 @@ function transFitBox(){
   transCanvasEl.classList.add('building');
   return {left:left,top:top,right:right,bottom:bottom,cx:(left+right)/2,cy:(top+bottom)/2};
 }
-// A card counts as linkable only while it's genuinely still at its
-// today position. The instant it starts moving (state 'merging') its
-// links are hidden — trying to keep a link geometrically attached to a
-// card mid-flight caused lines to sweep across other cards and pile up
-// on top of each other, which is worse than a clean, immediate cut.
-function transStillLinkable(id){return transState[id]==='today';}
+// A card counts as linkable while it's at its today position AND while
+// it's mid-merge/move/rename — its original links stay attached and
+// visibly track it (transComputePts falls back to the live elbow route
+// while 'merging') instead of vanishing the instant it starts moving.
+// They only disappear once the card has actually landed as 'gone' (fully
+// absorbed) or become a distinct new 'atlas' identity.
+function transStillLinkable(id){return transState[id]==='today'||transState[id]==='merging';}
 // Diffs the set of connectors that should be visible right now against
 // what's already on screen: links that still apply get their geometry
 // mutated in place (transUpsertLink), links that stop applying fade out
@@ -2274,21 +2282,24 @@ function transRelinkAll(){
     transUpsertLink(link[0],link[1],link[2]);
   });
   Object.keys(transPathRegistry).forEach(function(key){
-    if(key==='EXTERNAL_PRONTO')return;
+    if(key==='EXTERNAL_PRONTO_OUT'||key==='EXTERNAL_PRONTO_IN')return;
     if(!wanted[key])transRemovePath(key);
   });
   var box=transFitBox();
   if(box&&transState.pronto==='atlas'){
     var pron=transRect('pronto');
     if(pron){
-      // Exit from the box's bottom-right corner — a guaranteed-clear
-      // zone below every node — rather than at Pronto's own height,
-      // which happened to graze Productivity Analysis's row.
-      var anchor2={left:box.right-30,right:box.right-30,top:box.bottom,bottom:box.bottom,cx:box.right-30,cy:box.bottom};
-      transUpsertPath('EXTERNAL_PRONTO',transElbowPts(anchor2,pron),false,'afterLink');
+      // Corner-anchor both legs (bottom for outbound, top for inbound)
+      // rather than at Pronto's own mid-height, which would graze
+      // Productivity Analysis / CTC Forecasting's row.
+      var anchorOut={left:box.right-30,right:box.right-30,top:box.bottom,bottom:box.bottom,cx:box.right-30,cy:box.bottom};
+      var anchorIn={left:box.right-60,right:box.right-60,top:box.top,bottom:box.top,cx:box.right-60,cy:box.top};
+      transUpsertPath('EXTERNAL_PRONTO_OUT',transElbowPts(anchorOut,pron),false,'afterLink');
+      transUpsertPath('EXTERNAL_PRONTO_IN',transElbowPts(pron,anchorIn),false,'afterLink');
     }
   } else {
-    transRemovePath('EXTERNAL_PRONTO');
+    transRemovePath('EXTERNAL_PRONTO_OUT');
+    transRemovePath('EXTERNAL_PRONTO_IN');
   }
 }
 function transReset(){
@@ -2307,66 +2318,47 @@ function transReset(){
   transRelinkAll();
 }
 function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
-// Runs one group at a time: every secondary in the group is selected
-// (highlighted) together, slides as one onto the primary's current
-// (still-today) spot together, and fades together — reading as the
-// whole set merging at once rather than one after another. Once
-// they're merged, the primary itself highlights, relabels and carries
-// the merged result into its Atlas position, at which point the box
-// regrows and any newly-valid links appear.
+// Runs one group at a time: every card in the group — the primary AND
+// all of its secondaries — is selected together, then merges, moves and
+// (for the primary) renames/restyles into the final Atlas position all
+// in the same concurrent motion, landing together rather than the
+// secondaries arriving first and the primary following on afterwards.
+// Their original links stay attached and tracking throughout (see
+// transStillLinkable/transLiveTick) instead of cutting out the instant
+// they start moving.
 function transRunGroup(gi){
   if(!trans.running)return;
   var g=TRANS_GROUPS[gi];
-  if(g.retire){
-    var rEl=transCanvasEl.querySelector('.tCard[data-id="'+g.retire+'"]');
-    ltTrans(function(){rEl.classList.add('active');},0);
-    ltTrans(function(){
-      rEl.classList.remove('active');
-      transState[g.retire]='gone';
-      rEl.classList.add('retired');
-      transRelinkAll();
-    },650);
-    ltTrans(function(){transNextGroup(gi);},1300);
-    return;
-  }
   var secs=g.secondaries;
-  var primPos=TRANS_CARD_DATA[g.primary];
   var secEls=secs.map(function(sid){return transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');});
-  if(secs.length){
-    secEls.forEach(function(el){ltTrans(function(){el.classList.add('active');},0);});
-    ltTrans(function(){
-      secs.forEach(function(sid,i){
-        secEls[i].classList.remove('active');
-        transState[sid]='merging';
-        secEls[i].style.left=primPos.x+'%';secEls[i].style.top=primPos.y+'%';
-      });
-      transRelinkAll();
-    },650);
-    ltTrans(function(){
-      secs.forEach(function(sid,i){
-        secEls[i].classList.add('consumed');
-        transState[sid]='gone';
-      });
-      transRelinkAll();
-    },1500);
-  }
-  var pDelay=secs.length?1650:0;
   var pEl=transCanvasEl.querySelector('.tCard[data-id="'+g.primary+'"]');
-  ltTrans(function(){pEl.classList.add('active');},pDelay);
+  ltTrans(function(){
+    pEl.classList.add('active');
+    secEls.forEach(function(el){el.classList.add('active');});
+  },0);
   ltTrans(function(){
     pEl.classList.remove('active');
-    transState[g.primary]='merging';
     pEl.classList.remove('fam-'+TRANS_CARD_DATA[g.primary].fam,'branch','dashed');
     pEl.classList.add('fam-atlas');
     pEl.textContent=g.afterLabel;
     pEl.style.left=g.afterX+'%';pEl.style.top=g.afterY+'%';
+    transState[g.primary]='merging';
+    secs.forEach(function(sid,i){
+      secEls[i].classList.remove('active');
+      secEls[i].style.left=g.afterX+'%';secEls[i].style.top=g.afterY+'%';
+      transState[sid]='merging';
+    });
     transRelinkAll();
-  },pDelay+650);
+  },650);
   ltTrans(function(){
+    secs.forEach(function(sid,i){
+      secEls[i].classList.add('consumed');
+      transState[sid]='gone';
+    });
     transState[g.primary]='atlas';
     transRelinkAll();
-  },pDelay+1500);
-  ltTrans(function(){transNextGroup(gi);},pDelay+1750);
+  },1500);
+  ltTrans(function(){transNextGroup(gi);},1750);
 }
 function transNextGroup(gi){
   if(gi+1<TRANS_GROUPS.length){transRunGroup(gi+1);return;}
@@ -2390,12 +2382,6 @@ function transNextGroup(gi){
 function transStart(){
   if(RM){
     TRANS_GROUPS.forEach(function(g){
-      if(g.retire){
-        var rEl=transCanvasEl.querySelector('.tCard[data-id="'+g.retire+'"]');
-        rEl.classList.add('retired');
-        transState[g.retire]='gone';
-        return;
-      }
       g.secondaries.forEach(function(sid){
         var sEl=transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');
         var primPos=TRANS_CARD_DATA[g.primary];
@@ -2421,11 +2407,23 @@ function transStart(){
   trans.running=true;
   transReset();
   transRunGroup(0);
+  trans.raf=requestAnimationFrame(transLiveTick);
+}
+// While any card is mid-merge, keep re-diffing the links every frame so
+// the ones still attached to it (transStillLinkable) visibly track its
+// live position as it slides, rather than only updating at the fixed
+// timer checkpoints above.
+function transLiveTick(){
+  if(!trans.running){trans.raf=null;return;}
+  var anyMerging=Object.keys(transState).some(function(id){return transState[id]==='merging';});
+  if(anyMerging)transRelinkAll();
+  trans.raf=requestAnimationFrame(transLiveTick);
 }
 function transStop(){
   trans.running=false;
   trans.timers.forEach(clearTimeout);
   trans.timers=[];
+  if(trans.raf){cancelAnimationFrame(trans.raf);trans.raf=null;}
 }
 transBuild();
 
