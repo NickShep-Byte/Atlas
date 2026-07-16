@@ -2098,11 +2098,15 @@ function pathD(points){return 'M'+points.map(function(p){return p.x+','+p.y;}).j
 function transComputePts(idA,idB){
   var a=transRect(idA),b=transRect(idB);
   if(!a||!b)return null;
-  if(transState[idA]==='merging'||transState[idB]==='merging'){
-    // A card mid-move doesn't have a stable position for the hand-tuned
-    // special-case routes below (which assume a settled layout) — fall
-    // back to the generic live elbow so the link keeps tracking it
-    // smoothly instead of jumping between routing modes.
+  var sA=transState[idA],sB=transState[idB];
+  var pureBefore=(sA==='today'||sA==='merging')&&(sB==='today'||sB==='merging');
+  var pureAfter=sA==='atlas'&&sB==='atlas';
+  if(!pureBefore&&!pureAfter){
+    // One side has already landed in Atlas while the other hasn't moved
+    // yet (or either is mid-flight) — the hand-tuned special-case routes
+    // below assume a settled before-only or after-only layout, so fall
+    // back to the generic live elbow, which stays correct no matter how
+    // far apart the two ends currently are.
     return transElbowPts(a,b);
   }
   if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
@@ -2273,7 +2277,15 @@ function transRelinkAll(){
     }
   });
   TRANS_AFTER_LINKS.forEach(function(link){
-    if(transState[link[0]]==='atlas'&&transState[link[1]]==='atlas'){
+    var sA=transState[link[0]],sB=transState[link[1]];
+    // Wanted as soon as EITHER end has actually landed in Atlas, as long
+    // as neither end has been fully absorbed elsewhere — otherwise a
+    // link whose id pair happens to also exist as a before-link (e.g.
+    // dailydiary-costtracker, where both cards keep their own identity
+    // throughout) would get removed the instant its first side lands
+    // and not reappear until its second side lands too, when it never
+    // actually stopped applying in between.
+    if(sA!=='gone'&&sB!=='gone'&&(sA==='atlas'||sB==='atlas')){
       wanted[link[0]+'|'+link[1]]=link;
     }
   });
@@ -2286,7 +2298,16 @@ function transRelinkAll(){
     if(!wanted[key])transRemovePath(key);
   });
   var box=transFitBox();
-  if(box&&transState.pronto==='atlas'){
+  // The unified Atlas<->Pronto channel exists from the moment the box
+  // itself exists (the first tool lands), not just once Pronto makes its
+  // own final move — otherwise every individual before-link into Pronto
+  // (caaps-pronto, invoiceval-pronto, etc.) disappears as its card is
+  // absorbed while this replacement doesn't show up until the very end,
+  // reading as a hard cut followed by a disconnected reappearance. It
+  // tracks Pronto's live position throughout, so it's already in place,
+  // still pointed at Pronto's today spot, well before Pronto itself
+  // slides across to its with-Atlas spot.
+  if(box){
     var pron=transRect('pronto');
     if(pron){
       // Corner-anchor both legs (bottom for outbound, top for inbound)
@@ -2365,6 +2386,7 @@ function transNextGroup(gi){
   // everything's landed — move Pronto across to its with-Atlas spot,
   // then settle.
   ltTrans(function(){
+    transState.pronto='merging';
     TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
   },300);
   ltTrans(function(){
