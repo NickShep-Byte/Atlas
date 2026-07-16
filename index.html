@@ -263,27 +263,28 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s9 .head{text-align:center;margin-bottom:1.6vh;}
 .transCanvas{position:relative;width:min(1500px,96vw);height:58vh;margin:0 auto;}
 .transLinks{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
-.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease,d .4s ease;}
+.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease;}
 .transLinks path.warn{stroke:#E0664C;stroke-width:2;}
 .transLinks path.fresh,.transLinks path.gone{opacity:0;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
   border-radius:9px;padding:.6em .4em;text-align:center;
-  font-size:clamp(8.5px,.66vw,11px);font-weight:700;line-height:1.18;color:var(--txt);
+  font-size:clamp(8.5px,.66vw,11px);font-weight:700;line-height:1.18;color:var(--navy);
   border:1.5px solid transparent;
   transition:opacity .5s var(--ease),transform .5s var(--ease),left .8s var(--ease),top .8s var(--ease),border-color .3s ease,box-shadow .3s ease;
 }
-.tCard.fam-green{background:rgba(70,190,120,.16);border-color:rgba(70,190,120,.4);}
-.tCard.fam-pink{background:rgba(230,120,140,.16);border-color:rgba(230,120,140,.4);}
-.tCard.fam-blue{background:rgba(120,170,230,.16);border-color:rgba(120,170,230,.4);}
-.tCard.fam-yellow{background:rgba(230,200,90,.18);border-color:rgba(230,200,90,.45);}
-.tCard.fam-orange{background:rgba(230,160,90,.18);border-color:rgba(230,160,90,.45);}
-.tCard.fam-purple{background:rgba(150,130,220,.18);border-color:rgba(150,130,220,.45);}
-.tCard.fam-atlas{background:rgba(var(--acc2-rgb),.16);border-color:rgba(var(--acc2-rgb),.5);}
+.tCard.fam-green{background:#E1F5E9;border-color:#46BE78;}
+.tCard.fam-pink{background:#FBE9ED;border-color:#E6788C;}
+.tCard.fam-blue{background:#E9F1FB;border-color:#78AAE6;}
+.tCard.fam-yellow{background:#FAF5E1;border-color:#E6C85A;}
+.tCard.fam-orange{background:#FAEEE1;border-color:#E6A05A;}
+.tCard.fam-purple{background:#ECE9F9;border-color:#9682DC;}
+.tCard.fam-atlas{background:#fff;border-color:var(--acc2);}
 .tCard.dashed{border-style:dashed;}
 .tCard.branch{border-color:#E0664C;border-width:2px;}
 .tCard.active{transform:translate(-50%,-50%) scale(1.16);box-shadow:0 8px 24px rgba(var(--sec-rgb),.35);border-color:var(--teal);z-index:3;}
+.tCard.mergingPrimary{z-index:6;}
 .tCard.consumed{opacity:0;transform:translate(-50%,-50%) scale(.3);pointer-events:none;}
 .tCard.retired{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(10deg);pointer-events:none;}
 .atlasBoxOutline{
@@ -2017,6 +2018,9 @@ var TRANS_LINKS=[
  ['caaps','pronto',false],['invoiceval','pronto',false],
  ['planttracker','pronto',false],['forecasting','pronto',true]
 ];
+function transHasBeforeLink(idA,idB){
+  return TRANS_LINKS.some(function(l){return l[0]===idA&&l[1]===idB;});
+}
 // With-Atlas links, referencing the same cards now relabelled/moved.
 // Forecasting carries the CTC Forecasting role and Cost Tracker
 // carries Productivity Analysis, so links that used to target
@@ -2070,11 +2074,15 @@ function transRect(id){
 }
 function transPxX(pct){return transCanvasEl.getBoundingClientRect().width*pct/100;}
 function transPxY(pct){return transCanvasEl.getBoundingClientRect().height*pct/100;}
+function transKeyHash(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
 // Manhattan-style elbow: same row/column pairs get one straight segment
 // between their facing edges; everything else exits vertically, crosses
 // at the halfway row, then enters the target vertically — a clean
-// 90-degree-bend connector every time.
-function transElbowPts(a,b){
+// 90-degree-bend connector every time. The crossing height is nudged by
+// a small deterministic amount derived from `seed` (each link's own
+// registry key) so two unrelated pairs that happen to cross at a
+// similar height never land perfectly collinear with each other.
+function transElbowPts(a,b,seed){
   var dx=b.cx-a.cx,dy=b.cy-a.cy;
   if(Math.abs(dy)<4){
     var dir=dx>=0?1:-1;
@@ -2084,7 +2092,9 @@ function transElbowPts(a,b){
     var down=dy>=0;
     return [{x:a.cx,y:down?a.bottom:a.top},{x:b.cx,y:down?b.top:b.bottom}];
   }
-  var down2=dy>=0,midY=(a.cy+b.cy)/2;
+  var down2=dy>=0;
+  var jitter=seed?(transKeyHash(seed)%7-3)*8:0;
+  var midY=(a.cy+b.cy)/2+jitter;
   return [
     {x:a.cx,y:down2?a.bottom:a.top},{x:a.cx,y:midY},
     {x:b.cx,y:midY},{x:b.cx,y:down2?b.top:b.bottom}
@@ -2107,7 +2117,7 @@ function transComputePts(idA,idB){
     // below assume a settled before-only or after-only layout, so fall
     // back to the generic live elbow, which stays correct no matter how
     // far apart the two ends currently are.
-    return transElbowPts(a,b);
+    return transElbowPts(a,b,idA+'|'+idB);
   }
   if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
     // Invoice Validation sits directly between these two on the same
@@ -2178,7 +2188,7 @@ function transComputePts(idA,idB){
     var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
     return [{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
   }
-  return transElbowPts(a,b);
+  return transElbowPts(a,b,idA+'|'+idB);
 }
 // Every connector is a persistent DOM element keyed by "idA|idB" (or a
 // fixed key for the external Pronto link). Calling upsert again just
@@ -2278,14 +2288,24 @@ function transRelinkAll(){
   });
   TRANS_AFTER_LINKS.forEach(function(link){
     var sA=transState[link[0]],sB=transState[link[1]];
-    // Wanted as soon as EITHER end has actually landed in Atlas, as long
-    // as neither end has been fully absorbed elsewhere — otherwise a
-    // link whose id pair happens to also exist as a before-link (e.g.
-    // dailydiary-costtracker, where both cards keep their own identity
-    // throughout) would get removed the instant its first side lands
-    // and not reappear until its second side lands too, when it never
-    // actually stopped applying in between.
-    if(sA!=='gone'&&sB!=='gone'&&(sA==='atlas'||sB==='atlas')){
+    if(sA==='atlas'&&sB==='atlas'){
+      // Both ends have landed — this is a genuinely new Atlas-only
+      // relationship with no before-state equivalent, so it's created
+      // once, right here, and never touched again.
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    // Exception: a pair that's ALSO a literal before-link (same id order
+    // in TRANS_LINKS, e.g. dailydiary-costtracker — neither card is ever
+    // absorbed, so the relationship is continuously real) should mutate
+    // straight through rather than being removed once its first side
+    // lands and recreated once its second side does. Every other after-
+    // link has no before-state route to speak of, so showing it early —
+    // from an already-landed card all the way out to a partner still
+    // sitting at its scattered today position — would draw a long,
+    // messy line across the whole canvas that isn't what either state
+    // actually looks like.
+    if(sA!=='gone'&&sB!=='gone'&&(sA==='atlas'||sB==='atlas')&&transHasBeforeLink(link[0],link[1])){
       wanted[link[0]+'|'+link[1]]=link;
     }
   });
@@ -2315,8 +2335,8 @@ function transRelinkAll(){
       // Productivity Analysis / CTC Forecasting's row.
       var anchorOut={left:box.right-30,right:box.right-30,top:box.bottom,bottom:box.bottom,cx:box.right-30,cy:box.bottom};
       var anchorIn={left:box.right-60,right:box.right-60,top:box.top,bottom:box.top,cx:box.right-60,cy:box.top};
-      transUpsertPath('EXTERNAL_PRONTO_OUT',transElbowPts(anchorOut,pron),false,'afterLink');
-      transUpsertPath('EXTERNAL_PRONTO_IN',transElbowPts(pron,anchorIn),false,'afterLink');
+      transUpsertPath('EXTERNAL_PRONTO_OUT',transElbowPts(anchorOut,pron,'EXTERNAL_PRONTO_OUT'),false,'afterLink');
+      transUpsertPath('EXTERNAL_PRONTO_IN',transElbowPts(pron,anchorIn,'EXTERNAL_PRONTO_IN'),false,'afterLink');
     }
   } else {
     transRemovePath('EXTERNAL_PRONTO_OUT');
@@ -2360,7 +2380,7 @@ function transRunGroup(gi){
   ltTrans(function(){
     pEl.classList.remove('active');
     pEl.classList.remove('fam-'+TRANS_CARD_DATA[g.primary].fam,'branch','dashed');
-    pEl.classList.add('fam-atlas');
+    pEl.classList.add('fam-atlas','mergingPrimary');
     pEl.textContent=g.afterLabel;
     pEl.style.left=g.afterX+'%';pEl.style.top=g.afterY+'%';
     transState[g.primary]='merging';
