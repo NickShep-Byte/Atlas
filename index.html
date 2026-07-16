@@ -263,9 +263,9 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s9 .head{text-align:center;margin-bottom:1.6vh;}
 .transCanvas{position:relative;width:min(1500px,96vw);height:58vh;margin:0 auto;}
 .transLinks{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
-.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease;}
+.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease,d .4s ease;}
 .transLinks path.warn{stroke:#E0664C;stroke-width:2;}
-.transLinks path.fresh{opacity:0;}
+.transLinks path.fresh,.transLinks path.gone{opacity:0;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -286,8 +286,6 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .tCard.active{transform:translate(-50%,-50%) scale(1.16);box-shadow:0 8px 24px rgba(var(--sec-rgb),.35);border-color:var(--teal);z-index:3;}
 .tCard.consumed{opacity:0;transform:translate(-50%,-50%) scale(.3);pointer-events:none;}
 .tCard.retired{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(10deg);pointer-events:none;}
-.tCard.hidden{opacity:0;transform:translate(-50%,-50%) scale(.4);pointer-events:none;}
-.tCard.hidden.revealed{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
 .atlasBoxOutline{
   position:absolute;border-radius:16px;z-index:0;
   border:1.5px dashed rgba(var(--acc2-rgb),.5);background:rgba(var(--sec-rgb),.05);
@@ -1989,17 +1987,22 @@ var TRANS_CARD_DATA={
  forecasting:{label:'Forecasting',fam:'green',x:86,y:62},
  planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88}
 };
+// Order matches the requested merge/move sequence: Plant Tracker,
+// Procurement, CAAPS + Invoice Validation, Forecasting, Daily Diary,
+// then Cost Tracker (which now becomes Productivity Analysis — the
+// bonus node with no today-tool equivalent is gone; Cost Tracker
+// itself carries that role). Docket has no merge partner any more, so
+// it retires like Simpro used to, rather than merging into Daily Diary.
 var TRANS_GROUPS=[
- {primary:'procreg',secondaries:['rfq','f111','reqappr'],afterLabel:'Procurement Register',afterX:20,afterY:16},
+ {primary:'planttracker',secondaries:[],afterLabel:'Resource Scheduler',afterX:38,afterY:62},
  {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:12,afterY:62},
- {primary:'dailydiary',secondaries:['docket'],afterLabel:'Daily Diary',afterX:30,afterY:40},
+ {primary:'procreg',secondaries:['rfq','f111','reqappr'],afterLabel:'Procurement Portal',afterX:20,afterY:16},
  {primary:'invoiceval',secondaries:['caaps'],afterLabel:'Invoice Validation & Accruals',afterX:12,afterY:40},
- {primary:'costtracker',secondaries:['forecasting'],afterLabel:'CTC Forecasting',afterX:42,afterY:16},
- {primary:'planttracker',secondaries:[],afterLabel:'Resource Scheduler',afterX:38,afterY:62}
+ {retire:'docket'},
+ {primary:'forecasting',secondaries:[],afterLabel:'CTC Forecasting',afterX:42,afterY:16},
+ {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:30,afterY:40},
+ {primary:'costtracker',secondaries:[],afterLabel:'Productivity Analysis',afterX:48,afterY:40}
 ];
-// Productivity Analysis has no today-tool equivalent — a genuinely new
-// capability, so it just fades in fresh once everything else has landed.
-var TRANS_BONUS_NODE={id:'productivity',label:'Productivity Analysis',fam:'atlas',x:48,y:40};
 // Pronto exists in both states, just in a different spot — it slides
 // from its today position to its with-Atlas position once everything
 // else has been absorbed.
@@ -2014,12 +2017,18 @@ var TRANS_LINKS=[
  ['caaps','pronto',false],['invoiceval','pronto',false],
  ['planttracker','pronto',false],['forecasting','pronto',true]
 ];
-// With-Atlas links, referencing the SAME cards (now relabelled/moved)
-// plus the bonus Productivity Analysis node.
+// With-Atlas links, referencing the same cards now relabelled/moved.
+// Forecasting carries the CTC Forecasting role and Cost Tracker
+// carries Productivity Analysis, so links that used to target
+// 'costtracker' for the forecasting relationship now target
+// 'forecasting' instead.
 var TRANS_AFTER_LINKS=[
- ['invoiceval','procreg',false],['procreg','costtracker',false],
- ['procreg','dailydiary',false],['invoiceval','dailydiary',false],
- ['dailydiary','costtracker',false],['dailydiary','productivity',false],
+ ['invoiceval','procreg',false],
+ ['procreg','forecasting',false],
+ ['procreg','dailydiary',false],
+ ['invoiceval','dailydiary',false],
+ ['dailydiary','forecasting',false],
+ ['dailydiary','costtracker',false],
  ['connx','dailydiary',false],['planttracker','dailydiary',false],
  ['planttracker','connx',false]
 ];
@@ -2037,7 +2046,6 @@ var trans={running:false,timers:[]};
 var transState={};
 function transResetState(){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){transState[id]='today';});
-  transState.productivity='gone';
   transState.pronto='today';
 }
 transResetState();
@@ -2083,77 +2091,124 @@ function transElbowPts(a,b){
   ];
 }
 function pathD(points){return 'M'+points.map(function(p){return p.x+','+p.y;}).join(' L ');}
-function transDrawPts(pts,warn,cls,skipFade){
-  var l=document.createElementNS(SVGNS,'path');
-  l.setAttribute('d',pathD(pts));
-  l.setAttribute('marker-end','url(#tArrow)');
-  l.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:'')+(skipFade?'':' fresh'));
-  transLinksEl.appendChild(l);
-  if(!skipFade)requestAnimationFrame(function(){requestAnimationFrame(function(){l.classList.remove('fresh');});});
-  return l;
-}
-function transLine(idA,idB,warn,cls,skipFade){
+// Computes the connector path between two cards, live from their
+// current rendered positions. Most pairs just use the generic elbow;
+// a handful of pairs share an edge with another connector and get a
+// bespoke path so the two are never geometrically coincident.
+function transComputePts(idA,idB){
   var a=transRect(idA),b=transRect(idB);
   if(!a||!b)return null;
-  var pts;
   if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
     // Invoice Validation sits directly between these two on the same
     // row, so dip below it instead of cutting straight through.
     var dipY=Math.max(a.bottom,b.bottom)+26;
-    pts=[{x:a.cx,y:a.bottom},{x:a.cx,y:dipY},{x:b.cx,y:dipY},{x:b.cx,y:b.bottom}];
-  } else if(idA==='planttracker'&&idB==='pronto'){
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipY},{x:b.cx,y:dipY},{x:b.cx,y:b.bottom}];
+  }
+  if(idA==='planttracker'&&idB==='pronto'){
     // Plant Tracker has to cross the whole CAAPS/Invoice/Cost/Forecasting
     // row to reach Pronto — go around the left of that row, then cross
     // at the clear gap above Requisition Approval's row and drop into
     // Pronto from the top, rather than cutting through Requisition
     // Approval at Pronto's own row height.
     var corridor=transPxX(14),gapY=transPxY(23);
-    pts=[{x:a.left,y:a.cy},{x:corridor,y:a.cy},{x:corridor,y:gapY},{x:b.cx,y:gapY},{x:b.cx,y:b.top}];
-  } else if(idA==='caaps'&&idB==='pronto'){
+    return [{x:a.left,y:a.cy},{x:corridor,y:a.cy},{x:corridor,y:gapY},{x:b.cx,y:gapY},{x:b.cx,y:b.top}];
+  }
+  if(idA==='caaps'&&idB==='pronto'){
     // Three connectors converge on Pronto from below (CAAPS, Invoice
     // Validation, Forecasting) — give each a distinct entry point along
     // Pronto's bottom edge instead of all three funnelling through its
     // centre, where they'd sit exactly on top of one another.
     var midYc=(a.cy+b.cy)/2,entryXc=b.cx-18;
-    pts=[{x:a.cx,y:a.top},{x:a.cx,y:midYc},{x:entryXc,y:midYc},{x:entryXc,y:b.bottom}];
-  } else if(idA==='forecasting'&&idB==='pronto'){
+    return [{x:a.cx,y:a.top},{x:a.cx,y:midYc},{x:entryXc,y:midYc},{x:entryXc,y:b.bottom}];
+  }
+  if(idA==='forecasting'&&idB==='pronto'){
     var midYf=(a.cy+b.cy)/2,entryXf=b.cx+18;
-    pts=[{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
-  } else if(idA==='dailydiary'&&idB==='costtracker'){
-    // Before state, this shares its crossing row with Forecasting ->
-    // Pronto (both run between x:70-86 at the same halfway height); in
-    // the with-Atlas state, Daily Diary's top edge is also shared with
-    // Procurement Register -> Daily Diary. Cross at a different height
-    // and offset both ends off-centre so neither case coincides.
+    return [{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
+  }
+  if(idA==='dailydiary'&&idB==='costtracker'){
+    if(Math.abs(b.cy-a.cy)<4){
+      // With-Atlas state: Daily Diary -> Productivity Analysis, same row.
+      return [{x:a.right,y:a.cy},{x:b.left,y:b.cy}];
+    }
+    // Before state: shares its crossing row with Forecasting -> Pronto
+    // (both run between x:70-86 at the same halfway height) — cross at
+    // a different height and offset both ends off-centre.
     var down2d=b.cy>=a.cy,midYd=a.cy+(b.cy-a.cy)*0.32;
     var exitXd=a.cx+14,entryXd=b.cx+14;
-    pts=[{x:exitXd,y:down2d?a.bottom:a.top},{x:exitXd,y:midYd},{x:entryXd,y:midYd},{x:entryXd,y:down2d?b.top:b.bottom}];
-  } else if(idA==='procreg'&&idB==='dailydiary'){
-    // Procurement Register's bottom edge is shared with Invoice
-    // Validation -> Procurement Register (offset -14 there), and Daily
-    // Diary's top edge is shared with Daily Diary -> CTC Forecasting
-    // (offset +14 there) — offset both ends the other way.
+    return [{x:exitXd,y:down2d?a.bottom:a.top},{x:exitXd,y:midYd},{x:entryXd,y:midYd},{x:entryXd,y:down2d?b.top:b.bottom}];
+  }
+  if(idA==='dailydiary'&&idB==='forecasting'){
+    // Shares Daily Diary's top edge with Procurement Register -> Daily
+    // Diary (offset -14 there) — offset the other way.
+    var down2df=b.cy>=a.cy,midYdf=(a.cy+b.cy)/2,exitXdf=a.cx+14;
+    return [{x:exitXdf,y:down2df?a.bottom:a.top},{x:exitXdf,y:midYdf},{x:b.cx,y:midYdf},{x:b.cx,y:down2df?b.top:b.bottom}];
+  }
+  if(idA==='procreg'&&idB==='dailydiary'){
+    // Procurement's bottom edge is shared with Invoice Validation ->
+    // Procurement (offset -14 there), and Daily Diary's top edge is
+    // shared with Daily Diary -> CTC Forecasting (offset +14 there) —
+    // offset both ends the other way.
     var down2p=b.cy>=a.cy,midYp=(a.cy+b.cy)/2,exitXp=a.cx+14,entryXp=b.cx-14;
-    pts=[{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
-  } else if(idA==='invoiceval'&&idB==='procreg'){
-    // Shares Procurement Register's bottom edge with Procurement
-    // Register -> Daily Diary (offset +14 there) — offset the other way.
+    return [{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
+  }
+  if(idA==='invoiceval'&&idB==='procreg'){
+    // Shares Procurement's bottom edge with Procurement -> Daily Diary
+    // (offset +14 there) — offset the other way.
     var down2i=b.cy>=a.cy,midYi=(a.cy+b.cy)/2,entryXi=b.cx-14;
-    pts=[{x:a.cx,y:down2i?a.bottom:a.top},{x:a.cx,y:midYi},{x:entryXi,y:midYi},{x:entryXi,y:down2i?b.top:b.bottom}];
-  } else if(idA==='connx'&&idB==='dailydiary'){
+    return [{x:a.cx,y:down2i?a.bottom:a.top},{x:a.cx,y:midYi},{x:entryXi,y:midYi},{x:entryXi,y:down2i?b.top:b.bottom}];
+  }
+  if(idA==='connx'&&idB==='dailydiary'){
     // Shares Daily Diary's bottom edge with Plant Tracker -> Daily
     // Diary (offset +14 there) — offset the other way.
     var down2c=b.cy>=a.cy,midYcx=(a.cy+b.cy)/2,entryXcx=b.cx-14;
-    pts=[{x:a.cx,y:down2c?a.bottom:a.top},{x:a.cx,y:midYcx},{x:entryXcx,y:midYcx},{x:entryXcx,y:down2c?b.top:b.bottom}];
-  } else if(idA==='planttracker'&&idB==='dailydiary'){
-    var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
-    pts=[{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
-  } else {
-    pts=transElbowPts(a,b);
+    return [{x:a.cx,y:down2c?a.bottom:a.top},{x:a.cx,y:midYcx},{x:entryXcx,y:midYcx},{x:entryXcx,y:down2c?b.top:b.bottom}];
   }
-  var l=transDrawPts(pts,warn,cls,skipFade);
-  l.dataset.a=idA;l.dataset.b=idB;
-  return l;
+  if(idA==='planttracker'&&idB==='dailydiary'){
+    var down2pd=b.cy>=a.cy,midYpd=(a.cy+b.cy)/2,entryXpd=b.cx+14;
+    return [{x:a.cx,y:down2pd?a.bottom:a.top},{x:a.cx,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
+  }
+  return transElbowPts(a,b);
+}
+// Every connector is a persistent DOM element keyed by "idA|idB" (or a
+// fixed key for the external Pronto link). Calling upsert again just
+// mutates its `d` attribute in place — links never disappear and
+// reappear as a card moves; they're only actually removed (with a
+// fade) once the relationship they represent stops applying at all.
+var transPathRegistry={};
+function transUpsertPath(key,pts,warn,cls){
+  var d=pathD(pts),el=transPathRegistry[key];
+  if(el){
+    if(el.getAttribute('d')!==d)el.setAttribute('d',d);
+    el.classList.remove('gone');
+    return el;
+  }
+  el=document.createElementNS(SVGNS,'path');
+  el.setAttribute('marker-end','url(#tArrow)');
+  el.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:'')+' fresh');
+  el.setAttribute('d',d);
+  transLinksEl.appendChild(el);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.remove('fresh');});});
+  transPathRegistry[key]=el;
+  return el;
+}
+function transRemovePath(key){
+  var el=transPathRegistry[key];
+  if(!el)return;
+  el.classList.add('gone');
+  delete transPathRegistry[key];
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},450);
+}
+function transClearAllPaths(){
+  Object.keys(transPathRegistry).forEach(function(key){
+    var el=transPathRegistry[key];
+    if(el.parentNode)el.parentNode.removeChild(el);
+  });
+  transPathRegistry={};
+}
+function transUpsertLink(idA,idB,warn,cls){
+  var pts=transComputePts(idA,idB);
+  if(!pts)return;
+  transUpsertPath(idA+'|'+idB,pts,warn,cls);
 }
 function transBuild(){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){
@@ -2161,9 +2216,6 @@ function transBuild(){
     transCanvasEl.appendChild(transCard({id:id,label:d.label,fam:d.fam,dashed:d.dashed,branch:d.branch,x:d.x,y:d.y}));
   });
   TRANS_FIXED.forEach(function(c){transCanvasEl.appendChild(transCard({id:c.id,label:c.label,fam:c.fam,x:c.before.x,y:c.before.y}));});
-  var prodEl=transCard(TRANS_BONUS_NODE);
-  prodEl.classList.add('hidden');
-  transCanvasEl.appendChild(prodEl);
   transRelinkAll();
 }
 function transMoveFixed(which,to){
@@ -2178,7 +2230,6 @@ function transMoveFixed(which,to){
 function transFitBox(){
   var ids=TRANS_GROUPS.filter(function(g){return g.primary&&transState[g.primary]==='atlas';})
     .map(function(g){return g.primary;});
-  if(transState.productivity==='atlas')ids.push('productivity');
   var rects=ids.map(transRect).filter(Boolean);
   if(!rects.length){
     transCanvasEl.classList.remove('building');
@@ -2195,26 +2246,36 @@ function transFitBox(){
   transCanvasEl.classList.add('building');
   return {left:left,top:top,right:right,bottom:bottom,cx:(left+right)/2,cy:(top+bottom)/2};
 }
-// Redraws every connector from scratch based on current card state —
-// called after every highlight/move/merge/land so lines are always
-// correct for exactly what's on screen right now, not just at the end.
 // A card counts as linkable only while it's genuinely still at its
 // today position. The instant it starts moving (state 'merging') its
 // links are hidden — trying to keep a link geometrically attached to a
 // card mid-flight caused lines to sweep across other cards and pile up
 // on top of each other, which is worse than a clean, immediate cut.
 function transStillLinkable(id){return transState[id]==='today';}
-function transRelinkAll(live){
-  transLinksEl.querySelectorAll('path').forEach(function(l){l.remove();});
+// Diffs the set of connectors that should be visible right now against
+// what's already on screen: links that still apply get their geometry
+// mutated in place (transUpsertLink), links that stop applying fade out
+// and get removed, and everything else is left completely untouched.
+// Nothing is ever blanket-removed-and-redrawn.
+function transRelinkAll(){
+  var wanted={};
   TRANS_LINKS.forEach(function(link){
     if(transStillLinkable(link[0])&&transStillLinkable(link[1])){
-      transLine(link[0],link[1],link[2],'beforeLink',live);
+      wanted[link[0]+'|'+link[1]]=link;
     }
   });
   TRANS_AFTER_LINKS.forEach(function(link){
     if(transState[link[0]]==='atlas'&&transState[link[1]]==='atlas'){
-      transLine(link[0],link[1],link[2],'afterLink',live);
+      wanted[link[0]+'|'+link[1]]=link;
     }
+  });
+  Object.keys(wanted).forEach(function(key){
+    var link=wanted[key];
+    transUpsertLink(link[0],link[1],link[2]);
+  });
+  Object.keys(transPathRegistry).forEach(function(key){
+    if(key==='EXTERNAL_PRONTO')return;
+    if(!wanted[key])transRemovePath(key);
   });
   var box=transFitBox();
   if(box&&transState.pronto==='atlas'){
@@ -2224,8 +2285,10 @@ function transRelinkAll(live){
       // zone below every node — rather than at Pronto's own height,
       // which happened to graze Productivity Analysis's row.
       var anchor2={left:box.right-30,right:box.right-30,top:box.bottom,bottom:box.bottom,cx:box.right-30,cy:box.bottom};
-      transDrawPts(transElbowPts(anchor2,pron),false,'afterLink',live);
+      transUpsertPath('EXTERNAL_PRONTO',transElbowPts(anchor2,pron),false,'afterLink');
     }
+  } else {
+    transRemovePath('EXTERNAL_PRONTO');
   }
 }
 function transReset(){
@@ -2235,10 +2298,9 @@ function transReset(){
     el.textContent=d.label;
     el.style.left=d.x+'%';el.style.top=d.y+'%';
   });
-  var prod=transCanvasEl.querySelector('[data-id="productivity"]');
-  if(prod)prod.classList.remove('revealed');
   TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.before);});
   transResetState();
+  transClearAllPaths();
   transCanvasEl.classList.remove('settled','building');
   transNoteEl.textContent='Multiple uncontrolled hand-offs between systems.';
   transNoteEl.classList.remove('clean');
@@ -2255,6 +2317,18 @@ function ltTrans(fn,ms){trans.timers.push(setTimeout(fn,ms));}
 function transRunGroup(gi){
   if(!trans.running)return;
   var g=TRANS_GROUPS[gi];
+  if(g.retire){
+    var rEl=transCanvasEl.querySelector('.tCard[data-id="'+g.retire+'"]');
+    ltTrans(function(){rEl.classList.add('active');},0);
+    ltTrans(function(){
+      rEl.classList.remove('active');
+      transState[g.retire]='gone';
+      rEl.classList.add('retired');
+      transRelinkAll();
+    },650);
+    ltTrans(function(){transNextGroup(gi);},1300);
+    return;
+  }
   var secs=g.secondaries;
   var primPos=TRANS_CARD_DATA[g.primary];
   var secEls=secs.map(function(sid){return transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');});
@@ -2296,16 +2370,12 @@ function transRunGroup(gi){
 }
 function transNextGroup(gi){
   if(gi+1<TRANS_GROUPS.length){transRunGroup(gi+1);return;}
-  // everything's landed — move Pronto across to its with-Atlas spot
-  // first (clearing the area near Productivity Analysis's fixed spot),
-  // then reveal the bonus node, then settle.
+  // everything's landed — move Pronto across to its with-Atlas spot,
+  // then settle.
   ltTrans(function(){
     TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
   },300);
   ltTrans(function(){
-    var el=transCanvasEl.querySelector('.tCard.hidden[data-id="productivity"]');
-    if(el)el.classList.add('revealed');
-    transState.productivity='atlas';
     transState.pronto='atlas';
     transRelinkAll();
     transCanvasEl.classList.add('settled');
@@ -2320,6 +2390,12 @@ function transNextGroup(gi){
 function transStart(){
   if(RM){
     TRANS_GROUPS.forEach(function(g){
+      if(g.retire){
+        var rEl=transCanvasEl.querySelector('.tCard[data-id="'+g.retire+'"]');
+        rEl.classList.add('retired');
+        transState[g.retire]='gone';
+        return;
+      }
       g.secondaries.forEach(function(sid){
         var sEl=transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');
         var primPos=TRANS_CARD_DATA[g.primary];
@@ -2334,9 +2410,6 @@ function transStart(){
       pEl.style.left=g.afterX+'%';pEl.style.top=g.afterY+'%';
       transState[g.primary]='atlas';
     });
-    var prodEl=transCanvasEl.querySelector('.tCard.hidden[data-id="productivity"]');
-    if(prodEl)prodEl.classList.add('revealed');
-    transState.productivity='atlas';
     TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
     transState.pronto='atlas';
     transRelinkAll();
