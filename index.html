@@ -2020,6 +2020,33 @@ var TRANS_GROUPS=[
 var TRANS_FIXED=[
  {id:'pronto',label:'Pronto',fam:'purple',before:{x:54,y:36},after:{x:78,y:44}}
 ];
+// Collision avoidance for the two static rest layouts (today's scattered
+// positions, and everyone's with-Atlas positions) — not text wrapping,
+// card-footprint wrapping: if a card's assigned spot is too close to one
+// already placed, nudge it down by a fraction of a card-height, and if
+// that runs past the bottom of the canvas, wrap it into the next column
+// instead, the same way text wraps to a new line when it runs out of
+// room. Runs once at load, mutating the position data in place, so a
+// future edit that accidentally reuses a spot gets moved apart
+// automatically instead of silently overlapping (as CAAPS and Resource
+// Scheduler once did).
+function transResolveCollisions(items){
+  var fpW=13,fpH=10,maxY=94,stepY=fpH*0.65,stepX=fpW*0.65;
+  var placed=[];
+  items.forEach(function(it){
+    var tries=0;
+    while(tries<60&&placed.some(function(p){return Math.abs(p.x-it.x)<fpW&&Math.abs(p.y-it.y)<fpH;})){
+      it.y+=stepY;
+      if(it.y>maxY){it.y=it.y-maxY+6;it.x+=stepX;}
+      tries++;
+    }
+    placed.push({x:it.x,y:it.y});
+  });
+}
+transResolveCollisions(Object.keys(TRANS_CARD_DATA).map(function(id){return TRANS_CARD_DATA[id];}).concat([TRANS_FIXED[0].before]));
+transResolveCollisions(TRANS_GROUPS.map(function(g){
+  return {get x(){return g.afterX;},set x(v){g.afterX=v;},get y(){return g.afterY;},set y(v){g.afterY=v;}};
+}).concat([TRANS_FIXED[0].after]));
 var TRANS_LINKS=[
  ['rfq','procreg',false],['procreg','f111',false],['f111','reqappr',false],
  ['reqappr','pronto',false],['procreg','pronto',true],
