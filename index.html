@@ -2125,6 +2125,22 @@ function transRect(id){
   return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
           cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
 }
+// The box outline's own left/top/width/height are set to their FINAL
+// target values the instant a new primary lands (so it visibly grows
+// via its own .6s CSS transition rather than popping to full size) —
+// reading its rect straight after that write would just give back the
+// same target numbers before any transition frame has rendered. This
+// is for reading the box's true CURRENT on-screen edges on every other
+// call in between (i.e. every live-tick frame while it's mid-grow), so
+// the external Pronto connector's anchors track the box exactly as it
+// grows/moves instead of jumping ahead to where it's headed.
+function transBoxLiveRect(){
+  var r=atlasBoxOutlineEl.getBoundingClientRect();
+  if(!r.width&&!r.height)return null;
+  var cr=transCanvasEl.getBoundingClientRect();
+  return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
+          cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
+}
 function transPxX(pct){return transCanvasEl.getBoundingClientRect().width*pct/100;}
 function transPxY(pct){return transCanvasEl.getBoundingClientRect().height*pct/100;}
 function transKeyHash(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
@@ -2375,6 +2391,16 @@ function transFitBox(){
   var top=Math.min.apply(null,rects.map(function(r){return r.top;}))-40;
   var right=Math.max.apply(null,rects.map(function(r){return r.right;}))+28;
   var bottom=Math.max.apply(null,rects.map(function(r){return r.bottom;}))+28;
+  // Whenever the box's target bounds actually change, keep the live tick
+  // running for the length of its own .6s move/resize transition, so
+  // anything anchored to the box (the external Pronto connector) gets
+  // recomputed every frame against its true current edges as it grows,
+  // instead of only updating once at the start and once whenever it next
+  // happens to be nudged by an unrelated card merge.
+  if(!trans.lastBox||left!==trans.lastBox.left||top!==trans.lastBox.top||right!==trans.lastBox.right||bottom!==trans.lastBox.bottom){
+    trans.boxAnimUntil=Date.now()+650;
+  }
+  trans.lastBox={left:left,top:top,right:right,bottom:bottom};
   atlasBoxOutlineEl.style.left=left+'px';
   atlasBoxOutlineEl.style.top=top+'px';
   atlasBoxOutlineEl.style.width=(right-left)+'px';
@@ -2444,6 +2470,13 @@ function transRelinkAll(){
   // slides across to its with-Atlas spot.
   if(box){
     var pron=transRect('pronto');
+    // Use the box outline's own live rendered rect, not the just-computed
+    // target one above — the box animates to that target over its own
+    // .6s transition, so anchoring to the target directly would make
+    // this connector jump to where the box is headed instead of
+    // following it there, exactly like a card's link used to lag before
+    // it tracked the card's live position frame by frame.
+    var liveBox=transBoxLiveRect()||box;
     if(pron){
       // Enters/exits Pronto's LEFT edge (facing the box) rather than its
       // bottom, which already carries three other before-links
@@ -2455,10 +2488,10 @@ function transRelinkAll(){
       // right column) until past the box's right edge, only rising to
       // Pronto's height in the open gap where nothing else sits.
       var yOut=pron.cy-12,yIn=pron.cy+12;
-      var anchorOutX=box.right-30,anchorInX=box.right-60;
-      var midXo=box.right+15,midXi=box.right+30;
-      transUpsertPath('EXTERNAL_PRONTO_OUT',[{x:anchorOutX,y:box.bottom},{x:midXo,y:box.bottom},{x:midXo,y:yOut},{x:pron.left,y:yOut}],false,'afterLink');
-      transUpsertPath('EXTERNAL_PRONTO_IN',[{x:pron.left,y:yIn},{x:midXi,y:yIn},{x:midXi,y:box.top},{x:anchorInX,y:box.top}],false,'afterLink');
+      var anchorOutX=liveBox.right-30,anchorInX=liveBox.right-60;
+      var midXo=liveBox.right+15,midXi=liveBox.right+30;
+      transUpsertPath('EXTERNAL_PRONTO_OUT',[{x:anchorOutX,y:liveBox.bottom},{x:midXo,y:liveBox.bottom},{x:midXo,y:yOut},{x:pron.left,y:yOut}],false,'afterLink');
+      transUpsertPath('EXTERNAL_PRONTO_IN',[{x:pron.left,y:yIn},{x:midXi,y:yIn},{x:midXi,y:liveBox.top},{x:anchorInX,y:liveBox.top}],false,'afterLink');
     }
   } else {
     transRemovePath('EXTERNAL_PRONTO_OUT');
@@ -2592,7 +2625,8 @@ function transStart(){
 function transLiveTick(){
   if(!trans.running){trans.raf=null;return;}
   var anyMerging=Object.keys(transState).some(function(id){return transState[id]==='merging';});
-  if(anyMerging)transRelinkAll();
+  var boxAnimating=Date.now()<(trans.boxAnimUntil||0);
+  if(anyMerging||boxAnimating)transRelinkAll();
   trans.raf=requestAnimationFrame(transLiveTick);
 }
 function transStop(){
