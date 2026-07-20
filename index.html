@@ -2553,84 +2553,43 @@ function transPtAt(pts,t){
   }
   var last=pts[pts.length-1];return {x:last.x,y:last.y};
 }
-var SHINE_HALF=128;  // half-length (px of arc) of an atlas-flow shine streak
-// Points of the sub-polyline of `pts` between arc-lengths a and b (a<b),
-// keeping any vertices that fall inside so the streak follows bends.
-function transSubPathPts(pts,a,b){
-  var out=[],acc=0;
-  for(var i=1;i<pts.length;i++){
-    var p0=pts[i-1],p1=pts[i],dx=p1.x-p0.x,dy=p1.y-p0.y,seg=Math.sqrt(dx*dx+dy*dy);
-    if(seg<=0)continue;
-    var s0=acc,s1=acc+seg;
-    if(s1>=a&&s0<=b){
-      var ra=(Math.max(a,s0)-s0)/seg,rb=(Math.min(b,s1)-s0)/seg;
-      if(!out.length)out.push({x:p0.x+dx*ra,y:p0.y+dy*ra});
-      out.push({x:p0.x+dx*rb,y:p0.y+dy*rb});
-    }
-    acc=s1;
-  }
-  if(out.length<2){var e=transPtAt(pts,1);out=[e,{x:e.x,y:e.y}];}
-  return out;
+var SHINE_HALF=128;  // length (px of arc) of each atlas-flow shine dash
+// Grey/red flows use travelling circles. Atlas flows use ONE overlay path
+// stroked with a moving dash: a bright "shine" segment crawls along via
+// stroke-dashoffset. A dash follows the path's arc-length exactly (around
+// every bend, so it never breaks at a junction) and travels regardless of
+// line length — unlike the old straight-chord gradient, which broke at
+// corners and could only pulse in place on lines shorter than the streak.
+var SHINE_GAP=Math.round(SHINE_HALF*1.35);   // dark space between successive shines
+function transMakeCircle(cls){var c=document.createElementNS(SVGNS,'circle');c.setAttribute('r','3.2');c.setAttribute('class',cls);transDotLayer.appendChild(c);return c;}
+function transMakeShine(){
+  var p=document.createElementNS(SVGNS,'path');
+  p.setAttribute('class','tShine');
+  // Inline style beats the `.transLinks path` stylesheet stroke.
+  p.style.stroke='#AEDEFF';p.style.strokeLinecap='round';
+  p.style.strokeDasharray=SHINE_HALF+' '+SHINE_GAP;
+  transDotLayer.appendChild(p);
+  return p;
 }
-// A dot is either a travelling circle (grey/red flows) or, for atlas
-// flows, a gradient shine streak (a short bright path segment with its
-// own fade-at-the-ends linear gradient).
-function transMakeDot(cls){
-  if(cls.indexOf('atlasflow')>=0){
-    var id='tShine'+(transShineSeq++);
-    var g=document.createElementNS(SVGNS,'linearGradient');
-    g.setAttribute('id',id);g.setAttribute('gradientUnits','userSpaceOnUse');
-    [['0','#8FD3F7','0'],['0.35','#8FD3F7','0.55'],['0.5','#B9E6FF','1'],['0.65','#8FD3F7','0.55'],['1','#8FD3F7','0']].forEach(function(s){
-      var st=document.createElementNS(SVGNS,'stop');
-      st.setAttribute('offset',s[0]);st.setAttribute('stop-color',s[1]);st.setAttribute('stop-opacity',s[2]);
-      g.appendChild(st);
-    });
-    transShineDefs.appendChild(g);
-    var p=document.createElementNS(SVGNS,'path');
-    // Inline style, not a presentation attribute: the `.transLinks path`
-    // stylesheet rule would otherwise override a `stroke` attribute and
-    // paint the streak flat border-grey instead of the gradient.
-    p.setAttribute('class','tShine');p.style.stroke='url(#'+id+')';
-    transDotLayer.appendChild(p);
-    return {el:p,grad:g,shine:true};
-  }
-  var c=document.createElementNS(SVGNS,'circle');c.setAttribute('r','3.2');c.setAttribute('class',cls);transDotLayer.appendChild(c);
-  return {el:c,shine:false};
-}
-function transDropDot(dt){
-  if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);
-  if(dt.grad&&dt.grad.parentNode)dt.grad.parentNode.removeChild(dt.grad);
+function transDropReg(reg){
+  if(reg.shineEl&&reg.shineEl.parentNode)reg.shineEl.parentNode.removeChild(reg.shineEl);
+  (reg.dots||[]).forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
 }
 function transDotTick(dtSec){
   Object.keys(transDotRegistry).forEach(function(key){
     var reg=transDotRegistry[key];if(!reg.len)return;
-    var dph=(DOT_SPEED*dtSec)/reg.len;
-    reg.dots.forEach(function(dt){
-      dt.phase=(dt.phase+dph)%1;
-      if(dt.shine){
-        var c=dt.phase*reg.len,a=Math.max(0,c-SHINE_HALF),b=Math.min(reg.len,c+SHINE_HALF);
-        // Opacity envelope: fade the streak only over a SHORT fixed zone at
-        // each endpoint, so it dissolves smoothly into the card yet stays at
-        // full brightness along the rest of the line (a large fade zone made
-        // it dim across every short line — i.e. fade at every node). The
-        // phase wrap (end -> start) still happens at e=0, so no sudden pop.
-        var M=26,e=1;   // fixed fade distance at each endpoint
-        if(c<M)e=c/M; else if(c>reg.len-M)e=(reg.len-c)/M;
-        if(e<0)e=0;
-        dt.el.style.opacity=e<0?0:e;
-        if(b-a<=0.5){dt.el.setAttribute('d','M-50,-50');}
-        else{
-          var sp=transSubPathPts(reg.pts,a,b);
-          dt.el.setAttribute('d',pathD(sp));
-          var g0=sp[0],g1=sp[sp.length-1];
-          dt.grad.setAttribute('x1',g0.x);dt.grad.setAttribute('y1',g0.y);
-          dt.grad.setAttribute('x2',g1.x);dt.grad.setAttribute('y2',g1.y);
-        }
-      }else{
+    if(reg.kind==='shine'){
+      var rep=SHINE_HALF+SHINE_GAP;
+      reg.off=((reg.off||0)-DOT_SPEED*dtSec)%rep;
+      reg.shineEl.style.strokeDashoffset=reg.off;
+    }else{
+      var dph=(DOT_SPEED*dtSec)/reg.len;
+      reg.dots.forEach(function(dt){
+        dt.phase=(dt.phase+dph)%1;
         var p=transPtAt(reg.pts,dt.phase);
         dt.el.setAttribute('cx',p.x);dt.el.setAttribute('cy',p.y);
-      }
-    });
+      });
+    }
   });
 }
 // Flow kind for a connector: 'warn' (red) if it's an uncontrolled line;
@@ -2651,31 +2610,41 @@ function transLabelFor(key){
 }
 function transUpsertDots(key,pts,warn){
   var flow=transFlow(key,warn),cls='tDot '+flow,reg=transDotRegistry[key];
-  var isShine=(flow==='atlasflow');
+  var kind=(flow==='atlasflow')?'shine':'dot';
   var len=transPtLen(pts);
-  // Atlas flows get twice the spacing (fewer, further-apart shines).
-  var spacing=isShine?DOT_SPACING*2:DOT_SPACING;
-  var n=Math.max(1,Math.round(len/spacing));
-  function build(){var d=[];for(var k=0;k<n;k++){var m=transMakeDot(cls);d.push({el:m.el,grad:m.grad,shine:m.shine,phase:k/n});}return d;}
+  // Kind flip (a line joins/leaves the Atlas box) rebuilds the indicator,
+  // but only when settled — never mid-merge, so nothing is destroyed and
+  // recreated while a line is gliding.
+  if(reg&&reg.kind!==kind){
+    if(trans.animating)return;
+    transDropReg(reg);delete transDotRegistry[key];reg=null;
+  }
   if(reg){
     reg.pts=pts;reg.len=len;reg.cls=cls;
-    // Circles switch colour by class; shine streaks keep their own class.
-    reg.dots.forEach(function(dt){if(!dt.shine)dt.el.setAttribute('class',cls);});
-    // Only rebuild the dot set when settled — never mid-merge, so dots
-    // aren't destroyed/recreated while a line is gliding. Rebuild when the
-    // count changes OR when the kind flips (dot <-> shine as a line joins
-    // or leaves the Atlas box).
-    if(!trans.animating&&(reg.dots.length!==n||reg.kind!==(isShine?'shine':'dot'))){
-      reg.dots.forEach(transDropDot);
-      reg.dots=build();reg.kind=isShine?'shine':'dot';
+    if(kind==='shine'){
+      reg.shineEl.setAttribute('d',pathD(pts));
+    }else{
+      reg.dots.forEach(function(dt){dt.el.setAttribute('class',cls);});
+      var n=Math.max(1,Math.round(len/DOT_SPACING));
+      if(!trans.animating&&reg.dots.length!==n){
+        reg.dots.forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
+        reg.dots=[];for(var k=0;k<n;k++)reg.dots.push({el:transMakeCircle(cls),phase:k/n});
+      }
     }
     return;
   }
-  transDotRegistry[key]={pts:pts,len:len,cls:cls,dots:build(),kind:isShine?'shine':'dot'};
+  if(kind==='shine'){
+    var sh=transMakeShine();sh.setAttribute('d',pathD(pts));
+    transDotRegistry[key]={pts:pts,len:len,cls:cls,kind:'shine',shineEl:sh,off:0};
+  }else{
+    var n2=Math.max(1,Math.round(len/DOT_SPACING)),dots=[];
+    for(var k2=0;k2<n2;k2++)dots.push({el:transMakeCircle(cls),phase:k2/n2});
+    transDotRegistry[key]={pts:pts,len:len,cls:cls,kind:'dot',dots:dots};
+  }
 }
 function transRemoveDots(key){
   var reg=transDotRegistry[key];if(!reg)return;
-  reg.dots.forEach(transDropDot);
+  transDropReg(reg);
   delete transDotRegistry[key];
 }
 function transUpsertPath(key,pts,warn,cls){
@@ -3412,7 +3381,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-20T23:32:01Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-20T23:45:03Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
