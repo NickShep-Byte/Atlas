@@ -2134,7 +2134,7 @@ transResolveCollisions(TRANS_GROUPS.map(function(g){
 // Pronto — its numbers reach Pronto via Forecasting and the claims.
 var TRANS_LINKS=[
  ['procreg','f111',true],['f111','reqappr',false],['reqappr','pronto',true],
- ['pronto','procreg',true],['procreg','dailydiary',false],
+ ['procreg','dailydiary',true],
  ['connx','pronto',false],['planttracker','pronto',false],
  ['dailydiary','costtracker',false],['costtracker','forecasting',true,'dashedLink'],
  ['docket','invoiceval',false],['invoiceval','caaps',false],['caaps','pronto',false],
@@ -2149,11 +2149,11 @@ function transBeforeLink(idA,idB){
   }
   return null;
 }
-// With-Atlas links. Several pairs (Procurement<->Pronto's "Procured
-// rates", Forecasting->Pronto, the forecast roll-up, Variation
-// Register->Procurement's "Budget/cost allocation", the Stream
-// Forecasting/Monthly Reporting/Progress Claim chains) are the SAME
-// relationship in both states — those id pairs appear in TRANS_LINKS
+// With-Atlas links. Several pairs (Procurement -> Daily Diary's
+// "Procured rates", Forecasting->Pronto, the forecast roll-up,
+// Variation Register->Procurement's "Budget/cost allocation", the
+// Stream Forecasting/Monthly Reporting/Progress Claim chains) are the
+// SAME relationship in both states — those id pairs appear in TRANS_LINKS
 // too so they mutate continuously through the merge rather than
 // disappearing and being recreated. Connx/Plant Tracker -> Cost
 // Journalling, Invoice Validation -> Pronto, and Daily Diary's
@@ -2166,7 +2166,7 @@ function transBeforeLink(idA,idB){
 // the board's own point.
 var TRANS_AFTER_LINKS=[
  ['connx','costjournal',false],['planttracker','costjournal',false],['costjournal','pronto',false],
- ['pronto','procreg',false],['procreg','pronto',false],
+ ['procreg','pronto',false],['procreg','dailydiary',false],
  ['invoiceval','pronto',false],
  ['variationreg','progressclaim',false],['progressclaim','pronto',false],
  ['pronto','streamforecast',false],['pronto','monthlyreport',false],
@@ -2182,7 +2182,7 @@ var TRANS_LINK_LABELS={
  'procreg|f111':'Raise PO',
  'f111|reqappr':'Submission / Approval',
  'reqappr|pronto':'PO Approval',
- 'pronto|procreg':'Procured rates',
+ 'procreg|dailydiary':'Procured rates',
  'procreg|pronto':'Raised Approved PO',
  'connx|pronto':'All 555',
  'planttracker|pronto':'All AP01',
@@ -2276,15 +2276,6 @@ function transComputePts(idA,idB){
   // on Pronto, each given its own fixed lane and edge offset so none of
   // them ever run collinear. Every route here is computed from live
   // rects, so it stays correct in before, after and mixed states.
-  if(idA==='pronto'&&idB==='procreg'){
-    // "Procured rates" — rates flow back from Pronto to procurement.
-    // Out of Pronto's upper left edge, up the corridor between
-    // Timesheets' and Connx/Cost Journalling's columns, then left along
-    // the lane just above wherever Procurement currently sits (not
-    // across the canvas top), dropping into its top edge.
-    var exitYpr=a.cy-15,corrXpr=transPxX(38),laneYpr=b.top-30;
-    return [{x:a.left,y:exitYpr},{x:corrXpr,y:exitYpr},{x:corrXpr,y:laneYpr},{x:b.cx,y:laneYpr},{x:b.cx,y:b.top}];
-  }
   if(idA==='procreg'&&idB==='pronto'){
     // "Raised Approved PO" — with-Atlas only: the portal pushes raised
     // and approved POs straight into Pronto, replacing today's
@@ -2295,11 +2286,14 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:entryYrp},{x:b.left,y:entryYrp}];
   }
   if(idA==='procreg'&&idB==='dailydiary'){
-    // Today-only: runs along the lane just above the whole top band,
-    // exiting right of centre (Procured rates re-enters Procurement's
-    // top at dead centre) and dropping into Daily Diary's top.
-    var laneYpd=transPxY(6),exitXpd=a.cx+15;
-    return [{x:exitXpd,y:a.top},{x:exitXpd,y:laneYpd},{x:b.cx,y:laneYpd},{x:b.cx,y:b.top}];
+    // "Procured rates" — procurement's rates feed the Daily Diary so
+    // its tracked quantities can be costed, in BOTH states. Runs along
+    // the lane just above wherever Daily Diary currently sits (above
+    // the whole today top band; just above the box's top row once
+    // landed), entering Diary's top left of centre — Plant Scheduler's
+    // with-Atlas feed enters that edge at dead centre, one lane lower.
+    var laneYpd=b.top-28,entryXpd=b.cx-25;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd},{x:entryXpd,y:laneYpd},{x:entryXpd,y:b.top}];
   }
   if(idA==='forecasting'&&idB==='streamforecast'){
     // The project-to-company forecast roll-up. Landed: both sit on the
@@ -2318,8 +2312,9 @@ function transComputePts(idA,idB){
   if(idA==='planttracker'&&idB==='dailydiary'){
     // With-Atlas only: Plant Scheduler feeds the Daily Diary. Invoice
     // Validation sits between them on the top row — hop over it on the
-    // lane above the row.
-    var laneYpd2=a.top-20;
+    // lane above the row (staggered below Procured rates' lane, which
+    // crosses the same span into Diary's top).
+    var laneYpd2=a.top-16;
     return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd2},{x:b.cx,y:laneYpd2},{x:b.cx,y:b.top}];
   }
   if(idA==='dailydiary'&&idB==='costjournal'){
