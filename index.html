@@ -2553,7 +2553,7 @@ function transPtAt(pts,t){
   }
   var last=pts[pts.length-1];return {x:last.x,y:last.y};
 }
-var SHINE_HALF=64;   // half-length (px of arc) of an atlas-flow shine streak
+var SHINE_HALF=128;  // half-length (px of arc) of an atlas-flow shine streak
 // Points of the sub-polyline of `pts` between arc-lengths a and b (a<b),
 // keeping any vertices that fall inside so the streak follows bends.
 function transSubPathPts(pts,a,b){
@@ -2609,11 +2609,21 @@ function transDotTick(dtSec){
       dt.phase=(dt.phase+dph)%1;
       if(dt.shine){
         var c=dt.phase*reg.len,a=Math.max(0,c-SHINE_HALF),b=Math.min(reg.len,c+SHINE_HALF);
-        var sp=transSubPathPts(reg.pts,a,b);
-        dt.el.setAttribute('d',pathD(sp));
-        var g0=sp[0],g1=sp[sp.length-1];
-        dt.grad.setAttribute('x1',g0.x);dt.grad.setAttribute('y1',g0.y);
-        dt.grad.setAttribute('x2',g1.x);dt.grad.setAttribute('y2',g1.y);
+        // Opacity envelope: fade the whole streak to 0 as its centre nears
+        // either end, so it dissolves smoothly into the card rather than
+        // popping/clipping — and the phase wrap (end -> start) happens while
+        // fully invisible, so there's no sudden reappear.
+        var M=Math.min(SHINE_HALF,reg.len*0.5),e=1;
+        if(c<M)e=c/M; else if(c>reg.len-M)e=(reg.len-c)/M;
+        dt.el.style.opacity=e<0?0:e;
+        if(b-a<=0.5){dt.el.setAttribute('d','M-50,-50');}
+        else{
+          var sp=transSubPathPts(reg.pts,a,b);
+          dt.el.setAttribute('d',pathD(sp));
+          var g0=sp[0],g1=sp[sp.length-1];
+          dt.grad.setAttribute('x1',g0.x);dt.grad.setAttribute('y1',g0.y);
+          dt.grad.setAttribute('x2',g1.x);dt.grad.setAttribute('y2',g1.y);
+        }
       }else{
         var p=transPtAt(reg.pts,dt.phase);
         dt.el.setAttribute('cx',p.x);dt.el.setAttribute('cy',p.y);
