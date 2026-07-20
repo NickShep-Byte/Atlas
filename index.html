@@ -284,7 +284,8 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 /* Atlas flows read as a gradient "shine" sweeping along the line rather
    than a travelling dot: a short bright segment of the line whose ends
    fade out via a per-streak linear gradient. */
-.transLinks path.tShine{fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px #8FD3F7);pointer-events:none;}
+.transLinks path.tShine{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+.transLinks .tShineG{filter:drop-shadow(0 0 2.5px #8FD3F7);pointer-events:none;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -2553,35 +2554,47 @@ function transPtAt(pts,t){
   }
   var last=pts[pts.length-1];return {x:last.x,y:last.y};
 }
-var SHINE_HALF=128;  // length (px of arc) of each atlas-flow shine dash
-// Grey/red flows use travelling circles. Atlas flows use ONE overlay path
-// stroked with a moving dash: a bright "shine" segment crawls along via
-// stroke-dashoffset. A dash follows the path's arc-length exactly (around
-// every bend, so it never breaks at a junction) and travels regardless of
-// line length — unlike the old straight-chord gradient, which broke at
-// corners and could only pulse in place on lines shorter than the streak.
-var SHINE_GAP=Math.round(SHINE_HALF*1.35);   // dark space between successive shines
+var SHINE_BAND=128;  // length of the bright part of a shine (px of arc)
+var SHINE_SEG=11;    // target px per tiling segment (smaller = smoother gradient)
+// Grey/red flows use travelling circles. Atlas flows use a shine built from
+// many short segments that TILE the actual path (so it follows every bend
+// exactly) whose OPACITY is graded by a scrolling bell curve — giving a soft
+// gradient highlight that sweeps along. This avoids a straight-line gradient
+// (which breaks at corners) and a solid dash (which reads as a flat block).
 function transMakeCircle(cls){var c=document.createElementNS(SVGNS,'circle');c.setAttribute('r','3.2');c.setAttribute('class',cls);transDotLayer.appendChild(c);return c;}
-function transMakeShine(){
-  var p=document.createElementNS(SVGNS,'path');
-  p.setAttribute('class','tShine');
-  // Inline style beats the `.transLinks path` stylesheet stroke.
-  p.style.stroke='#AEDEFF';p.style.strokeLinecap='round';
-  p.style.strokeDasharray=SHINE_HALF+' '+SHINE_GAP;
-  transDotLayer.appendChild(p);
-  return p;
+// (Re)build the tiled segments for a shine line. Segment geometry is computed
+// once here; the animation only tweaks per-segment opacity each frame.
+function transBuildShine(reg){
+  if(reg.g&&reg.g.parentNode)reg.g.parentNode.removeChild(reg.g);
+  var g=document.createElementNS(SVGNS,'g');g.setAttribute('class','tShineG');
+  var len=reg.len,count=Math.max(4,Math.min(72,Math.round(len/SHINE_SEG))),segLen=len/count;
+  reg.segs=[];
+  for(var i=0;i<count;i++){
+    var pa=transPtAt(reg.pts,(i*segLen)/len),pb=transPtAt(reg.pts,Math.min(len,(i+1)*segLen+0.6)/len);
+    var p=document.createElementNS(SVGNS,'path');
+    p.setAttribute('class','tShine');p.style.stroke='#AEDEFF';p.style.strokeLinecap='round';
+    p.setAttribute('d','M'+pa.x+','+pa.y+' L '+pb.x+','+pb.y);p.style.opacity='0';
+    g.appendChild(p);reg.segs.push({el:p,mid:i*segLen+segLen/2});
+  }
+  transDotLayer.appendChild(g);reg.g=g;
+  reg.band=Math.min(SHINE_BAND,len*0.55);   // bright-band length (shrinks on short lines)
+  reg.period=reg.band/0.42;                 // band ~42% of the cycle, rest dark
 }
 function transDropReg(reg){
-  if(reg.shineEl&&reg.shineEl.parentNode)reg.shineEl.parentNode.removeChild(reg.shineEl);
+  if(reg.g&&reg.g.parentNode)reg.g.parentNode.removeChild(reg.g);
   (reg.dots||[]).forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
 }
 function transDotTick(dtSec){
   Object.keys(transDotRegistry).forEach(function(key){
     var reg=transDotRegistry[key];if(!reg.len)return;
     if(reg.kind==='shine'){
-      var rep=SHINE_HALF+SHINE_GAP;
-      reg.off=((reg.off||0)-DOT_SPEED*dtSec)%rep;
-      reg.shineEl.style.strokeDashoffset=reg.off;
+      var per=reg.period,band=reg.band;
+      reg.scroll=((reg.scroll||0)+DOT_SPEED*dtSec)%per;
+      for(var i=0;i<reg.segs.length;i++){
+        var s=reg.segs[i],x=((s.mid-reg.scroll)%per+per)%per;
+        var op=x<band?Math.sin(Math.PI*(x/band)):0;   // smooth 0->1->0 bell over the band
+        s.el.style.opacity=op<0.02?'0':op.toFixed(3);
+      }
     }else{
       var dph=(DOT_SPEED*dtSec)/reg.len;
       reg.dots.forEach(function(dt){
@@ -2622,7 +2635,7 @@ function transUpsertDots(key,pts,warn){
   if(reg){
     reg.pts=pts;reg.len=len;reg.cls=cls;
     if(kind==='shine'){
-      reg.shineEl.setAttribute('d',pathD(pts));
+      transBuildShine(reg);   // rebuild tiled segments for the new geometry
     }else{
       reg.dots.forEach(function(dt){dt.el.setAttribute('class',cls);});
       var n=Math.max(1,Math.round(len/DOT_SPACING));
@@ -2634,8 +2647,8 @@ function transUpsertDots(key,pts,warn){
     return;
   }
   if(kind==='shine'){
-    var sh=transMakeShine();sh.setAttribute('d',pathD(pts));
-    transDotRegistry[key]={pts:pts,len:len,cls:cls,kind:'shine',shineEl:sh,off:0};
+    var r={pts:pts,len:len,cls:cls,kind:'shine',scroll:0};
+    transBuildShine(r);transDotRegistry[key]=r;
   }else{
     var n2=Math.max(1,Math.round(len/DOT_SPACING)),dots=[];
     for(var k2=0;k2<n2;k2++)dots.push({el:transMakeCircle(cls),phase:k2/n2});
@@ -3381,7 +3394,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-20T23:45:03Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-20T23:57:01Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
