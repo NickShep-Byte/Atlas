@@ -280,7 +280,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
    blue when both ends are inside Atlas. */
 .transLinks circle.tDot{fill:rgba(var(--brd-rgb),.8);transition:fill .6s ease;}
 .transLinks circle.tDot.warn{fill:#E0664C;}
-.transLinks circle.tDot.atlasflow{fill:var(--acc2);filter:drop-shadow(0 0 2px var(--acc2));}
+.transLinks circle.tDot.atlasflow{fill:#66ABFF;filter:drop-shadow(0 0 4px #66ABFF);}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -2008,10 +2008,10 @@ var TRANS_CARD_DATA={
  docket:{label:'Docket / Delivery Register',fam:'green',dashed:true,x:66,y:12},
  dailydiary:{label:'Daily Diary',fam:'green',x:82,y:12},
  caaps:{label:'CAAPS',fam:'pink',x:56,y:48},
- invoiceval:{label:'Invoice Validation / Approval Process',fam:'orange',branch:true,x:66,y:39},
+ invoiceval:{label:'Invoice Validation / Approval Process',fam:'orange',branch:true,x:56,y:36},
  costtracker:{label:'Cost Tracker',fam:'green',x:82,y:39},
  forecasting:{label:'Project Forecasting',fam:'green',x:95,y:39},
- reqappr:{label:'Requisition Approval',fam:'blue',branch:true,x:25,y:64},
+ reqappr:{label:'Requisition Approval',fam:'blue',branch:true,x:25,y:62},
  streamforecast:{label:'Stream / Company Forecasting',fam:'green',x:22,y:78},
  monthlyreport:{label:'Monthly Reporting',fam:'green',x:39,y:87},
  progressclaim:{label:'Progress Claim',fam:'green',x:76,y:85},
@@ -2105,9 +2105,10 @@ transResolveCollisions(TRANS_GROUPS.map(function(g){
 // Pronto — its numbers reach Pronto via Forecasting and the claims.
 var TRANS_LINKS=[
  ['procreg','f111',true],['f111','reqappr',false],['reqappr','pronto',true],
- ['procreg','dailydiary',true],
+ ['procreg','pronto',true],['procreg','dailydiary',true],
  ['connx','pronto',false],['planttracker','pronto',false],
  ['dailydiary','costtracker',false],['costtracker','forecasting',true,'dashedLink'],
+ ['dailydiary','invoiceval',false],
  ['docket','invoiceval',false],['invoiceval','caaps',false],['caaps','pronto',false],
  ['forecasting','pronto',true],['forecasting','streamforecast',true],
  ['pronto','streamforecast',false],['pronto','monthlyreport',false],
@@ -2150,11 +2151,10 @@ var TRANS_AFTER_LINKS=[
 // in both states). "Raised Approved PO" is the with-Atlas replacement
 // for today's Raise PO/Submission/Approval chain.
 var TRANS_LINK_LABELS={
- 'procreg|f111':'Raise PO',
  'f111|reqappr':'Submission / Approval',
  'reqappr|pronto':'PO Approval',
  'procreg|dailydiary':'Procured rates',
- 'procreg|pronto':'Raised Approved PO',
+ 'procreg|pronto':'Raise PO',
  'connx|pronto':'All 555',
  'planttracker|pronto':'All AP01',
  'dailydiary|costtracker':'Tracked Quantities',
@@ -2252,13 +2252,14 @@ function transComputePts(idA,idB){
   // them ever run collinear. Every route here is computed from live
   // rects, so it stays correct in before, after and mixed states.
   if(idA==='procreg'&&idB==='pronto'){
-    // "Raised Approved PO" — with-Atlas only: the portal pushes raised
-    // and approved POs straight into Pronto, replacing today's
-    // F111/Requisition Approval chain (it appears at the very step that
-    // chain is absorbed). Enters Pronto's left edge below centre —
-    // Procured rates exits that edge above centre.
-    var entryYrp=b.cy+15;
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:entryYrp},{x:b.left,y:entryYrp}];
+    // "Raise PO" — exits Procurement's BOTTOM edge right of centre,
+    // mirroring Budget/cost allocation which enters that same edge left
+    // of centre. Runs along a lane above Requisition Approval, drops
+    // through the clear gap just left of Pronto, and enters Pronto's
+    // centre-left — so it never clips Requisition Approval, which sits on
+    // Pronto's row immediately to its left.
+    var exitXrp=a.cx+22,hiYrp=transPxY(50),gapXrp=b.left-14;
+    return [{x:exitXrp,y:a.bottom},{x:exitXrp,y:hiYrp},{x:gapXrp,y:hiYrp},{x:gapXrp,y:b.cy},{x:b.left,y:b.cy}];
   }
   if(idA==='procreg'&&idB==='dailydiary'){
     // "Procured rates" — procurement's rates feed the Daily Diary so
@@ -2280,11 +2281,11 @@ function transComputePts(idA,idB){
       var dipYfs=Math.max(a.bottom,b.bottom)+16;
       return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipYfs},{x:b.cx,y:dipYfs},{x:b.cx,y:b.bottom}];
     }
-    // Pre-settle: a single bend — straight down Forecasting's own column
-    // (offset from the CTC drop beside it), then straight along Stream/
-    // Company's row into its right edge.
-    var exitXfs=a.cx-15;
-    return [{x:exitXfs,y:a.bottom},{x:exitXfs,y:b.cy},{x:b.right,y:b.cy}];
+    // Pre-settle: a single bend, exiting at 2/3 along Project
+    // Forecasting's bottom edge (CTC -> Pronto takes the 1/3 point),
+    // straight down then along Stream/Company's row into its right edge.
+    var x23fs=a.left+(a.right-a.left)*2/3;
+    return [{x:x23fs,y:a.bottom},{x:x23fs,y:b.cy},{x:b.right,y:b.cy}];
   }
   if(idA==='planttracker'&&idB==='dailydiary'){
     // With-Atlas only: Plant Scheduler feeds the Daily Diary, hopping
@@ -2300,7 +2301,7 @@ function transComputePts(idA,idB){
     // top dead centre and entering Cost Journalling's top right of
     // centre, clear of the Connx feed's column.
     var laneYdc=a.top-28;
-    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYdc},{x:b.cx+25,y:laneYdc},{x:b.cx+25,y:b.top}];
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYdc},{x:b.cx,y:laneYdc},{x:b.cx,y:b.top}];
   }
   if(idA==='variationreg'&&idB==='procreg'){
     // "Budget/cost allocation" — down below the whole bottom row, left
@@ -2328,11 +2329,11 @@ function transComputePts(idA,idB){
       var corrXcf=transPxX(68);
       return [{x:a.left,y:a.cy},{x:corrXcf,y:a.cy},{x:corrXcf,y:b.cy},{x:b.right,y:b.cy}];
     }
-    // Pre-settle (Forecasting still at its scattered today spot, far
-    // upper-right): a single bend — straight down its own far-right
-    // column, then straight along Pronto's row into Pronto's right edge.
-    // Both legs run clear of every today card.
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:b.cy},{x:b.right,y:b.cy}];
+    // Pre-settle: a single bend, exiting at 1/3 along Project
+    // Forecasting's bottom edge (the roll-up to Company takes 2/3),
+    // straight down then along Pronto's row into Pronto's right edge.
+    var x13cf=a.left+(a.right-a.left)/3;
+    return [{x:x13cf,y:a.bottom},{x:x13cf,y:b.cy},{x:b.right,y:b.cy}];
   }
   if(idA==='invoiceval'&&idB==='pronto'){
     // Appears the moment Invoice Validation lands (board p9). Enters
@@ -2350,10 +2351,17 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcp},{x:entryXcp,y:laneYcp},{x:entryXcp,y:b.top}];
   }
   if(idA==='invoiceval'&&idB==='caaps'){
-    // Today-only: CAAPS is tucked below-left of Invoice Validation —
-    // a small Z into its right edge.
+    // Today-only: CAAPS sits directly below Invoice Validation (same
+    // column) — a straight vertical drop.
+    if(Math.abs(b.cx-a.cx)<8)return [{x:a.cx,y:a.bottom},{x:b.cx,y:b.top}];
     var midXic=(a.left+b.right)/2;
     return [{x:a.left,y:a.cy},{x:midXic,y:a.cy},{x:midXic,y:b.cy},{x:b.right,y:b.cy}];
+  }
+  if(idA==='dailydiary'&&idB==='invoiceval'){
+    // Today link: out of Daily Diary's LEFT edge, into Invoice
+    // Validation's RIGHT edge, via a mid corridor between them.
+    var midXdi=(b.right+a.left)/2;
+    return [{x:a.left,y:a.cy},{x:midXdi,y:a.cy},{x:midXdi,y:b.cy},{x:b.right,y:b.cy}];
   }
   if(idA==='pronto'&&idB==='streamforecast'){
     // Exits Pronto's bottom edge left of centre (Monthly Reporting's
@@ -2373,10 +2381,9 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYm},{x:b.cx,y:laneYm},{x:b.cx,y:b.top}];
   }
   if(idA==='progressclaim'&&idB==='pronto'){
-    // Rises from Progress Claim's top on its own lane (staggered
-    // between Cost Actuals' and CTC's lanes) into Pronto's bottom edge
-    // right of centre.
-    var laneYpc=transPxY(74.4),entryXpc=transPxX(46);
+    // "Cost Actuals" — rises from Progress Claim on its own lane into
+    // Pronto's bottom edge at 75% of Pronto's width (right of centre).
+    var laneYpc=transPxY(74.4),entryXpc=b.left+0.75*(b.right-b.left);
     return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpc},{x:entryXpc,y:laneYpc},{x:entryXpc,y:b.bottom}];
   }
   if(idA==='variationreg'&&idB==='progressclaim'){
@@ -2447,7 +2454,7 @@ function transPlaceLabel(el,pts,key){
   // left, clear of the forecasting arrow.
   if(key==='variationreg|procreg'){
     var lbb;try{lbb=el.getBBox();}catch(e){lbb=null;}
-    if(lbb&&lbb.width){ox-=0.8*lbb.width;el.setAttribute('x',ox);}
+    if(lbb&&lbb.width){ox-=0.8*lbb.width;ox+=20;el.setAttribute('x',ox);}
   }
   // Nudge clear of labels already placed this pass so no two labels
   // (and, since a label sits just off its own line, no label/other-line
