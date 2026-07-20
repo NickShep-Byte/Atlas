@@ -3396,12 +3396,15 @@ segEls[0].classList.add('cur');
 counter.textContent=(cur+1)+' / '+slides.length;
 if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('shown');});});
 })();
-// Populate the logo tooltip with the document's own last-modified time,
-// so it reflects when a new version was pushed with no manual stamping.
+// Populate the logo tooltip with the build stamp (bumped on each push;
+// document.lastModified proved unreliable — git checkout / missing
+// Last-Modified headers report the wrong time). Shown in the viewer's
+// local time.
+var BUILD_STAMP='2026-07-20T23:13:39Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
-  var d=new Date(document.lastModified);
-  var s=isNaN(d.getTime())?document.lastModified:d.toLocaleString(undefined,{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'});
+  var d=new Date(BUILD_STAMP);
+  var s=isNaN(d.getTime())?BUILD_STAMP:d.toLocaleString(undefined,{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'});
   tip.textContent='Last updated '+s;
 })();
 </script>
