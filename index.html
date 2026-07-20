@@ -2341,11 +2341,9 @@ function transComputePts(idA,idB){
   }
   if(idA==='planttracker'&&idB==='pronto'){
     // Today-only (dies when Plant Tracker becomes Plant Scheduler).
-    // Pronto's top edge is shadowed by Cost Journalling's card from p5,
-    // so this comes around the right into Pronto's right edge, on its
-    // own corridor between Cost Journalling's and CAAPS's columns.
-    var laneYpt=transPxY(27),corrXpt=transPxX(48.7),entryYpt=b.cy-8;
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYpt},{x:corrXpt,y:laneYpt},{x:corrXpt,y:entryYpt},{x:b.right,y:entryYpt}];
+    // Enters Pronto's TOP edge right of centre (swapped with CAAPS).
+    var laneYpt=transPxY(27),entryXpt=b.cx+25;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYpt},{x:entryXpt,y:laneYpt},{x:entryXpt,y:b.top}];
   }
   if(idA==='forecasting'&&idB==='pronto'){
     // "CTC Forecast (monthly)".
@@ -2370,12 +2368,11 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYiv},{x:entryXiv,y:laneYiv},{x:entryXiv,y:b.top}];
   }
   if(idA==='caaps'&&idB==='pronto'){
-    // Today-only, and CAAPS sits above-right of Pronto. Same
-    // right-of-centre top-edge slot as Invoice Validation's hand-off —
-    // CAAPS dies at the exact step that link appears (p9), so the slot
-    // is never shared.
-    var laneYcp=transPxY(56),entryXcp=b.cx+25;
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcp},{x:entryXcp,y:laneYcp},{x:entryXcp,y:b.top}];
+    // Today-only, and CAAPS sits above-right of Pronto. Enters Pronto's
+    // RIGHT edge via the corridor between Cost Journalling's and CAAPS's
+    // columns (swapped with Plant Tracker).
+    var laneYcp=transPxY(56),corrXcp=transPxX(48.7),entryYcp=b.cy-8;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcp},{x:corrXcp,y:laneYcp},{x:corrXcp,y:entryYcp},{x:b.right,y:entryYcp}];
   }
   if(idA==='invoiceval'&&idB==='caaps'){
     // Today-only: CAAPS sits on the same row as Invoice Validation,
