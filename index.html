@@ -2553,7 +2553,7 @@ function transPtAt(pts,t){
   }
   var last=pts[pts.length-1];return {x:last.x,y:last.y};
 }
-var SHINE_HALF=32;   // half-length (px of arc) of an atlas-flow shine streak
+var SHINE_HALF=64;   // half-length (px of arc) of an atlas-flow shine streak
 // Points of the sub-polyline of `pts` between arc-lengths a and b (a<b),
 // keeping any vertices that fall inside so the streak follows bends.
 function transSubPathPts(pts,a,b){
