@@ -2275,16 +2275,16 @@ function transComputePts(idA,idB){
   if(idA==='forecasting'&&idB==='streamforecast'){
     // The project-to-company forecast roll-up. Landed: both sit on the
     // box's bottom row with three cards between them — dip below the
-    // row (staggered above Budget/cost allocation's rail). Today: down
-    // Forecasting's right side and across the gap above Pronto's row,
-    // descending between Requisition Approval's and Monthly Reporting's
-    // columns into Stream/Company's right edge.
+    // row (staggered above Budget/cost allocation's rail).
     if(Math.abs(b.cy-a.cy)<4){
       var dipYfs=Math.max(a.bottom,b.bottom)+16;
       return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipYfs},{x:b.cx,y:dipYfs},{x:b.cx,y:b.bottom}];
     }
-    var laneYfs=transPxY(57.5),corrXfs=transPxX(31.3),exitXfs=a.cx+25;
-    return [{x:exitXfs,y:a.bottom},{x:exitXfs,y:laneYfs},{x:corrXfs,y:laneYfs},{x:corrXfs,y:b.cy},{x:b.right,y:b.cy}];
+    // Pre-settle: a single bend — straight down Forecasting's own column
+    // (offset from the CTC drop beside it), then straight along Stream/
+    // Company's row into its right edge.
+    var exitXfs=a.cx-15;
+    return [{x:exitXfs,y:a.bottom},{x:exitXfs,y:b.cy},{x:b.right,y:b.cy}];
   }
   if(idA==='planttracker'&&idB==='dailydiary'){
     // With-Atlas only: Plant Scheduler feeds the Daily Diary, hopping
