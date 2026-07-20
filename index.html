@@ -2371,7 +2371,7 @@ function transComputePts(idA,idB){
     // Today-only, and CAAPS sits above-right of Pronto. Single elbow
     // into Pronto's RIGHT edge: straight down from CAAPS's bottom, then
     // straight into the right edge.
-    var entryYcp=b.cy;
+    var entryYcp=b.cy-8;
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:entryYcp},{x:b.right,y:entryYcp}];
   }
   if(idA==='invoiceval'&&idB==='caaps'){
