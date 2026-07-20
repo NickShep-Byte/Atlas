@@ -2543,22 +2543,26 @@ function transFitBox(){
     transCanvasEl.classList.remove('building');
     return null;
   }
-  // Wrap the box around everything currently drawn inside it — landed
-  // cards AND the connector geometry and text labels, which extend past
-  // the cards (rails below the bottom row, lanes above the top row).
+  // Wrap the box around everything currently INSIDE it — landed cards
+  // plus the geometry/labels of links that connect two in-box cards.
+  // A link with one end still at a scattered today spot must NOT expand
+  // the box (that would balloon it across the whole canvas the instant
+  // the first tool lands); only both-ends-in-Atlas links count.
+  var inBox={};ids.forEach(function(id){inBox[id]=1;});
+  function bothIn(key){var p=key.split('|');return inBox[p[0]]&&inBox[p[1]];}
   var minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   function ext(l,t,r,b){if(l<minX)minX=l;if(t<minY)minY=t;if(r>maxX)maxX=r;if(b>maxY)maxY=b;}
   rects.forEach(function(r){ext(r.left,r.top,r.right,r.bottom);});
   Object.keys(transPathRegistry).forEach(function(k){
     var el=transPathRegistry[k];
-    if(!el||el.classList.contains('gone'))return;
+    if(!el||el.classList.contains('gone')||!bothIn(k))return;
     var nums=(el.getAttribute('d')||'').match(/-?\d+(?:\.\d+)?/g);
     if(!nums)return;
     for(var i=0;i+1<nums.length;i+=2){var x=+nums[i],y=+nums[i+1];ext(x,y,x,y);}
   });
   Object.keys(transLabelRegistry).forEach(function(k){
     var el=transLabelRegistry[k];
-    if(!el||el.classList.contains('gone'))return;
+    if(!el||el.classList.contains('gone')||!bothIn(k))return;
     var bb;try{bb=el.getBBox();}catch(e){return;}
     if(bb&&bb.width)ext(bb.x,bb.y,bb.x+bb.width,bb.y+bb.height);
   });
