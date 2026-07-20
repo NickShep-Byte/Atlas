@@ -280,7 +280,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   border-radius:9px;padding:.6em .4em;text-align:center;
   font-size:clamp(8.5px,.66vw,11px);font-weight:700;line-height:1.18;color:var(--navy);
   border:1.5px solid transparent;
-  transition:opacity .5s var(--ease),transform .5s var(--ease),left .8s var(--ease),top .8s var(--ease),border-color .3s ease,box-shadow .3s ease;
+  transition:opacity 1s var(--ease),transform 1s var(--ease),left 1.6s var(--ease),top 1.6s var(--ease),border-color .5s ease,box-shadow .5s ease;
 }
 .tCard.fam-green{background:#E1F5E9;border-color:#46BE78;}
 .tCard.fam-pink{background:#FBE9ED;border-color:#E6788C;}
@@ -299,33 +299,43 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   position:absolute;border-radius:16px;z-index:0;
   border:1.5px dashed rgba(var(--acc2-rgb),.5);background:rgba(var(--sec-rgb),.05);
   opacity:0;
-  transition:border-color .5s ease,border-style .5s ease,background .5s ease,opacity .5s ease,
-             left .6s var(--ease),top .6s var(--ease),width .6s var(--ease),height .6s var(--ease);
+  transition:border-color 1s ease,border-style 1s ease,background 1s ease,opacity 1s ease,
+             left 1.2s var(--ease),top 1.2s var(--ease),width 1.2s var(--ease),height 1.2s var(--ease);
 }
 .transCanvas.building .atlasBoxOutline{opacity:1;}
 .transCanvas.settled .atlasBoxOutline{border-style:solid;border-color:var(--teal);background:rgba(var(--sec-rgb),.1);}
-/* Pronto is NOT part of Atlas — the board cuts a blank window out of
-   the box around it. Painted above the box fill (and below the
-   connector layer, which gets its own z-index) in plain page
-   background, so the box visibly flows around Pronto rather than
-   claiming it. */
-.prontoBlockout{
+/* A card that isn't (yet) part of Atlas sits in its own blocked-out
+   window — the SAME dashed outline as the Atlas box, in plain page
+   background so it reads as a separate system. Pronto keeps its window
+   forever (never absorbed); every other card loses it the moment it's
+   pulled into Atlas. Painted above the box fill, below the cards. */
+.tBlockout{
   position:absolute;border-radius:12px;z-index:0;
-  background:var(--bg);opacity:0;
-  transition:opacity .5s ease,left .6s var(--ease),top .6s var(--ease),width .6s var(--ease),height .6s var(--ease);
+  background:var(--bg);
+  border:1.5px dashed rgba(var(--acc2-rgb),.5);
+  opacity:1;
+  transition:opacity .8s ease,left 1.2s var(--ease),top 1.2s var(--ease),width 1.2s var(--ease),height 1.2s var(--ease);
 }
-.transCanvas.building .prontoBlockout{opacity:1;}
+.tBlockout.fresh{opacity:0;}
+/* Instant repositioning (used while invisible during a fade reset) so
+   cards don't visibly glide back to their today spots. */
+.transCanvas.instant .tCard,
+.transCanvas.instant .tBlockout,
+.transCanvas.instant .atlasBoxOutline{transition:none!important;}
 .atlasBoxOutline span{position:absolute;top:-.9em;left:1.2em;padding:0 .5em;background:var(--bg);
   font-size:clamp(9.5px,.8vw,12px);font-weight:800;letter-spacing:.06em;color:var(--soft);}
-.transPlayPause{
-  position:absolute;top:6px;right:6px;z-index:5;
+.transControls{position:absolute;top:6px;right:6px;z-index:5;display:flex;gap:6px;align-items:center;}
+.transStep{font-size:clamp(9px,.72vw,11px);font-weight:700;color:var(--soft);letter-spacing:.02em;
+  margin-right:2px;min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums;}
+.transCtrl{
   width:32px;height:32px;border-radius:50%;border:1px solid rgba(var(--brd-rgb),.4);
   background:rgba(var(--srf-rgb),.08);color:var(--txt);font-size:11px;line-height:1;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:background .25s ease,transform .25s ease;
 }
-.transPlayPause:hover{background:rgba(var(--acc2-rgb),.25);transform:translateY(-2px);}
-.transPlayPause:focus-visible{outline:2px solid var(--blue-bright);outline-offset:2px;}
+.transCtrl:hover{background:rgba(var(--acc2-rgb),.25);transform:translateY(-2px);}
+.transCtrl:focus-visible{outline:2px solid var(--blue-bright);outline-offset:2px;}
+.transCtrl[disabled]{opacity:.35;cursor:default;pointer-events:none;}
 .transFoot{display:flex;flex-direction:column;align-items:center;gap:1vh;margin-top:1vh;}
 .transNote{font-size:clamp(9.5px,.8vw,12px);color:#E0664C;font-weight:600;text-align:center;font-style:italic;min-height:1.6em;transition:color .4s ease;}
 .transNote.clean{color:var(--teal);}
@@ -953,8 +963,12 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
         </defs>
       </svg>
       <div class="atlasBoxOutline" id="atlasBoxOutline"><span>Atlas &middot; Shared Database</span></div>
-      <div class="prontoBlockout" id="prontoBlockout"></div>
-      <button class="transPlayPause" id="transPlayPause" type="button" aria-label="Pause animation" title="Pause animation">&#10074;&#10074;</button>
+      <div class="transControls">
+        <span class="transStep" id="transStep"></span>
+        <button class="transCtrl" id="transPrev" type="button" aria-label="Previous step" title="Previous step">&#10094;</button>
+        <button class="transCtrl" id="transPlayPause" type="button" aria-label="Pause animation" title="Pause animation">&#10074;&#10074;</button>
+        <button class="transCtrl" id="transNext" type="button" aria-label="Next step" title="Next step">&#10095;</button>
+      </div>
     </div>
     <div class="transFoot rv d2">
       <div class="transNote" id="transNote">Multiple uncontrolled hand-offs between systems.</div>
@@ -2149,10 +2163,14 @@ var SVGNS='http://www.w3.org/2000/svg';
 var transCanvasEl=document.getElementById('transCanvas');
 var transLinksEl=document.getElementById('transLinks');
 var atlasBoxOutlineEl=document.getElementById('atlasBoxOutline');
-var prontoBlockoutEl=document.getElementById('prontoBlockout');
 var transNoteEl=document.getElementById('transNote');
-var trans={running:false,paused:false,timers:[],raf:null};
+var trans={running:false,paused:false,mode:'auto',step:0,animating:false,timers:[],raf:null};
 var transPlayPauseEl=document.getElementById('transPlayPause');
+var transPrevEl=document.getElementById('transPrev');
+var transNextEl=document.getElementById('transNext');
+var transStepEl=document.getElementById('transStep');
+// One dashed "blocked-out" window per card that isn't part of Atlas.
+var transBlockouts={};
 // Per-card lifecycle state, driving which links are currently valid:
 // 'today'   — still at its original spot, before-links apply
 // 'merging' — moving toward its primary's spot, no links apply
@@ -2282,10 +2300,12 @@ function transComputePts(idA,idB){
   }
   if(idA==='variationreg'&&idB==='procreg'){
     // "Budget/cost allocation" — down below the whole bottom row, left
-    // along a clear rail to Procurement's own column (nothing else sits
-    // in it), then straight up into Procurement's BOTTOM edge.
-    var railY=Math.max(a.bottom,b.bottom)+26,exitXvp=a.cx-20;
-    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:b.cx,y:railY},{x:b.cx,y:b.bottom}];
+    // along a clear rail to Procurement's column, then up into
+    // Procurement's BOTTOM edge LEFT of centre, so it enters left of
+    // Procurement -> Pronto ("Raised Approved PO"), which drops from
+    // Procurement's bottom centre.
+    var railY=Math.max(a.bottom,b.bottom)+26,exitXvp=a.cx-20,entryXvp=b.cx-22;
+    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:entryXvp,y:railY},{x:entryXvp,y:b.bottom}];
   }
   if(idA==='planttracker'&&idB==='pronto'){
     // Today-only (dies when Plant Tracker becomes Plant Scheduler).
@@ -2395,14 +2415,15 @@ var transLabelBoxes=[];
 // route's best segment, preferring horizontal runs (horizontal text
 // reads along them); a vertical-only route gets the text set just
 // beside its longest drop.
-function transPlaceLabel(el,pts){
+function transPlaceLabel(el,pts,key){
   var best=null,bestScore=0;
   for(var i=0;i<pts.length-1;i++){
     var dx=Math.abs(pts[i+1].x-pts[i].x),dy=Math.abs(pts[i+1].y-pts[i].y);
     var horiz=dx>=dy,score=horiz?dx:dy*0.55;
     if(score>bestScore){
       bestScore=score;
-      best={x:(pts[i].x+pts[i+1].x)/2,y:(pts[i].y+pts[i+1].y)/2,horiz:horiz};
+      best={x:(pts[i].x+pts[i+1].x)/2,y:(pts[i].y+pts[i+1].y)/2,horiz:horiz,
+            lo:Math.min(pts[i].x,pts[i+1].x),hi:Math.max(pts[i].x,pts[i+1].x)};
     }
   }
   if(!best)return;
@@ -2410,6 +2431,10 @@ function transPlaceLabel(el,pts){
   if(best.horiz){
     el.setAttribute('text-anchor','middle');
     ox=best.x;oy=best.y-7;
+    // Budget/cost allocation sits on the long bottom rail — pin it to
+    // the LEFT quarter of that rail so it stays clear of the forecasting
+    // arrows that cross the rail's centre.
+    if(key==='variationreg|procreg')ox=best.lo+(best.hi-best.lo)*0.22;
   }else{
     el.setAttribute('text-anchor','start');
     ox=best.x+8;oy=best.y+3;
@@ -2448,7 +2473,7 @@ function transUpsertLabel(key,pts,warn,label){
   }
   el.classList.toggle('warn',!!warn);
   el.classList.remove('gone');
-  transPlaceLabel(el,pts);
+  transPlaceLabel(el,pts,key);
 }
 function transUpsertPath(key,pts,warn,cls){
   var d=pathD(pts),el=transPathRegistry[key];
@@ -2511,7 +2536,7 @@ function transBuild(){
   TRANS_FIXED.forEach(function(c){transCanvasEl.appendChild(transCard({id:c.id,label:c.label,fam:c.fam,x:c.before.x,y:c.before.y}));});
   // The bonus node (Cost Journalling/Allocation) has no today position —
   // it's created already sitting at its final spot, styled as a landed
-  // Atlas card, but hidden (consumed) until transRunGroup reveals it.
+  // Atlas card, but hidden (consumed) until its wave reveals it.
   var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
   if(bonusGroup){
     var bEl=transCard({id:bonusGroup.bonus,label:bonusGroup.label,fam:'atlas',x:bonusGroup.afterX,y:bonusGroup.afterY});
@@ -2572,16 +2597,6 @@ function transFitBox(){
   atlasBoxOutlineEl.style.top=top+'px';
   atlasBoxOutlineEl.style.width=(right-left)+'px';
   atlasBoxOutlineEl.style.height=(bottom-top)+'px';
-  // Pronto is not part of Atlas — keep a page-background window cut out
-  // of the box around it, tracking its card.
-  var pron=transRect('pronto');
-  if(pron){
-    var padBo=40;
-    prontoBlockoutEl.style.left=(pron.left-padBo)+'px';
-    prontoBlockoutEl.style.top=(pron.top-padBo)+'px';
-    prontoBlockoutEl.style.width=(pron.right-pron.left+padBo*2)+'px';
-    prontoBlockoutEl.style.height=(pron.bottom-pron.top+padBo*2)+'px';
-  }
   transCanvasEl.classList.add('building');
   return {left:left,top:top,right:right,bottom:bottom,cx:(left+right)/2,cy:(top+bottom)/2};
 }
@@ -2597,6 +2612,37 @@ function transStillLinkable(id){return transState[id]==='today'||transState[id]=
 // mutated in place (transUpsertLink), links that stop applying fade out
 // and get removed, and everything else is left completely untouched.
 // Nothing is ever blanket-removed-and-redrawn.
+// One dashed window per card not (yet) in Atlas — every card still at
+// its today spot, plus Pronto forever (it's never absorbed). A card
+// loses its window the moment it starts merging into Atlas.
+function transBlockoutPad(id){return id==='pronto'?40:9;}
+function transSyncBlockouts(){
+  var need={};
+  Object.keys(TRANS_CARD_DATA).forEach(function(id){if(transState[id]==='today')need[id]=1;});
+  need.pronto=1;
+  Object.keys(need).forEach(function(id){
+    var r=transRect(id);if(!r)return;
+    var bo=transBlockouts[id];
+    if(!bo){
+      bo=document.createElement('div');bo.className='tBlockout fresh';
+      transCanvasEl.appendChild(bo);transBlockouts[id]=bo;
+      requestAnimationFrame(function(){requestAnimationFrame(function(){bo.classList.remove('fresh');});});
+    }
+    var p=transBlockoutPad(id);
+    bo.style.left=(r.left-p)+'px';bo.style.top=(r.top-p)+'px';
+    bo.style.width=(r.right-r.left+p*2)+'px';bo.style.height=(r.bottom-r.top+p*2)+'px';
+  });
+  Object.keys(transBlockouts).forEach(function(id){
+    if(need[id])return;
+    var bo=transBlockouts[id];bo.classList.add('fresh');
+    delete transBlockouts[id];
+    setTimeout(function(){if(bo.parentNode)bo.parentNode.removeChild(bo);},800);
+  });
+}
+function transClearBlockouts(){
+  Object.keys(transBlockouts).forEach(function(id){var bo=transBlockouts[id];if(bo.parentNode)bo.parentNode.removeChild(bo);});
+  transBlockouts={};
+}
 function transRelinkAll(){
   var wanted={};
   TRANS_LINKS.forEach(function(link){
@@ -2669,27 +2715,89 @@ function transRelinkAll(){
     if(!wanted[key])transRemovePath(key);
   });
   transFitBox();
+  transSyncBlockouts();
 }
-function transReset(){
+function transCardEl(id){return transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');}
+// The board moves several tools on the same page; those groups form one
+// "wave" (a group plus any immediately-following withPrev groups) that
+// animates together. Steps run 0 (today) → 1..N (after each wave), with
+// the final wave completion also settling Pronto.
+var TRANS_WAVES=(function(){
+  var out=[],i=0;
+  while(i<TRANS_GROUPS.length){
+    var w=[i],j=i;
+    while(j+1<TRANS_GROUPS.length&&TRANS_GROUPS[j+1].withPrev){j++;w.push(j);}
+    out.push(w);i=j+1;
+  }
+  return out;
+})();
+var TRANS_STEPS=TRANS_WAVES.length;
+function transStepTimers(){trans.timers.forEach(function(t){clearTimeout(t.id);});trans.timers=[];}
+function transUpdateStepUI(){
+  if(transStepEl)transStepEl.textContent=Math.min(trans.step,TRANS_STEPS)+' / '+TRANS_STEPS;
+  if(transPrevEl)transPrevEl.disabled=trans.step<=0;
+  if(transNextEl)transNextEl.disabled=trans.step>=TRANS_STEPS;
+}
+// Pronto never moves, so settling only flips its state and switches the
+// box/notes to the unified look.
+function transSettle(){
+  transState.pronto='atlas';
+  transRelinkAll();
+  transCanvasEl.classList.add('settled');
+  transNoteEl.textContent='One shared Atlas platform.';
+  transNoteEl.classList.add('clean');
+}
+// Set the whole board to a given step INSTANTLY (no per-card glide) —
+// used for the fade reset and manual "previous".
+function transApplyStep(step){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){
-    var d=TRANS_CARD_DATA[id],el=transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');
+    var d=TRANS_CARD_DATA[id],el=transCardEl(id);
     el.className='tCard fam-'+d.fam+(d.dashed?' dashed':'')+(d.branch?' branch':'');
-    el.textContent=d.label;
-    el.style.left=d.x+'%';el.style.top=d.y+'%';
+    el.textContent=d.label;el.style.left=d.x+'%';el.style.top=d.y+'%';
   });
   TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.before);});
-  var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
-  if(bonusGroup){
-    var bEl=transCanvasEl.querySelector('.tCard[data-id="'+bonusGroup.bonus+'"]');
-    bEl.classList.add('consumed');
-    bEl.classList.remove('mergingPrimary');
-  }
   transResetState();
+  for(var wi=0;wi<step&&wi<TRANS_WAVES.length;wi++){
+    TRANS_WAVES[wi].forEach(function(gi){
+      var g=TRANS_GROUPS[gi];
+      if(g.bonus){var b=transCardEl(g.bonus);b.classList.remove('consumed');b.classList.add('mergingPrimary');transState[g.bonus]='atlas';return;}
+      g.secondaries.forEach(function(sid){var s=transCardEl(sid);s.classList.add('consumed');transState[sid]='gone';});
+      var p=transCardEl(g.primary);
+      p.classList.remove('fam-'+TRANS_CARD_DATA[g.primary].fam,'branch','dashed');
+      p.classList.add('fam-atlas','mergingPrimary');
+      p.textContent=g.afterLabel;p.style.left=g.afterX+'%';p.style.top=g.afterY+'%';
+      transState[g.primary]='atlas';
+    });
+  }
+  var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
+  if(bonusGroup&&transState[bonusGroup.bonus]!=='atlas'){
+    var bEl=transCardEl(bonusGroup.bonus);bEl.classList.add('consumed');bEl.classList.remove('mergingPrimary');
+  }
   transClearAllPaths();
-  transCanvasEl.classList.remove('settled','building');
-  transNoteEl.textContent='Multiple uncontrolled hand-offs between systems.';
-  transNoteEl.classList.remove('clean');
+  if(step>=TRANS_STEPS){
+    transState.pronto='atlas';
+    transCanvasEl.classList.add('settled');
+    transNoteEl.textContent='One shared Atlas platform.';transNoteEl.classList.add('clean');
+  }else{
+    transCanvasEl.classList.remove('settled');
+    transNoteEl.textContent='Multiple uncontrolled hand-offs between systems.';transNoteEl.classList.remove('clean');
+  }
   transRelinkAll();
+}
+// Fade the canvas out, jump to `step` while invisible (cards repositioned
+// with transitions off, so nothing glides), then fade back in.
+function transFadeTo(step,after){
+  transStepTimers();
+  transCanvasEl.style.transition='opacity .6s ease';
+  transCanvasEl.style.opacity='0';
+  ltTrans(function(){
+    transCanvasEl.classList.add('instant');
+    transApplyStep(step);trans.step=step;transUpdateStepUI();
+    void transCanvasEl.offsetWidth;
+    transCanvasEl.classList.remove('instant');
+    transCanvasEl.style.opacity='1';
+    ltTrans(function(){transCanvasEl.style.transition='';if(after)after();},650);
+  },650);
 }
 // Timers are tracked as {fn,firesAt,id} rather than bare setTimeout ids
 // so a pause can compute exactly how much time was left on each one and
@@ -2712,36 +2820,26 @@ function ltTrans(fn,ms){
 // Their original links stay attached and tracking throughout (see
 // transStillLinkable/transLiveTick) instead of cutting out the instant
 // they start moving.
-function transRunGroup(gi){
-  if(!trans.running)return;
-  var g=TRANS_GROUPS[gi];
-  if(g.bonus){
-    // No today position to travel from — just fades into its already-
-    // final spot. Runs second (board p5), before either of its feeder
-    // tools has landed: the Connx feed and the Allocated Cost hand-off
-    // to Pronto rewire onto it immediately (see transRelinkAll).
-    var bEl=transCanvasEl.querySelector('.tCard[data-id="'+g.bonus+'"]');
+// Animate ONE wave into Atlas, calling onDone once it has landed. All
+// timings are 2x the original so the story reads slowly.
+function transAnimateWave(wi,onDone){
+  var groups=TRANS_WAVES[wi].map(function(gi){return TRANS_GROUPS[gi];});
+  trans.animating=true;
+  if(groups.length===1&&groups[0].bonus){
+    // No today position — the new capability just fades into its final
+    // spot; its feeds rewire immediately (see transRelinkAll).
+    var g=groups[0],bEl=transCardEl(g.bonus);
     ltTrans(function(){
-      bEl.classList.remove('consumed');
-      bEl.classList.add('mergingPrimary');
-      transState[g.bonus]='atlas';
-      transRelinkAll();
-    },300);
-    ltTrans(function(){transNextGroup(gi);},1300);
+      bEl.classList.remove('consumed');bEl.classList.add('mergingPrimary');
+      transState[g.bonus]='atlas';transRelinkAll();
+    },600);
+    ltTrans(function(){trans.animating=false;if(onDone)onDone();},2600);
     return;
   }
-  // The board moves some tools on the same page — those groups run as
-  // one wave here: this group plus every immediately following group
-  // flagged withPrev, all animating simultaneously.
-  var wave=[g],last=gi;
-  while(last+1<TRANS_GROUPS.length&&TRANS_GROUPS[last+1].withPrev){
-    last++;
-    wave.push(TRANS_GROUPS[last]);
-  }
-  wave.forEach(function(wg){
+  groups.forEach(function(wg){
     var secs=wg.secondaries;
-    var secEls=secs.map(function(sid){return transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');});
-    var pEl=transCanvasEl.querySelector('.tCard[data-id="'+wg.primary+'"]');
+    var secEls=secs.map(function(sid){return transCardEl(sid);});
+    var pEl=transCardEl(wg.primary);
     ltTrans(function(){
       pEl.classList.add('active');
       secEls.forEach(function(el){el.classList.add('active');});
@@ -2759,74 +2857,68 @@ function transRunGroup(gi){
         transState[sid]='merging';
       });
       transRelinkAll();
-    },650);
+    },1300);
     ltTrans(function(){
-      secs.forEach(function(sid,i){
-        secEls[i].classList.add('consumed');
-        transState[sid]='gone';
-      });
+      secs.forEach(function(sid,i){secEls[i].classList.add('consumed');transState[sid]='gone';});
       transState[wg.primary]='atlas';
       transRelinkAll();
-    },1500);
+    },3000);
   });
-  ltTrans(function(){transNextGroup(last);},1750);
+  ltTrans(function(){trans.animating=false;if(onDone)onDone();},3500);
 }
-function transNextGroup(gi){
-  if(gi+1<TRANS_GROUPS.length){transRunGroup(gi+1);return;}
-  // everything's landed — Pronto stays exactly where it is (it never
-  // moves on the board either); the final beat just flips its state so
-  // the box and links settle around it.
-  ltTrans(function(){
-    transState.pronto='merging';
-    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-  },300);
-  ltTrans(function(){
-    transState.pronto='atlas';
-    transRelinkAll();
-    transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One shared Atlas platform.';
-    transNoteEl.classList.add('clean');
-  },1150);
-  ltTrans(function(){
-    transReset();
-    transRunGroup(0);
-  },4750);
-}
-function transStart(){
-  if(RM){
-    TRANS_GROUPS.forEach(function(g){
-      if(g.bonus){
-        var bEl=transCanvasEl.querySelector('.tCard[data-id="'+g.bonus+'"]');
-        bEl.classList.remove('consumed');
-        transState[g.bonus]='atlas';
-        return;
-      }
-      g.secondaries.forEach(function(sid){
-        var sEl=transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');
-        var primPos=TRANS_CARD_DATA[g.primary];
-        sEl.style.left=primPos.x+'%';sEl.style.top=primPos.y+'%';
-        sEl.classList.add('consumed');
-        transState[sid]='gone';
-      });
-      var pEl=transCanvasEl.querySelector('.tCard[data-id="'+g.primary+'"]');
-      pEl.classList.remove('fam-'+TRANS_CARD_DATA[g.primary].fam,'branch','dashed');
-      pEl.classList.add('fam-atlas');
-      pEl.textContent=g.afterLabel;
-      pEl.style.left=g.afterX+'%';pEl.style.top=g.afterY+'%';
-      transState[g.primary]='atlas';
-    });
-    TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.after);});
-    transState.pronto='atlas';
-    transRelinkAll();
-    transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One shared Atlas platform.';
-    transNoteEl.classList.add('clean');
+// Auto-play: run waves back-to-back, settle, hold, then fade-reset and
+// loop.
+function transAutoStep(){
+  if(!trans.running||trans.paused||trans.mode!=='auto')return;
+  if(trans.step>=TRANS_STEPS){
+    transFadeTo(0,function(){if(trans.running&&!trans.paused&&trans.mode==='auto')transAutoStep();});
     return;
   }
-  trans.running=true;
-  transReset();
-  transRunGroup(0);
+  transAnimateWave(trans.step,function(){
+    trans.step++;transUpdateStepUI();
+    if(trans.step>=TRANS_STEPS){
+      transSettle();
+      ltTrans(function(){if(trans.running&&!trans.paused&&trans.mode==='auto')transAutoStep();},9500);
+    }else if(trans.running&&!trans.paused&&trans.mode==='auto'){
+      transAutoStep();
+    }
+  });
+}
+function transPlay(){
+  trans.paused=false;trans.mode='auto';transSetPlayPauseUI(false);
+  if(trans.animating)return;                 // current wave will chain on
+  transStepTimers();
+  if(trans.step>=TRANS_STEPS)transFadeTo(0,function(){transAutoStep();});
+  else transAutoStep();
+}
+// Pause does NOT abort an in-flight wave — it lets it land (the auto
+// chain checks `paused` in its onDone and stops there), so `animating`
+// always resolves and a paused frame is always a clean landed step.
+function transPause(){trans.paused=true;trans.mode='manual';transSetPlayPauseUI(true);}
+function transManualNext(){
+  transPause();
+  if(trans.animating||trans.step>=TRANS_STEPS)return;
+  transAnimateWave(trans.step,function(){
+    trans.step++;transUpdateStepUI();
+    if(trans.step>=TRANS_STEPS)transSettle();
+  });
+}
+function transManualPrev(){
+  transPause();
+  if(trans.animating||trans.step<=0)return;
+  transFadeTo(trans.step-1);
+}
+function transStart(){
+  if(RM){transApplyStep(TRANS_STEPS);return;}
+  trans.running=true;trans.mode='auto';trans.paused=false;trans.animating=false;trans.step=0;
+  transCanvasEl.classList.add('instant');
+  transApplyStep(0);
+  void transCanvasEl.offsetWidth;
+  transCanvasEl.classList.remove('instant');
+  transUpdateStepUI();
+  if(trans.raf)cancelAnimationFrame(trans.raf);
   trans.raf=requestAnimationFrame(transLiveTick);
+  transAutoStep();
 }
 // While any card is mid-merge, keep re-diffing the links every frame so
 // the ones still attached to it (transStillLinkable) visibly track its
@@ -2839,39 +2931,12 @@ function transLiveTick(){
   trans.raf=requestAnimationFrame(transLiveTick);
 }
 function transStop(){
-  trans.running=false;
-  trans.paused=false;
-  trans.timers.forEach(function(t){clearTimeout(t.id);});
-  trans.timers=[];
+  trans.running=false;trans.paused=false;trans.animating=false;
+  transStepTimers();
   if(trans.raf){cancelAnimationFrame(trans.raf);trans.raf=null;}
-  transSetPlayPauseUI(false);
-}
-// Pausing clears every pending timer but remembers how much time was
-// left on each (firesAt - now), and cancels the per-frame live-follow
-// loop. Resuming reschedules each one with exactly that remaining delay
-// and restarts the loop, so the sequence picks up from precisely where
-// it left off rather than skipping ahead or restarting a step. Whatever
-// CSS transition was already in flight when paused just finishes
-// playing out (at most ~0.8s) rather than being pinned mid-pixel.
-function transSetPaused(p){
-  if(!trans.running||trans.paused===p)return;
-  trans.paused=p;
-  if(p){
-    var now=Date.now();
-    trans.timers.forEach(function(t){clearTimeout(t.id);t.remaining=t.firesAt-now;});
-    if(trans.raf){cancelAnimationFrame(trans.raf);trans.raf=null;}
-  } else {
-    trans.timers.forEach(function(t){
-      var fn=t.fn;
-      t.id=setTimeout(function(){
-        var i=trans.timers.indexOf(t);
-        if(i>-1)trans.timers.splice(i,1);
-        fn();
-      },Math.max(0,t.remaining||0));
-    });
-    trans.raf=requestAnimationFrame(transLiveTick);
-  }
-  transSetPlayPauseUI(p);
+  transClearBlockouts();
+  transCanvasEl.style.opacity='';transCanvasEl.style.transition='';
+  transCanvasEl.classList.remove('instant');
 }
 function transSetPlayPauseUI(paused){
   if(!transPlayPauseEl)return;
@@ -2882,9 +2947,11 @@ function transSetPlayPauseUI(paused){
 }
 if(transPlayPauseEl){
   if(RM){
-    transPlayPauseEl.style.display='none';
+    var tc=document.querySelector('.transControls');if(tc)tc.style.display='none';
   } else {
-    transPlayPauseEl.addEventListener('click',function(){transSetPaused(!trans.paused);});
+    transPlayPauseEl.addEventListener('click',function(){trans.paused?transPlay():transPause();});
+    if(transPrevEl)transPrevEl.addEventListener('click',transManualPrev);
+    if(transNextEl)transNextEl.addEventListener('click',transManualNext);
   }
 }
 transBuild();
