@@ -2368,11 +2368,11 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYiv},{x:entryXiv,y:laneYiv},{x:entryXiv,y:b.top}];
   }
   if(idA==='caaps'&&idB==='pronto'){
-    // Today-only, and CAAPS sits above-right of Pronto. Enters Pronto's
-    // RIGHT edge via the corridor between Cost Journalling's and CAAPS's
-    // columns (swapped with Plant Tracker).
-    var laneYcp=transPxY(56),corrXcp=transPxX(48.7),entryYcp=b.cy-8;
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcp},{x:corrXcp,y:laneYcp},{x:corrXcp,y:entryYcp},{x:b.right,y:entryYcp}];
+    // Today-only, and CAAPS sits above-right of Pronto. Single elbow
+    // into Pronto's RIGHT edge: straight down from CAAPS's bottom, then
+    // straight into the right edge.
+    var entryYcp=b.cy;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:entryYcp},{x:b.right,y:entryYcp}];
   }
   if(idA==='invoiceval'&&idB==='caaps'){
     // Today-only: CAAPS sits on the same row as Invoice Validation,
