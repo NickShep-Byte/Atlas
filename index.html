@@ -2084,7 +2084,7 @@ var TRANS_GROUPS=[
  {primary:'streamforecast',secondaries:[],afterLabel:'Stream / Company Forecasting',afterX:33,afterY:88},
  {primary:'forecasting',secondaries:[],afterLabel:'Project Forecasting',afterX:73,afterY:88,withPrev:true},
  {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:73,afterY:36},
- {primary:'costtracker',secondaries:[],afterLabel:'Cost Tracker',afterX:73,afterY:57,withPrev:true},
+ {primary:'costtracker',secondaries:[],afterLabel:'Cost Tracker',afterX:73,afterY:62,withPrev:true},
  {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:33,afterY:36}
 ];
 // Pronto NEVER moves — tracing the board pages shows it at the exact
@@ -2092,7 +2092,7 @@ var TRANS_GROUPS=[
 // It's kept in the fixed list (before === after) so the existing
 // state machinery still flips it to 'atlas' at the end.
 var TRANS_FIXED=[
- {id:'pronto',label:'Pronto',fam:'purple',before:{x:43,y:64},after:{x:43,y:64}}
+ {id:'pronto',label:'Pronto',fam:'purple',before:{x:43,y:62},after:{x:43,y:62}}
 ];
 // Collision avoidance for the two static rest layouts (today's scattered
 // positions, and everyone's with-Atlas positions) — not text wrapping,
@@ -2328,12 +2328,11 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.top},{x:a.cx,y:laneYdc},{x:b.cx+25,y:laneYdc},{x:b.cx+25,y:b.top}];
   }
   if(idA==='variationreg'&&idB==='procreg'){
-    // "Budget/cost allocation" — the board's long loop: below the whole
-    // bottom row, left along a clear lane, then up the far-left canvas
-    // edge (the only column clear of cards in both layouts) into
-    // Procurement's left edge.
-    var railY=Math.max(a.bottom,b.bottom)+26,corridorX=transPxX(2.5),entryY=b.cy+15,exitXvp=a.cx-20;
-    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:corridorX,y:railY},{x:corridorX,y:entryY},{x:b.left,y:entryY}];
+    // "Budget/cost allocation" — down below the whole bottom row, left
+    // along a clear rail to Procurement's own column (nothing else sits
+    // in it), then straight up into Procurement's BOTTOM edge.
+    var railY=Math.max(a.bottom,b.bottom)+26,exitXvp=a.cx-20;
+    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:b.cx,y:railY},{x:b.cx,y:b.bottom}];
   }
   if(idA==='planttracker'&&idB==='pronto'){
     // Today-only (dies when Plant Tracker becomes Plant Scheduler).
@@ -2344,14 +2343,20 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYpt},{x:corrXpt,y:laneYpt},{x:corrXpt,y:entryYpt},{x:b.right,y:entryYpt}];
   }
   if(idA==='forecasting'&&idB==='pronto'){
-    // "CTC Forecast (monthly)" — from Forecasting (today far right,
-    // landed on the bottom row) to a fixed lane and corridor into
-    // Pronto's right edge. Exits left of its own centre: the dashed
-    // chain from Cost Tracker uses this card's centre column once both
-    // are landed.
-    var laneYcf=transPxY(72.8),corrXcf=transPxX(49.7),entryYcf=b.cy+10,exitXcf=a.cx-25;
+    // "CTC Forecast (monthly)".
+    if(transState.forecasting==='atlas'){
+      // Settled: up the clear gap between Revenue Management's and Cost
+      // Tracker's columns, then straight into Pronto's right edge at its
+      // own height — no dip.
+      var corrXcf=transPxX(68);
+      return [{x:a.left,y:a.cy},{x:corrXcf,y:a.cy},{x:corrXcf,y:b.cy},{x:b.right,y:b.cy}];
+    }
+    // Pre-settle (Forecasting still at its scattered today spot): route
+    // via the low lane and mid corridor, which stays clear while the
+    // right column is still populated by today cards.
+    var laneYcf=transPxY(72.8),corrOld=transPxX(49.7),entryYcf=b.cy+10,exitXcf=a.cx-25;
     var aEdgeYcf=a.cy<transPxY(72.8)?a.bottom:a.top;
-    return [{x:exitXcf,y:aEdgeYcf},{x:exitXcf,y:laneYcf},{x:corrXcf,y:laneYcf},{x:corrXcf,y:entryYcf},{x:b.right,y:entryYcf}];
+    return [{x:exitXcf,y:aEdgeYcf},{x:exitXcf,y:laneYcf},{x:corrOld,y:laneYcf},{x:corrOld,y:entryYcf},{x:b.right,y:entryYcf}];
   }
   if(idA==='invoiceval'&&idB==='pronto'){
     // Appears the moment Invoice Validation lands (board p9). Enters
@@ -2430,6 +2435,9 @@ function transComputePts(idA,idB){
 // fade) once the relationship they represent stops applying at all.
 var transPathRegistry={};
 var transLabelRegistry={};
+// Rebuilt each relink pass — the bounding boxes of labels already placed
+// this pass, so a newly-placed label can nudge clear of them.
+var transLabelBoxes=[];
 // Picks where a connector's text label sits: the midpoint of the
 // route's best segment, preferring horizontal runs (horizontal text
 // reads along them); a vertical-only route gets the text set just
@@ -2445,13 +2453,31 @@ function transPlaceLabel(el,pts){
     }
   }
   if(!best)return;
+  var ox,oy;
   if(best.horiz){
     el.setAttribute('text-anchor','middle');
-    el.setAttribute('x',best.x);el.setAttribute('y',best.y-5);
+    ox=best.x;oy=best.y-7;
   }else{
     el.setAttribute('text-anchor','start');
-    el.setAttribute('x',best.x+7);el.setAttribute('y',best.y+3);
+    ox=best.x+8;oy=best.y+3;
   }
+  el.setAttribute('x',ox);el.setAttribute('y',oy);
+  // Nudge clear of labels already placed this pass so no two labels
+  // (and, since a label sits just off its own line, no label/other-line
+  // pairing at that height) overlap. Horizontal labels step upward;
+  // vertical labels step right.
+  var bb;try{bb=el.getBBox();}catch(e){bb=null;}
+  var tries=0;
+  function hit(x){return transLabelBoxes.some(function(p){
+    return !(x.x>p.x+p.w||x.x+x.width<p.x||x.y>p.y+p.h||x.y+x.height<p.y);
+  });}
+  while(bb&&tries<10&&hit(bb)){
+    if(best.horiz){oy-=13;}else{ox+=12;}
+    el.setAttribute('x',ox);el.setAttribute('y',oy);
+    try{bb=el.getBBox();}catch(e){break;}
+    tries++;
+  }
+  if(bb&&bb.width)transLabelBoxes.push({x:bb.x,y:bb.y,w:bb.width,h:bb.height});
 }
 function transUpsertLabel(key,pts,warn,label){
   var el=transLabelRegistry[key];
@@ -2564,10 +2590,27 @@ function transFitBox(){
     transCanvasEl.classList.remove('building');
     return null;
   }
-  var left=Math.min.apply(null,rects.map(function(r){return r.left;}))-28;
-  var top=Math.min.apply(null,rects.map(function(r){return r.top;}))-40;
-  var right=Math.max.apply(null,rects.map(function(r){return r.right;}))+28;
-  var bottom=Math.max.apply(null,rects.map(function(r){return r.bottom;}))+28;
+  // Wrap the box around everything currently drawn inside it — landed
+  // cards AND the connector geometry and text labels, which extend past
+  // the cards (rails below the bottom row, lanes above the top row).
+  var minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  function ext(l,t,r,b){if(l<minX)minX=l;if(t<minY)minY=t;if(r>maxX)maxX=r;if(b>maxY)maxY=b;}
+  rects.forEach(function(r){ext(r.left,r.top,r.right,r.bottom);});
+  Object.keys(transPathRegistry).forEach(function(k){
+    var el=transPathRegistry[k];
+    if(!el||el.classList.contains('gone'))return;
+    var nums=(el.getAttribute('d')||'').match(/-?\d+(?:\.\d+)?/g);
+    if(!nums)return;
+    for(var i=0;i+1<nums.length;i+=2){var x=+nums[i],y=+nums[i+1];ext(x,y,x,y);}
+  });
+  Object.keys(transLabelRegistry).forEach(function(k){
+    var el=transLabelRegistry[k];
+    if(!el||el.classList.contains('gone'))return;
+    var bb;try{bb=el.getBBox();}catch(e){return;}
+    if(bb&&bb.width)ext(bb.x,bb.y,bb.x+bb.width,bb.y+bb.height);
+  });
+  var pad=8;
+  var left=minX-pad,top=minY-pad,right=maxX+pad,bottom=maxY+pad;
   atlasBoxOutlineEl.style.left=left+'px';
   atlasBoxOutlineEl.style.top=top+'px';
   atlasBoxOutlineEl.style.width=(right-left)+'px';
@@ -2576,7 +2619,7 @@ function transFitBox(){
   // of the box around it, tracking its card.
   var pron=transRect('pronto');
   if(pron){
-    var padBo=10;
+    var padBo=40;
     prontoBlockoutEl.style.left=(pron.left-padBo)+'px';
     prontoBlockoutEl.style.top=(pron.top-padBo)+'px';
     prontoBlockoutEl.style.width=(pron.right-pron.left+padBo*2)+'px';
@@ -2660,6 +2703,7 @@ function transRelinkAll(){
       wanted[link[0]+'|'+link[1]]=link;
     }
   });
+  transLabelBoxes=[];
   Object.keys(wanted).forEach(function(key){
     var link=wanted[key];
     transUpsertLink(link[0],link[1],link[2],link[3]);
