@@ -2008,7 +2008,7 @@ var TRANS_CARD_DATA={
  docket:{label:'Docket / Delivery Register',fam:'green',dashed:true,x:66,y:12},
  dailydiary:{label:'Daily Diary',fam:'green',x:82,y:12},
  caaps:{label:'CAAPS',fam:'pink',x:56,y:48},
- invoiceval:{label:'Invoice Validation / Approval Process',fam:'orange',branch:true,x:56,y:36},
+ invoiceval:{label:'Invoice Validation / Approval Process',fam:'orange',branch:true,x:70,y:48},
  costtracker:{label:'Cost Tracker',fam:'green',x:82,y:39},
  forecasting:{label:'Project Forecasting',fam:'green',x:95,y:39},
  reqappr:{label:'Requisition Approval',fam:'blue',branch:true,x:25,y:62},
@@ -2351,9 +2351,9 @@ function transComputePts(idA,idB){
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcp},{x:entryXcp,y:laneYcp},{x:entryXcp,y:b.top}];
   }
   if(idA==='invoiceval'&&idB==='caaps'){
-    // Today-only: CAAPS sits directly below Invoice Validation (same
-    // column) — a straight vertical drop.
-    if(Math.abs(b.cx-a.cx)<8)return [{x:a.cx,y:a.bottom},{x:b.cx,y:b.top}];
+    // Today-only: CAAPS sits on the same row as Invoice Validation,
+    // just to its left — a straight horizontal segment edge-to-edge.
+    if(Math.abs(b.cy-a.cy)<8)return [{x:a.left,y:a.cy},{x:b.right,y:b.cy}];
     var midXic=(a.left+b.right)/2;
     return [{x:a.left,y:a.cy},{x:midXic,y:a.cy},{x:midXic,y:b.cy},{x:b.right,y:b.cy}];
   }
