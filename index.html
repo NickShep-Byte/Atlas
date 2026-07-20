@@ -1111,7 +1111,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
    data (content constants) directly above the script logic
    (rendering/animation/interaction) that consumes it, since the
    two are tightly coupled per slide rather than reusable across
-   the deck (MODS is the one exception, shared by slides 4 and 6).
+   the deck.
    Shared cross-slide utilities (fragments, progress bar, nav,
    theme) are grouped at the end, after every slide's own section.
    ============================================================ */
@@ -1121,65 +1121,13 @@ var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
 var cur = 0;
 
-/* ---------- Module data (background data — shared by Slide 4's
-   ecosystem ring and Slide 6's production line) ---------- */
-var MODS = [
- {n:"00",name:"General Ledger Journaling",
-  pain:"GL journals are prepared manually across spreadsheets and re-keyed into Pronto, with no structured workflow, audit trail, or easy way to review what was posted.",
-  scope:"Standardises and automates the creation, review and posting of general ledger journals straight into Pronto, with validation and an auditable record of every entry.",
-  ben:"Removes manual re-keying, gives a clean audit trail, speeds up month-end, and underpins the accuracy of every downstream module."},
- {n:"01",name:"MPR Auto-Generation",m1:true,
-  pain:"MPRs are generated manually. Slow, time-consuming, and with no structured workflow.",
-  scope:"Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.",
-  ben:"Major reduction in MPR effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs."},
- {n:"02",name:"Cost Coding Control",
-  pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
-  scope:"Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.",
-  ben:"Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking."},
- {n:"03",name:"Registers & Quick Links",
-  pain:"Qualitative project data lives in disconnected Excel registers of varying quality.",
-  scope:"A Risk & Opportunity Register, a basic Procurement Register, the already-built Digital Dockets, and quick links to Safety 2, Procore, Hammertech, SharePoint and Pronto.",
-  ben:"One delivery workspace, register data accessible via AI, and qualitative data connected to the numbers (contingency, variations and more)."},
- {n:"04",name:"Plant Scheduling & Cost Allocation",
-  pain:"Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility.",
-  scope:"Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant.",
-  ben:"Retires fragile macros, speeds up plant-cost processing, feeds Module 2, and is the critical enabler of an accurate Daily Diary."},
- {n:"05",name:"Progress Claims (Upstream)",
-  pain:"80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.",
-  scope:"Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.",
-  ben:"Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable."},
- {n:"06",name:"Subcontractor Claims",
-  pain:"Subcontractor claims arrive in personal mailboxes under strict SoPA rules, often left unprocessed and captured in error-prone Excel.",
-  scope:"Ingests, standardises and evaluates subcontractor claims for one consistent view of what subcontractors are claiming.",
-  ben:"Standardised capture, clearer evaluation, better subcontractor-exposure visibility and improved SoPA compliance."},
- {n:"07",name:"Daily Diary",
-  pain:"Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.",
-  scope:"Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.",
-  ben:"Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool."},
- {n:"08",name:"Cost to Complete Forecast",
-  pain:"Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.",
-  scope:"Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.",
-  ben:"Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls."},
- {n:"09",name:"Cashflow Forecast",
-  pain:"Monthly cashflow forecasts are stitched together by hand across systems. Slow, and hard to trust.",
-  scope:"Uses data across Pronto, Atlas and CAAPS to help teams produce a monthly cashflow forecast, building on Module 8.",
-  ben:"Cross-system cashflow visibility in one view, supporting finance and project leadership."},
- {n:"10",name:"Resource Management & Planning",
-  pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
-  scope:"Expands Module 4 for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.",
-  ben:"A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking."}
-];
 
-/* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas modules.
-   Click zooms the node to centre, replacing the core with an "Atlas | Name" hero.
-   TODO: once the features-by-module Word doc lands, replace each
-   FEATURE_MODS[i].feats with that module's feature list (currently empty). */
-/* Build ecosystem ring (slide 4) — 11 phase nodes orbit the Atlas core (uses MODS,
-   defined above). A module chip row selects one of the 7 Atlas modules: the core
-   relabels to "Atlas / ModuleName" and the ring rebuilds to show ONLY that
-   module's features (not the full 11). Clicking any node (phase or feature)
-   shows its pain/scope/benefit in the panel below. Data sourced from
-   Atlas_Description_Text_updated.docx. */
+
+/* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas
+   modules. A module chip row selects one: the core relabels to
+   "Atlas / ModuleName" and the ring rebuilds to show that module's
+   features. Clicking any node shows its pain/scope/benefit in the panel
+   below. Data sourced from Atlas_Description_Text_updated.docx. */
 var FEATURE_MODS=[
  {name:'People',fn:'People & Payroll',desc:'A single platform to manage the entire employee lifecycle — from recruitment and onboarding through payroll, performance and workforce management.',feats:[
   {n:'01',name:'Employee Profile & Core HR',
@@ -1802,16 +1750,20 @@ var APPMODS=[
 })();
 
 /* ---------- Slide 5: Release cadence (looping delivery animation) ---------- */
+// Delivery sequence follows the Transition slide's absorption order,
+// mapping each of its nodes to the matching Atlas feature. Quarters stay
+// fixed (Q3 2026 → Q4 2028); the first delivery keeps the milestone
+// marker. Shared by slide 5 (cadence) and slide 6 (process).
 var CAD=[
- ["Q3 2026","Cost Coding Control",true],
- ["Q4 2026","Revenue Management"],
- ["Q1 2027","Procurement Controls"],
- ["Q2 2027","Plant Allocation & Scheduling"],
- ["Q3 2027","Progress Claims (Upstream)"],
- ["Q4 2027","Vendor Claim Validation"],
- ["Q1 2028","Daily Diary"],
- ["Q2 2028","Cost to Complete Forecast"],
- ["Q3 2028","Cashflow Forecast"],
+ ["Q3 2026","Plant Allocation & Scheduling",true],
+ ["Q4 2026","Procurement Controls"],
+ ["Q1 2027","Progress Claims (Upstream)"],
+ ["Q2 2027","Revenue Management"],
+ ["Q3 2027","Vendor Claim Validation"],
+ ["Q4 2027","Cashflow Forecast"],
+ ["Q1 2028","Cost to Complete Forecast"],
+ ["Q2 2028","Daily Diary"],
+ ["Q3 2028","Cost Coding Control"],
  ["Q4 2028","Resource Management & Planning"]
 ];
 var tl=document.getElementById('tlSvg');
@@ -1919,12 +1871,13 @@ function clearShelfChips(){
 }
 function runModule(){
   if(!line.running)return;
-  var m=MODS[line.modIdx%MODS.length];
+  var ci=line.modIdx%CAD.length;
+  var m={n:('0'+(ci+1)).slice(-2),name:CAD[ci][1]};
   var centers=stationCenters();
   // reset stations
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
-  // new shelf cycle when back at module 01
-  if(line.modIdx%MODS.length===0)clearShelfChips();
+  // new shelf cycle when back at the first feature
+  if(ci===0)clearShelfChips();
   // token enters
   tokenLabel.textContent='M'+m.n;
   tokenName.textContent=m.name;
@@ -1982,9 +1935,9 @@ function lineStart(){
   if(RM){
     stationEls.forEach(function(st){st.classList.add('done');st.style.setProperty('--pr',100);});
     clearShelfChips();
-    MODS.slice(0,3).forEach(function(m){
+    CAD.slice(0,3).forEach(function(c,i){
       var chip=document.createElement('span');
-      chip.className='dchip';chip.textContent='M'+m.n+' · '+m.name;
+      chip.className='dchip';chip.textContent='M'+('0'+(i+1)).slice(-2)+' · '+c[1];
       shelf.appendChild(chip);
     });
     return;
