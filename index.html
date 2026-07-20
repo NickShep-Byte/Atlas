@@ -280,7 +280,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
    blue when both ends are inside Atlas. */
 .transLinks circle.tDot{fill:rgba(var(--brd-rgb),.8);transition:fill .6s ease;}
 .transLinks circle.tDot.warn{fill:#E0664C;}
-.transLinks circle.tDot.atlasflow{fill:var(--acc2);}
+.transLinks circle.tDot.atlasflow{fill:var(--acc2);filter:drop-shadow(0 0 2px var(--acc2));}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -329,8 +329,8 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .transCanvas.instant .tCard,
 .transCanvas.instant .tBlockout,
 .transCanvas.instant .atlasBoxOutline{transition:none!important;}
-.atlasBoxOutline span{position:absolute;top:-.9em;left:1.2em;padding:0 .5em;background:var(--bg);
-  font-size:clamp(9.5px,.8vw,12px);font-weight:800;letter-spacing:.06em;color:var(--soft);}
+.atlasBoxOutline span{position:absolute;bottom:100%;margin-bottom:4px;left:1.2em;padding:0 .5em;background:var(--bg);
+  font-size:clamp(9.5px,.8vw,12px);font-weight:800;letter-spacing:.06em;color:var(--acc2);}
 .transControls{position:absolute;top:6px;right:6px;z-index:5;display:flex;gap:6px;align-items:center;}
 .transStep{font-size:clamp(9px,.72vw,11px);font-weight:700;color:var(--soft);letter-spacing:.02em;
   margin-right:2px;min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums;}
@@ -2328,12 +2328,11 @@ function transComputePts(idA,idB){
       var corrXcf=transPxX(68);
       return [{x:a.left,y:a.cy},{x:corrXcf,y:a.cy},{x:corrXcf,y:b.cy},{x:b.right,y:b.cy}];
     }
-    // Pre-settle (Forecasting still at its scattered today spot): route
-    // via the low lane and mid corridor, which stays clear while the
-    // right column is still populated by today cards.
-    var laneYcf=transPxY(72.8),corrOld=transPxX(49.7),entryYcf=b.cy+10,exitXcf=a.cx-25;
-    var aEdgeYcf=a.cy<transPxY(72.8)?a.bottom:a.top;
-    return [{x:exitXcf,y:aEdgeYcf},{x:exitXcf,y:laneYcf},{x:corrOld,y:laneYcf},{x:corrOld,y:entryYcf},{x:b.right,y:entryYcf}];
+    // Pre-settle (Forecasting still at its scattered today spot, far
+    // upper-right): a single bend — straight down its own far-right
+    // column, then straight along Pronto's row into Pronto's right edge.
+    // Both legs run clear of every today card.
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:b.cy},{x:b.right,y:b.cy}];
   }
   if(idA==='invoiceval'&&idB==='pronto'){
     // Appears the moment Invoice Validation lands (board p9). Enters
@@ -2444,6 +2443,12 @@ function transPlaceLabel(el,pts,key){
     ox=best.x+8;oy=best.y+3;
   }
   el.setAttribute('x',ox);el.setAttribute('y',oy);
+  // Budget/cost allocation: nudge a further 80% of its own width to the
+  // left, clear of the forecasting arrow.
+  if(key==='variationreg|procreg'){
+    var lbb;try{lbb=el.getBBox();}catch(e){lbb=null;}
+    if(lbb&&lbb.width){ox-=0.8*lbb.width;el.setAttribute('x',ox);}
+  }
   // Nudge clear of labels already placed this pass so no two labels
   // (and, since a label sits just off its own line, no label/other-line
   // pairing at that height) overlap. Horizontal labels step upward;
@@ -2481,13 +2486,36 @@ function transUpsertLabel(key,pts,warn,label){
 }
 // Travelling dataflow dots along each connector. Colour: red on an
 // uncontrolled line, Atlas blue when both ends are inside Atlas (or an
-// Atlas card ↔ Pronto), grey otherwise. Dot ELEMENTS are only rebuilt
-// when the path shape actually changes and no merge is in flight (during
-// a merge the cards glide, so leave the dots be for that ~1.3s rather
-// than restarting SMIL every frame); colour is refreshed every call.
+// Atlas card ↔ Pronto), grey otherwise. Dots are driven by our own rAF
+// (not SMIL) so they slide ALONG the live path every frame — moving in
+// lockstep with a connector as it mutates, instead of lagging and being
+// rebuilt/faded afterwards. Only the dot COUNT is (re)built, and only
+// when settled.
 var transDotRegistry={};
 var DOT_SPEED=60,DOT_SPACING=64;
-function transPathLen(pts){var L=0;for(var i=1;i<pts.length;i++){L+=Math.abs(pts[i].x-pts[i-1].x)+Math.abs(pts[i].y-pts[i-1].y);}return L;}
+function transPtLen(pts){var L=0;for(var i=1;i<pts.length;i++){var dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y;L+=Math.sqrt(dx*dx+dy*dy);}return L;}
+function transPtAt(pts,t){
+  var L=transPtLen(pts);if(L<=0)return {x:pts[0].x,y:pts[0].y};
+  var target=t*L,acc=0;
+  for(var i=1;i<pts.length;i++){
+    var dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y,seg=Math.sqrt(dx*dx+dy*dy);
+    if(seg>0&&acc+seg>=target){var r=(target-acc)/seg;return {x:pts[i-1].x+dx*r,y:pts[i-1].y+dy*r};}
+    acc+=seg;
+  }
+  var last=pts[pts.length-1];return {x:last.x,y:last.y};
+}
+function transMakeDot(cls){var c=document.createElementNS(SVGNS,'circle');c.setAttribute('r','3.2');c.setAttribute('class',cls);transLinksEl.appendChild(c);return c;}
+function transDotTick(dtSec){
+  Object.keys(transDotRegistry).forEach(function(key){
+    var reg=transDotRegistry[key];if(!reg.len)return;
+    var dph=(DOT_SPEED*dtSec)/reg.len;
+    reg.dots.forEach(function(dt){
+      dt.phase=(dt.phase+dph)%1;
+      var p=transPtAt(reg.pts,dt.phase);
+      dt.el.setAttribute('cx',p.x);dt.el.setAttribute('cy',p.y);
+    });
+  });
+}
 // Flow kind for a connector: 'warn' (red) if it's an uncontrolled line;
 // 'atlasflow' (Atlas blue) if BOTH ends are inside Atlas — Pronto counts
 // as inside for this purpose ("atlas card + Pronto"); '' otherwise.
@@ -2498,26 +2526,28 @@ function transFlow(key,warn){
   return (ai(p[0])&&ai(p[1]))?'atlasflow':'';
 }
 function transUpsertDots(key,pts,warn){
-  var d=pathD(pts),cls='tDot '+transFlow(key,warn),reg=transDotRegistry[key];
-  if(reg&&(reg.sig===d||trans.animating)){
-    reg.dots.forEach(function(dt){dt.setAttribute('class',cls);});
+  var flow=transFlow(key,warn),cls='tDot '+flow,reg=transDotRegistry[key];
+  var len=transPtLen(pts);
+  // Atlas dots get twice the spacing (fewer, glowing dots).
+  var spacing=(flow==='atlasflow')?DOT_SPACING*2:DOT_SPACING;
+  var n=Math.max(1,Math.round(len/spacing));
+  if(reg){
+    reg.pts=pts;reg.len=len;reg.cls=cls;
+    reg.dots.forEach(function(dt){dt.el.setAttribute('class',cls);});
+    // Only change the dot COUNT when settled — never mid-merge, so dots
+    // aren't destroyed/recreated while a line is gliding.
+    if(!trans.animating&&reg.dots.length!==n){
+      reg.dots.forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
+      reg.dots=[];for(var k=0;k<n;k++)reg.dots.push({el:transMakeDot(cls),phase:k/n});
+    }
     return;
   }
-  if(reg)reg.dots.forEach(function(dt){if(dt.parentNode)dt.parentNode.removeChild(dt);});
-  var len=transPathLen(pts),n=Math.max(1,Math.round(len/DOT_SPACING)),dur=Math.max(1,len/DOT_SPEED),dots=[];
-  for(var k=0;k<n;k++){
-    var c=document.createElementNS(SVGNS,'circle');
-    c.setAttribute('r','3.2');c.setAttribute('class',cls);
-    var am=document.createElementNS(SVGNS,'animateMotion');
-    am.setAttribute('dur',dur.toFixed(2)+'s');am.setAttribute('repeatCount','indefinite');
-    am.setAttribute('path',d);am.setAttribute('begin',(-dur*k/n).toFixed(2)+'s');
-    c.appendChild(am);transLinksEl.appendChild(c);dots.push(c);
-  }
-  transDotRegistry[key]={sig:d,dots:dots};
+  var dots=[];for(var k=0;k<n;k++)dots.push({el:transMakeDot(cls),phase:k/n});
+  transDotRegistry[key]={pts:pts,len:len,cls:cls,dots:dots};
 }
 function transRemoveDots(key){
   var reg=transDotRegistry[key];if(!reg)return;
-  reg.dots.forEach(function(dt){if(dt.parentNode)dt.parentNode.removeChild(dt);});
+  reg.dots.forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
   delete transDotRegistry[key];
 }
 function transUpsertPath(key,pts,warn,cls){
@@ -2638,10 +2668,9 @@ function transFitBox(){
     var bb;try{bb=el.getBBox();}catch(e){return;}
     if(bb&&bb.width)ext(bb.x,bb.y,bb.x+bb.width,bb.y+bb.height);
   });
-  // Extra headroom at the top so the "Atlas · Shared Database" title,
-  // which straddles the top border, clears the topmost card instead of
-  // being hidden behind it.
-  var pad=8,topPad=26;
+  // A little extra headroom up top so the "Atlas · Shared Database"
+  // title (which now sits fully above the top border) has clear air.
+  var pad=8,topPad=12;
   var left=minX-pad,top=minY-topPad,right=maxX+pad,bottom=maxY+pad;
   atlasBoxOutlineEl.style.left=left+'px';
   atlasBoxOutlineEl.style.top=top+'px';
@@ -2968,7 +2997,7 @@ function transManualPrev(){
 }
 function transStart(){
   if(RM){transApplyStep(TRANS_STEPS);return;}
-  trans.running=true;trans.mode='auto';trans.paused=false;trans.animating=false;trans.step=0;
+  trans.running=true;trans.mode='auto';trans.paused=false;trans.animating=false;trans.step=0;trans.lastT=null;
   transCanvasEl.classList.add('instant');
   transApplyStep(0);
   void transCanvasEl.offsetWidth;
@@ -2982,10 +3011,13 @@ function transStart(){
 // the ones still attached to it (transStillLinkable) visibly track its
 // live position as it slides, rather than only updating at the fixed
 // timer checkpoints above.
-function transLiveTick(){
+function transLiveTick(ts){
   if(!trans.running){trans.raf=null;return;}
+  if(trans.lastT==null)trans.lastT=ts;
+  var dtSec=Math.min(0.05,(ts-trans.lastT)/1000);trans.lastT=ts;
   var anyMerging=Object.keys(transState).some(function(id){return transState[id]==='merging';});
   if(anyMerging)transRelinkAll();
+  transDotTick(dtSec);                          // dots slide along the live paths every frame
   trans.raf=requestAnimationFrame(transLiveTick);
 }
 function transStop(){
