@@ -1,0 +1,15 @@
+#!/bin/sh
+# Auto-stamp the deck's BUILD_STAMP with the current UTC time on commit, so
+# the "Last updated" tooltip on the Atlas logo always reflects the latest
+# commit. Only runs when index.html is part of the commit.
+f="index.html"
+if git diff --cached --name-only | grep -q "^$f$"; then
+  stamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  if command -v perl >/dev/null 2>&1; then
+    perl -i -pe "s/var BUILD_STAMP='[^']*';/var BUILD_STAMP='$stamp';/" "$f"
+  else
+    tmp="$f.stamp.tmp"
+    sed "s/var BUILD_STAMP='[^']*';/var BUILD_STAMP='$stamp';/" "$f" > "$tmp" && mv "$tmp" "$f"
+  fi
+  git add "$f"
+fi
