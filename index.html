@@ -284,7 +284,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 /* Atlas flows read as a gradient "shine" sweeping along the line rather
    than a travelling dot: a short bright segment of the line whose ends
    fade out via a per-streak linear gradient. */
-.transLinks path.tShine{fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px #66ABFF);pointer-events:none;}
+.transLinks path.tShine{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px #8FD3F7);pointer-events:none;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -2542,7 +2542,7 @@ function transPtAt(pts,t){
   }
   var last=pts[pts.length-1];return {x:last.x,y:last.y};
 }
-var SHINE_HALF=15;   // half-length (px of arc) of an atlas-flow shine streak
+var SHINE_HALF=46;   // half-length (px of arc) of an atlas-flow shine streak
 // Points of the sub-polyline of `pts` between arc-lengths a and b (a<b),
 // keeping any vertices that fall inside so the streak follows bends.
 function transSubPathPts(pts,a,b){
@@ -2569,7 +2569,7 @@ function transMakeDot(cls){
     var id='tShine'+(transShineSeq++);
     var g=document.createElementNS(SVGNS,'linearGradient');
     g.setAttribute('id',id);g.setAttribute('gradientUnits','userSpaceOnUse');
-    [['0','#66ABFF','0'],['0.5','#DCEEFF','1'],['1','#66ABFF','0']].forEach(function(s){
+    [['0','#8FD3F7','0'],['0.35','#8FD3F7','0.55'],['0.5','#B9E6FF','1'],['0.65','#8FD3F7','0.55'],['1','#8FD3F7','0']].forEach(function(s){
       var st=document.createElementNS(SVGNS,'stop');
       st.setAttribute('offset',s[0]);st.setAttribute('stop-color',s[1]);st.setAttribute('stop-opacity',s[2]);
       g.appendChild(st);
@@ -2627,8 +2627,9 @@ function transUpsertDots(key,pts,warn){
   var flow=transFlow(key,warn),cls='tDot '+flow,reg=transDotRegistry[key];
   var isShine=(flow==='atlasflow');
   var len=transPtLen(pts);
-  // Atlas flows get twice the spacing (fewer, further-apart shines).
-  var spacing=isShine?DOT_SPACING*2:DOT_SPACING;
+  // Atlas flows are spaced well apart so each shine reads as a single
+  // gentle swell of light travelling a long stretch of dark line.
+  var spacing=isShine?DOT_SPACING*3.2:DOT_SPACING;
   var n=Math.max(1,Math.round(len/spacing));
   function build(){var d=[];for(var k=0;k<n;k++){var m=transMakeDot(cls);d.push({el:m.el,grad:m.grad,shine:m.shine,phase:k/n});}return d;}
   if(reg){
