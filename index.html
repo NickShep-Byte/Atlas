@@ -263,8 +263,9 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s9 .head{text-align:center;margin-bottom:1.6vh;}
 .transCanvas{position:relative;width:min(1500px,96vw);height:58vh;margin:0 auto;}
 .transLinks{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
-.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease;}
+.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease,stroke .6s ease,stroke-width .6s ease;}
 .transLinks path.warn{stroke:#E0664C;stroke-width:2;}
+.transLinks path.dashedLink{stroke-dasharray:6 5;}
 .transLinks path.fresh,.transLinks path.gone{opacity:0;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
@@ -2030,27 +2031,39 @@ var TRANS_CARD_DATA={
 // instead of highlighting/sliding from a today position, it simply
 // fades into its final spot once both of those have landed (handled
 // in transRunGroup).
-// Cost Tracker and Project Forecasting run before the bottom-row group
-// (Variation Register/Stream Forecasting/Monthly Reporting/Progress
-// Claim) so their own before-state link — a straight same-row line
-// running behind where that row lands — is already gone (both cards
-// have moved on) by the time anything settles into that screen space.
-// Progress Claim also runs before Variation Register specifically,
-// since Progress Claim -> Pronto's route passes directly through the
-// spot Variation Register lands in.
+// Groups run in the Miro board's own page order — the board dedicates
+// a page to each absorption step and that sequence IS the story this
+// slide tells: Monthly Reporting first (p4), Cost Journalling/
+// Allocation appearing as a brand-new capability (p5), Plant Tracker
+// becoming Plant Scheduler (p6), procurement consolidating into the
+// Procurement Portal (p7), Progress Claim and Variation Register
+// becoming the claims/revenue pair (p8), Invoice Validation absorbing
+// CAAPS and the docket register (p9), the two forecasting tools (p10),
+// the site-data pair Daily Diary/Cost Tracker (p11), and finally Connx
+// handing over to Timesheets (p12). Do not reorder these for layout
+// convenience — fix routing in transComputePts instead.
 var TRANS_GROUPS=[
- {primary:'planttracker',secondaries:[],afterLabel:'Plant Scheduler',afterX:55,afterY:16},
- {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:35,afterY:16},
+ {primary:'monthlyreport',secondaries:[],afterLabel:'Monthly Reporting',afterX:35,afterY:64},
+ // Cost Journalling appears second (p5), while Requisition Approval —
+ // whose today card owns the x35 column of that row until p7 — is
+ // still sitting there, so its spot is pulled left into the gap
+ // between Procurement's and F111's today columns.
+ {bonus:'costjournal',label:'Cost Journalling / Allocation',afterX:28,afterY:40},
+ // Plant Scheduler's and Progress Claim's spots are chosen around the
+ // today cards that OUTLIVE them in the board's order: 55 would put
+ // Plant Scheduler underneath the still-present Connx card (gone only
+ // at the final step), and put Progress Claim on top of Invoice
+ // Validation's today card (absorbed one page later).
+ {primary:'planttracker',secondaries:[],afterLabel:'Plant Scheduler',afterX:62,afterY:16},
  {primary:'procreg',secondaries:['f111','reqappr'],afterLabel:'Procurement Portal',afterX:15,afterY:16},
- {bonus:'costjournal',label:'Cost Journalling / Allocation',afterX:35,afterY:40},
+ {primary:'progressclaim',secondaries:[],afterLabel:'Progress Claim',afterX:62,afterY:64},
+ {primary:'variationreg',secondaries:[],afterLabel:'Revenue Management (Contract + VOs)',afterX:78,afterY:64},
  {primary:'invoiceval',secondaries:['caaps','docket'],afterLabel:'Invoice Validation / Approval Process',afterX:78,afterY:16},
+ {primary:'streamforecast',secondaries:[],afterLabel:'Stream / Company Forecasting',afterX:15,afterY:64},
+ {primary:'forecasting',secondaries:[],afterLabel:'Project Forecasting',afterX:94,afterY:64,external:true},
  {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:94,afterY:16,external:true},
  {primary:'costtracker',secondaries:[],afterLabel:'Cost Tracker',afterX:94,afterY:40,external:true},
- {primary:'forecasting',secondaries:[],afterLabel:'Project Forecasting',afterX:94,afterY:64,external:true},
- {primary:'progressclaim',secondaries:[],afterLabel:'Progress Claim',afterX:55,afterY:64},
- {primary:'variationreg',secondaries:[],afterLabel:'Revenue Management (Contract + VOs)',afterX:78,afterY:64},
- {primary:'streamforecast',secondaries:[],afterLabel:'Stream / Company Forecasting',afterX:15,afterY:64},
- {primary:'monthlyreport',secondaries:[],afterLabel:'Monthly Reporting',afterX:35,afterY:64}
+ {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:35,afterY:16}
 ];
 // Pronto exists in both states, just in a different spot. On the
 // board's own final page it's drawn INSIDE the Atlas box (still its own
@@ -2086,19 +2099,29 @@ transResolveCollisions(Object.keys(TRANS_CARD_DATA).map(function(id){return TRAN
 transResolveCollisions(TRANS_GROUPS.map(function(g){
   return {get x(){return g.afterX;},set x(v){g.afterX=v;},get y(){return g.afterY;},set y(v){g.afterY=v;}};
 }).concat([TRANS_FIXED[0].after]));
+// Each entry is [from, to, uncontrolled, cls]: `uncontrolled` (warn)
+// draws the red "Uncontrolled Transfers" stroke from the board's
+// legend, matched line-for-line to the board's today page — Raise PO,
+// PO Approval, Procured rates, CTC Forecast, Cost Actuals, Budget/cost
+// allocation and the claims web are red; the rest are controlled grey.
+// The Cost Tracker -> Project Forecasting link is the board's dashed
+// line, in both states.
 var TRANS_LINKS=[
- ['procreg','f111',false],['f111','reqappr',false],['reqappr','pronto',false],
+ ['procreg','f111',true],['f111','reqappr',false],['reqappr','pronto',true],
  ['procreg','pronto',true],
  ['connx','pronto',false],['planttracker','pronto',false],
- ['dailydiary','costtracker',false],['costtracker','forecasting',false],
+ ['dailydiary','costtracker',false],['costtracker','forecasting',true,'dashedLink'],
  ['docket','invoiceval',false],['invoiceval','caaps',false],['caaps','pronto',false],
  ['forecasting','pronto',true],['costtracker','pronto',true],
  ['pronto','streamforecast',false],['pronto','monthlyreport',false],
- ['variationreg','progressclaim',false],['progressclaim','pronto',false],
+ ['variationreg','progressclaim',true],['progressclaim','pronto',true],
  ['variationreg','procreg',true]
 ];
-function transHasBeforeLink(idA,idB){
-  return TRANS_LINKS.some(function(l){return l[0]===idA&&l[1]===idB;});
+function transBeforeLink(idA,idB){
+  for(var i=0;i<TRANS_LINKS.length;i++){
+    if(TRANS_LINKS[i][0]===idA&&TRANS_LINKS[i][1]===idB)return TRANS_LINKS[i];
+  }
+  return null;
 }
 // With-Atlas links. Several pairs (Procurement<->Pronto's "Procured
 // rates", Forecasting/Cost Tracker->Pronto, Variation Register-
@@ -2109,15 +2132,19 @@ function transHasBeforeLink(idA,idB){
 // recreated. Connx/Plant Tracker -> Cost Journalling and Invoice
 // Validation -> Pronto are genuinely new Atlas-only relationships with
 // no before-state equivalent.
+// Every after-link is controlled (no red on the board's final page):
+// once a relationship's two ends have both landed in Atlas, its
+// uncontrolled-transfer red flips to the controlled grey — that colour
+// change is the board's own point.
 var TRANS_AFTER_LINKS=[
  ['connx','costjournal',false],['planttracker','costjournal',false],['costjournal','pronto',false],
- ['procreg','pronto',true],
+ ['procreg','pronto',false],
  ['invoiceval','pronto',false],
  ['variationreg','progressclaim',false],['progressclaim','pronto',false],
  ['pronto','streamforecast',false],['pronto','monthlyreport',false],
- ['variationreg','procreg',true],
- ['forecasting','pronto',true],['costtracker','pronto',true],
- ['dailydiary','costtracker',false]
+ ['variationreg','procreg',false],
+ ['forecasting','pronto',false],['costtracker','pronto',false],
+ ['dailydiary','costtracker',false],['costtracker','forecasting',false,'dashedLink']
 ];
 var SVGNS='http://www.w3.org/2000/svg';
 var transCanvasEl=document.getElementById('transCanvas');
@@ -2204,18 +2231,27 @@ function transComputePts(idA,idB){
   // fixed offset along whichever of its edges it shares with the others
   // so none of them ever land exactly on top of one another.
   if(idA==='procreg'&&idB==='pronto'){
-    // Procurement always sits up/left of Pronto in both layouts. Pronto's
-    // top edge is shared with Plant Tracker -> Pronto (today-only, offset
-    // +15 there) and Invoice Validation -> Pronto (with-Atlas only,
-    // offset +25 there) — this one gets the far side.
-    var down2pp=b.cy>=a.cy,midYpp=(a.cy+b.cy)/2,entryXpp=b.cx-25;
-    return [{x:a.cx,y:down2pp?a.bottom:a.top},{x:a.cx,y:midYpp},{x:entryXpp,y:midYpp},{x:entryXpp,y:down2pp?b.top:b.bottom}];
+    // "Procured rates" — the board draws this along the very top of
+    // the map, above every row, then drops it into Pronto's upper left
+    // edge. The mid-canvas is criss-crossed by every other hand-off
+    // (and, in the board's order, Plant Tracker's today card outlives
+    // Procurement's move), so any midpoint route would cut through
+    // cards. The descent corridor threads today's gap between F111's
+    // and Plant Tracker's columns; the left-edge entry sits above
+    // Requisition Approval's dead-centre entry and Cost Journalling's
+    // below-centre one.
+    var laneYpr=transPxY(3.5),corrXpr=transPxX(42),entryYpr=b.cy-15;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpr},{x:corrXpr,y:laneYpr},{x:corrXpr,y:entryYpr},{x:b.left,y:entryYpr}];
   }
   if(idA==='costtracker'&&idB==='pronto'){
-    if(Math.abs(b.cy-a.cy)<4){
-      // With-Atlas state: same row as Pronto — one straight segment, no
-      // needless bend just because today's layout has them apart.
-      return transElbowPts(a,b);
+    if(b.right<a.left-20&&Math.abs(b.cy-a.cy)<40){
+      // Landed beside the box (roughly Pronto's own row) while Pronto
+      // is still at — or finally moving from — its today spot: come in
+      // from the east into Pronto's right edge with a small Z-jog,
+      // entering above centre so it never coincides with Requisition
+      // Approval -> Pronto on the facing left edge.
+      var jogXct=(b.right+a.left)/2,entryYct=b.cy-8;
+      return [{x:a.left,y:a.cy},{x:jogXct,y:a.cy},{x:jogXct,y:entryYct},{x:b.right,y:entryYct}];
     }
     // Today state: Cost Tracker sits below Pronto. Exits Cost Tracker's
     // top offset from centre — Daily Diary -> Cost Tracker enters that
@@ -2225,11 +2261,60 @@ function transComputePts(idA,idB){
     var midYct=(a.cy+b.cy)/2-15,exitXct=a.cx-20,entryXct=b.cx+7;
     return [{x:exitXct,y:a.top},{x:exitXct,y:midYct},{x:entryXct,y:midYct},{x:entryXct,y:b.bottom}];
   }
+  if(idA==='costtracker'&&idB==='forecasting'){
+    // "Tracked Quantities" chain, live in every state (the board keeps
+    // this link dashed right through to its final page). Same right-
+    // hand column once both land beside the box — one straight drop.
+    if(Math.abs(b.cx-a.cx)<4){
+      return [{x:a.cx,y:a.bottom},{x:b.cx,y:b.top}];
+    }
+    if(transState.variationreg==='today'&&Math.abs(b.cy-a.cy)<4){
+      return [{x:a.right,y:a.cy},{x:b.left,y:b.cy}];
+    }
+    // Revenue Management lands directly on the straight today-row line
+    // between these two (the board's own order absorbs Variation
+    // Register several pages before this pair moves) — from the moment
+    // it leaves its today spot, dip below the landed bottom row
+    // instead of cutting through it.
+    var vrcf=transRect('variationreg');
+    var laneYcf=(vrcf?vrcf.bottom:Math.max(a.bottom,b.bottom))+30;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcf},{x:b.cx,y:laneYcf},{x:b.cx,y:b.bottom}];
+  }
+  if(idA==='connx'&&idB==='costjournal'){
+    // Live from the moment Cost Journalling appears (Connx still at its
+    // today spot, board p5) right through Connx's own final slide into
+    // the Timesheets position. Crosses in the clear lane just below
+    // Connx's own bottom edge (above Plant Tracker's today row) and
+    // drops down the gap between Procurement's and F111's today
+    // columns, entering left of centre — Plant Scheduler's feed holds
+    // the right-of-centre slot on the same top edge.
+    var laneYcc2=a.bottom+12,entryXcc2=b.cx-25;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcc2},{x:entryXcc2,y:laneYcc2},{x:entryXcc2,y:b.top}];
+  }
+  if(idA==='costjournal'&&idB==='pronto'){
+    // "Allocated Cost" — live from the moment Cost Journalling appears
+    // (board p5) straight through Pronto's own final move. Exits and
+    // enters below centre (Requisition Approval -> Pronto holds the
+    // dead-centre left-edge entry until procurement consolidates), with
+    // a fixed jog column in the gap right of Requisition Approval's
+    // today card.
+    var exitYcj=a.cy+16,entryYcj=b.cy+14,jogXcj=transPxX(43);
+    return [{x:a.right,y:exitYcj},{x:jogXcj,y:exitYcj},{x:jogXcj,y:entryYcj},{x:b.left,y:entryYcj}];
+  }
+  if(idA==='invoiceval'&&idB==='pronto'){
+    // Appears as soon as Invoice Validation lands (board p9), while
+    // Pronto is still at its today spot. Shares Pronto's top edge with
+    // Procurement -> Pronto (offset -25 there) — offset the other way.
+    var midYiv=(a.cy+b.cy)/2,entryXiv=b.cx+25;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:midYiv},{x:entryXiv,y:midYiv},{x:entryXiv,y:b.top}];
+  }
   if(idA==='forecasting'&&idB==='pronto'){
     // Forecasting sits below Pronto in both layouts — furthest right of
-    // everything sharing Pronto's bottom edge.
-    var midYf=(a.cy+b.cy)/2+15,entryXf=b.cx+35;
-    return [{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
+    // everything sharing Pronto's bottom edge. Exits left of its own
+    // centre: once landed it shares a column with Cost Tracker (whose
+    // Tracked Quantities drop runs down that column's dead centre).
+    var midYf=(a.cy+b.cy)/2+15,exitXf=a.cx-25,entryXf=b.cx+35;
+    return [{x:exitXf,y:a.top},{x:exitXf,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
   }
   if(idA==='pronto'&&idB==='streamforecast'){
     // Furthest left of everything sharing Pronto's bottom edge. Jogs
@@ -2238,8 +2323,10 @@ function transComputePts(idA,idB){
     // layout) rather than at the halfway point — a midpoint bend would
     // cut straight through whichever of those sits in the same column.
     // Each of the four routes sharing Pronto's bottom edge gets its own
-    // jog height too, so none of their sideways jogs run collinear.
-    var jogYs=a.bottom+25,exitXs=a.cx-35;
+    // jog height too, so none of their sideways jogs run collinear
+    // (this one also clears Cost Journalling's card, whose bottom edge
+    // sits just above this lane).
+    var jogYs=a.bottom+30,exitXs=a.cx-35;
     return [{x:exitXs,y:a.bottom},{x:exitXs,y:jogYs},{x:b.cx,y:jogYs},{x:b.cx,y:b.top}];
   }
   if(idA==='pronto'&&idB==='monthlyreport'){
@@ -2247,23 +2334,49 @@ function transComputePts(idA,idB){
     return [{x:exitXm,y:a.bottom},{x:exitXm,y:jogYm},{x:b.cx,y:jogYm},{x:b.cx,y:b.top}];
   }
   if(idA==='progressclaim'&&idB==='pronto'){
-    // Exits offset from centre — Variation Register -> Progress Claim
-    // enters that same edge dead-centre (generic elbow, mixed states).
-    var jogYpc=b.bottom+55,exitXpc=a.cx-20,entryXpc=b.cx+21;
+    // Exits well right of centre: Variation Register -> Progress Claim
+    // enters the top edge dead-centre (generic elbow, mixed states),
+    // and — because the board absorbs Progress Claim (p8) before
+    // Invoice Validation (p9) — the exit must also clear Invoice
+    // Validation's today card, which sits almost directly beneath
+    // Progress Claim's landed spot.
+    // Jog height staggered below Forecasting -> Pronto's settled bend,
+    // which crosses the same span once Pronto makes its final move.
+    var jogYpc=b.bottom+42,exitXpc=a.cx+46,entryXpc=b.cx+21;
     return [{x:exitXpc,y:a.top},{x:exitXpc,y:jogYpc},{x:entryXpc,y:jogYpc},{x:entryXpc,y:b.bottom}];
   }
+  if(idA==='variationreg'&&idB==='progressclaim'){
+    // One straight same-row segment whenever the direct span is clear.
+    // In the board's order this pair lands (p8) while Cost Tracker's
+    // today card — which sits exactly on the landed row's straight
+    // path — stays put until p11, so while a still-unabsorbed card
+    // blocks the span, dip below the landed bottom row instead. Its
+    // lane is staggered above Cost Tracker -> Forecasting's dip (+30),
+    // which crosses the same space in the p9-p11 window.
+    if(Math.abs(b.cy-a.cy)<4){
+      var blockers=['costtracker','invoiceval'].filter(function(id){return transState[id]!=='atlas'&&transState[id]!=='gone';});
+      var loXvp=Math.min(a.left,b.right),hiXvp=Math.max(a.left,b.right);
+      var blocked=blockers.some(function(id){
+        var r=transRect(id);
+        return r&&a.cy>r.top&&a.cy<r.bottom&&loXvp<r.right&&hiXvp>r.left;
+      });
+      if(!blocked)return [{x:a.left,y:a.cy},{x:b.right,y:b.cy}];
+    }
+    var laneYvp=Math.max(a.bottom,b.bottom)+18;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYvp},{x:b.cx,y:laneYvp},{x:b.cx,y:b.bottom}];
+  }
   if(idA==='variationreg'&&idB==='procreg'){
-    // Long bottom-rail route: Variation Register sits bottom-right in
-    // both layouts, Procurement top-left — a straight diagonal would cut
-    // through most of the canvas. Drop below the whole bottom row, run
-    // left along a lane nothing else occupies, then rise on a corridor
-    // clear of Procurement's own column (which the with-Atlas layout
-    // puts directly above Stream/Company Forecasting's column) before
-    // entering Procurement from the right. Exits offset from centre —
-    // Variation Register -> Progress Claim exits that same edge
-    // dead-centre (generic elbow, mixed states).
-    var railY=Math.max(a.bottom,b.bottom)+26,corridorX=b.right+26,entryY=b.cy+15,exitXvp=a.cx-20;
-    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:corridorX,y:railY},{x:corridorX,y:entryY},{x:b.right,y:entryY}];
+    // Long bottom-rail route, matching how the board itself draws
+    // "Budget/cost allocation": down below the whole bottom row, left
+    // along a lane nothing else occupies, then up the far-left canvas
+    // edge — the only column that stays clear of every card in both
+    // layouts (Stream/Company Forecasting's today and landed spots own
+    // the near-left columns at different times) — entering Procurement
+    // from the left. Exits offset from centre — Variation Register ->
+    // Progress Claim exits that same edge dead-centre (generic elbow,
+    // mixed states).
+    var railY=Math.max(a.bottom,b.bottom)+26,corridorX=transPxX(2.5),entryY=b.cy+15,exitXvp=a.cx-20;
+    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:corridorX,y:railY},{x:corridorX,y:entryY},{x:b.left,y:entryY}];
   }
   // Strictly "today" / "atlas" here, not "merging" — a card mid-flight
   // toward its own merge target can pass anywhere on the canvas along
@@ -2290,20 +2403,14 @@ function transComputePts(idA,idB){
     var jogYcp=b.bottom+35,exitXcp=a.cx-15,entryXcp=b.cx-21;
     return [{x:exitXcp,y:a.top},{x:exitXcp,y:jogYcp},{x:entryXcp,y:jogYcp},{x:entryXcp,y:b.bottom}];
   }
-  if(idA==='invoiceval'&&idB==='pronto'){
-    // With-Atlas only. Shares Pronto's top edge with Procurement ->
-    // Pronto (offset -25 there) — offset the other way.
-    var midYiv=(a.cy+b.cy)/2,entryXiv=b.cx+25;
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:midYiv},{x:entryXiv,y:midYiv},{x:entryXiv,y:b.top}];
-  }
   if(idA==='planttracker'&&idB==='costjournal'){
-    // With-Atlas only. Cost Journalling sits directly below Connx ->
-    // Cost Journalling (a straight dead-centre drop) — offset this one's
-    // entry so the two don't run collinear down Cost Journalling's own
-    // column. Bends higher than the row-to-row midpoint (which is both
-    // collinear with Procurement -> Pronto's own bend and sits inside
-    // Pronto's own row, which is directly between these two rows today).
-    var down2pc=b.cy>=a.cy,midYpc2=(a.cy+b.cy)/2-20,entryXpc2=b.cx+25;
+    // Appears the moment Plant Scheduler lands (board p6). Enters Cost
+    // Journalling's top edge right of centre — Connx -> Cost
+    // Journalling holds the left slot — keeping the entry drop clear of
+    // Procurement's today card just left of Cost Journalling's spot.
+    // Bends higher than the row-to-row midpoint too, which sits inside
+    // Pronto's own row, directly between these two rows today.
+    var down2pc=b.cy>=a.cy,midYpc2=(a.cy+b.cy)/2-20,entryXpc2=b.cx+15;
     return [{x:a.cx,y:down2pc?a.bottom:a.top},{x:a.cx,y:midYpc2},{x:entryXpc2,y:midYpc2},{x:entryXpc2,y:down2pc?b.top:b.bottom}];
   }
   return transElbowPts(a,b,idA+'|'+idB);
@@ -2318,6 +2425,11 @@ function transUpsertPath(key,pts,warn,cls){
   var d=pathD(pts),el=transPathRegistry[key];
   if(el){
     if(el.getAttribute('d')!==d)el.setAttribute('d',d);
+    // warn is re-applied on every mutation, not just at creation — a
+    // persistent link's colour flips from uncontrolled red to
+    // controlled grey the moment both its ends land in Atlas (the
+    // stroke transition in CSS animates the change).
+    el.classList.toggle('warn',!!warn);
     el.classList.remove('gone');
     return el;
   }
@@ -2417,11 +2529,34 @@ function transRelinkAll(){
   var wanted={};
   TRANS_LINKS.forEach(function(link){
     if(transStillLinkable(link[0])&&transStillLinkable(link[1])){
+      // Connx feeds Pronto directly only until Cost Journalling/
+      // Allocation exists — from that board page (p5) onward the Connx
+      // feed is redrawn into the new node instead (see the matching
+      // early-show rule below), long before Connx itself is absorbed.
+      if(link[0]==='connx'&&link[1]==='pronto'&&transState.costjournal==='atlas')return;
       wanted[link[0]+'|'+link[1]]=link;
     }
   });
   TRANS_AFTER_LINKS.forEach(function(link){
     var sA=transState[link[0]],sB=transState[link[1]];
+    // The board wires the new Cost Journalling/Allocation node up the
+    // moment it appears (p5): the Connx feed redirects into it while
+    // Connx is still sitting at its today spot, and its "Allocated
+    // Cost" hand-off to Pronto is drawn immediately. Invoice
+    // Validation's own Pronto hand-off likewise appears the moment it
+    // lands (p9), not only once Pronto makes its final move.
+    if(link[0]==='connx'&&link[1]==='costjournal'&&sB==='atlas'&&sA!=='gone'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    if(link[0]==='costjournal'&&link[1]==='pronto'&&sA==='atlas'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    if(link[0]==='invoiceval'&&link[1]==='pronto'&&sA==='atlas'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
     if(sA==='atlas'&&sB==='atlas'){
       // Both ends have landed — this is a genuinely new Atlas-only
       // relationship with no before-state equivalent, so it's created
@@ -2438,14 +2573,18 @@ function transRelinkAll(){
     // from an already-landed card all the way out to a partner still
     // sitting at its scattered today position — would draw a long,
     // messy line across the whole canvas that isn't what either state
-    // actually looks like.
-    if(sA!=='gone'&&sB!=='gone'&&(sA==='atlas'||sB==='atlas')&&transHasBeforeLink(link[0],link[1])){
-      wanted[link[0]+'|'+link[1]]=link;
+    // actually looks like. Keeps the BEFORE entry's colour while only
+    // one end has landed — the atlas-atlas branch above is what flips
+    // an uncontrolled red hand-off to controlled grey, so the flip
+    // happens exactly when the relationship is fully inside Atlas.
+    var bl=transBeforeLink(link[0],link[1]);
+    if(sA!=='gone'&&sB!=='gone'&&(sA==='atlas'||sB==='atlas')&&bl){
+      wanted[link[0]+'|'+link[1]]=[link[0],link[1],bl[2],link[3]];
     }
   });
   Object.keys(wanted).forEach(function(key){
     var link=wanted[key];
-    transUpsertLink(link[0],link[1],link[2]);
+    transUpsertLink(link[0],link[1],link[2],link[3]);
   });
   Object.keys(transPathRegistry).forEach(function(key){
     if(!wanted[key])transRemovePath(key);
@@ -2499,7 +2638,9 @@ function transRunGroup(gi){
   var g=TRANS_GROUPS[gi];
   if(g.bonus){
     // No today position to travel from — just fades into its already-
-    // final spot once its inputs (Timesheets, Plant Scheduler) exist.
+    // final spot. Runs second (board p5), before either of its feeder
+    // tools has landed: the Connx feed and the Allocated Cost hand-off
+    // to Pronto rewire onto it immediately (see transRelinkAll).
     var bEl=transCanvasEl.querySelector('.tCard[data-id="'+g.bonus+'"]');
     ltTrans(function(){
       bEl.classList.remove('consumed');
