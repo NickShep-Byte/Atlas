@@ -265,6 +265,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .transLinks{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:1;}
 .transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease,stroke .6s ease,stroke-width .6s ease;}
 .transLinks path.warn{stroke:#E0664C;stroke-width:2;}
+.transLinks path.atlasflow{stroke:var(--acc2);}
 .transLinks path.dashedLink{stroke-dasharray:6 5;}
 .transLinks text{
   font-size:clamp(8px,.62vw,10px);font-weight:700;fill:var(--soft);
@@ -274,6 +275,12 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .transLinks text.warn{fill:#E0664C;}
 .transLinks text.fresh,.transLinks text.gone{opacity:0;}
 .transLinks path.fresh,.transLinks path.gone{opacity:0;}
+/* Travelling dataflow dots (same idea as the cost-flow slide) replace
+   static arrowheads: grey by default, red on an uncontrolled line, Atlas
+   blue when both ends are inside Atlas. */
+.transLinks circle.tDot{fill:rgba(var(--brd-rgb),.8);transition:fill .6s ease;}
+.transLinks circle.tDot.warn{fill:#E0664C;}
+.transLinks circle.tDot.atlasflow{fill:var(--acc2);}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -1011,8 +1018,8 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 <section class="slide" id="s6" data-label="Process" data-act="4">
   <div class="inner">
     <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>How We Build Each Module</span>
-      <h2 style="margin-top:1.4vh;">Four steps. Repeated for every module.</h2>
+      <span class="eyebrow"><span class="dot"></span>How We Build Each Feature</span>
+      <h2 style="margin-top:1.4vh;">Four steps. Repeated for every feature.</h2>
     </div>
     <div class="lineWrap rv d1">
       <div class="lineTrack" aria-hidden="true"></div>
@@ -1021,7 +1028,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
           <div class="sNum">1</div>
           <h3>Design</h3>
           <div class="own">Product Manager &amp; Developer</div>
-          <p>A detailed high-level design of the module.</p>
+          <p>A detailed high-level design of the feature.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
         <div class="station">
@@ -1047,12 +1054,11 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
         </div>
       </div>
       <div class="modToken" id="modToken" aria-hidden="true">
-        <span class="tk" id="tokenLabel">M01</span>
-        <span class="tkn" id="tokenName">MPR Auto-Generation</span>
+        <span class="tkn" id="tokenName">Plant Allocation &amp; Scheduling</span>
       </div>
     </div>
     <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
-    <div class="cap rv d3">"The same four steps, module after module."</div>
+    <div class="cap rv d3">"The same four steps, feature after feature."</div>
   </div>
 </section>
 
@@ -1868,7 +1874,6 @@ function cadenceStop(){
 /* ---------- Slide 6: Delivery process, production line ---------- */
 var line={timers:[],running:false,modIdx:0};
 var token=document.getElementById('modToken');
-var tokenLabel=document.getElementById('tokenLabel');
 var tokenName=document.getElementById('tokenName');
 var shelf=document.getElementById('shelf');
 var stationEls=Array.prototype.slice.call(document.querySelectorAll('#stations .station'));
@@ -1886,14 +1891,13 @@ function clearShelfChips(){
 function runModule(){
   if(!line.running)return;
   var ci=line.modIdx%CAD.length;
-  var m={n:('0'+(ci+1)).slice(-2),name:CAD[ci][1]};
+  var m={name:CAD[ci][1]};
   var centers=stationCenters();
   // reset stations
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
   // new shelf cycle when back at the first feature
   if(ci===0)clearShelfChips();
   // token enters
-  tokenLabel.textContent='M'+m.n;
   tokenName.textContent=m.name;
   token.classList.remove('flying');
   token.style.transition='none';
@@ -1933,7 +1937,7 @@ function runModule(){
   lt(function(){
     var chip=document.createElement('span');
     chip.className='dchip';
-    chip.textContent='M'+m.n+' · '+m.name;
+    chip.textContent=m.name;
     shelf.appendChild(chip);
     // keep shelf tidy: max 5 chips visible
     var chips=shelf.querySelectorAll('.dchip');
@@ -1949,9 +1953,9 @@ function lineStart(){
   if(RM){
     stationEls.forEach(function(st){st.classList.add('done');st.style.setProperty('--pr',100);});
     clearShelfChips();
-    CAD.slice(0,3).forEach(function(c,i){
+    CAD.slice(0,3).forEach(function(c){
       var chip=document.createElement('span');
-      chip.className='dchip';chip.textContent='M'+('0'+(i+1)).slice(-2)+' · '+c[1];
+      chip.className='dchip';chip.textContent=c[1];
       shelf.appendChild(chip);
     });
     return;
@@ -2475,22 +2479,63 @@ function transUpsertLabel(key,pts,warn,label){
   el.classList.remove('gone');
   transPlaceLabel(el,pts,key);
 }
+// Travelling dataflow dots along each connector. Colour: red on an
+// uncontrolled line, Atlas blue when both ends are inside Atlas (or an
+// Atlas card ↔ Pronto), grey otherwise. Dot ELEMENTS are only rebuilt
+// when the path shape actually changes and no merge is in flight (during
+// a merge the cards glide, so leave the dots be for that ~1.3s rather
+// than restarting SMIL every frame); colour is refreshed every call.
+var transDotRegistry={};
+var DOT_SPEED=60,DOT_SPACING=64;
+function transPathLen(pts){var L=0;for(var i=1;i<pts.length;i++){L+=Math.abs(pts[i].x-pts[i-1].x)+Math.abs(pts[i].y-pts[i-1].y);}return L;}
+// Flow kind for a connector: 'warn' (red) if it's an uncontrolled line;
+// 'atlasflow' (Atlas blue) if BOTH ends are inside Atlas — Pronto counts
+// as inside for this purpose ("atlas card + Pronto"); '' otherwise.
+function transFlow(key,warn){
+  if(warn)return 'warn';
+  var p=key.split('|');
+  function ai(id){return transState[id]==='atlas'||id==='pronto';}
+  return (ai(p[0])&&ai(p[1]))?'atlasflow':'';
+}
+function transUpsertDots(key,pts,warn){
+  var d=pathD(pts),cls='tDot '+transFlow(key,warn),reg=transDotRegistry[key];
+  if(reg&&(reg.sig===d||trans.animating)){
+    reg.dots.forEach(function(dt){dt.setAttribute('class',cls);});
+    return;
+  }
+  if(reg)reg.dots.forEach(function(dt){if(dt.parentNode)dt.parentNode.removeChild(dt);});
+  var len=transPathLen(pts),n=Math.max(1,Math.round(len/DOT_SPACING)),dur=Math.max(1,len/DOT_SPEED),dots=[];
+  for(var k=0;k<n;k++){
+    var c=document.createElementNS(SVGNS,'circle');
+    c.setAttribute('r','3.2');c.setAttribute('class',cls);
+    var am=document.createElementNS(SVGNS,'animateMotion');
+    am.setAttribute('dur',dur.toFixed(2)+'s');am.setAttribute('repeatCount','indefinite');
+    am.setAttribute('path',d);am.setAttribute('begin',(-dur*k/n).toFixed(2)+'s');
+    c.appendChild(am);transLinksEl.appendChild(c);dots.push(c);
+  }
+  transDotRegistry[key]={sig:d,dots:dots};
+}
+function transRemoveDots(key){
+  var reg=transDotRegistry[key];if(!reg)return;
+  reg.dots.forEach(function(dt){if(dt.parentNode)dt.parentNode.removeChild(dt);});
+  delete transDotRegistry[key];
+}
 function transUpsertPath(key,pts,warn,cls){
-  var d=pathD(pts),el=transPathRegistry[key];
+  var d=pathD(pts),el=transPathRegistry[key],flow=transFlow(key,warn);
   transUpsertLabel(key,pts,warn,TRANS_LINK_LABELS[key]);
+  transUpsertDots(key,pts,warn);
   if(el){
     if(el.getAttribute('d')!==d)el.setAttribute('d',d);
-    // warn is re-applied on every mutation, not just at creation — a
-    // persistent link's colour flips from uncontrolled red to
-    // controlled grey the moment its tool is absorbed into Atlas (the
-    // stroke transition in CSS animates the change).
-    el.classList.toggle('warn',!!warn);
+    // Flow class is re-applied on every mutation, not just at creation —
+    // a persistent link's colour flips from uncontrolled red to Atlas
+    // blue the moment both its ends are inside Atlas (CSS animates it).
+    el.classList.toggle('warn',flow==='warn');
+    el.classList.toggle('atlasflow',flow==='atlasflow');
     el.classList.remove('gone');
     return el;
   }
   el=document.createElementNS(SVGNS,'path');
-  el.setAttribute('marker-end','url(#tArrow)');
-  el.setAttribute('class','tLink'+(warn?' warn':'')+(cls?' '+cls:'')+' fresh');
+  el.setAttribute('class','tLink'+(flow?' '+flow:'')+(cls?' '+cls:'')+' fresh');
   el.dataset.key=key;
   el.setAttribute('d',d);
   transLinksEl.appendChild(el);
@@ -2504,6 +2549,7 @@ function transRemovePath(key){
   el.classList.add('gone');
   delete transPathRegistry[key];
   setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},450);
+  transRemoveDots(key);
   var lbl=transLabelRegistry[key];
   if(lbl){
     lbl.classList.add('gone');
@@ -2512,6 +2558,7 @@ function transRemovePath(key){
   }
 }
 function transClearAllPaths(){
+  Object.keys(transDotRegistry).forEach(transRemoveDots);
   Object.keys(transLabelRegistry).forEach(function(key){
     var el=transLabelRegistry[key];
     if(el.parentNode)el.parentNode.removeChild(el);
@@ -2591,8 +2638,11 @@ function transFitBox(){
     var bb;try{bb=el.getBBox();}catch(e){return;}
     if(bb&&bb.width)ext(bb.x,bb.y,bb.x+bb.width,bb.y+bb.height);
   });
-  var pad=8;
-  var left=minX-pad,top=minY-pad,right=maxX+pad,bottom=maxY+pad;
+  // Extra headroom at the top so the "Atlas · Shared Database" title,
+  // which straddles the top border, clears the topmost card instead of
+  // being hidden behind it.
+  var pad=8,topPad=26;
+  var left=minX-pad,top=minY-topPad,right=maxX+pad,bottom=maxY+pad;
   atlasBoxOutlineEl.style.left=left+'px';
   atlasBoxOutlineEl.style.top=top+'px';
   atlasBoxOutlineEl.style.width=(right-left)+'px';
@@ -2612,14 +2662,23 @@ function transStillLinkable(id){return transState[id]==='today'||transState[id]=
 // mutated in place (transUpsertLink), links that stop applying fade out
 // and get removed, and everything else is left completely untouched.
 // Nothing is ever blanket-removed-and-redrawn.
-// One dashed window per card not (yet) in Atlas — every card still at
-// its today spot, plus Pronto forever (it's never absorbed). A card
-// loses its window the moment it starts merging into Atlas.
+// One dashed window per card that isn't part of Atlas AND actually sits
+// over the Atlas box background (a blockout only earns its keep where it
+// punches a hole in that tinted fill — a scattered today card off on its
+// own needs none). Candidates: any card still at its today spot, plus
+// Pronto forever (it's never absorbed). `box` is the current box rect or
+// null (no box yet → no blockouts at all).
 function transBlockoutPad(id){return id==='pronto'?40:9;}
-function transSyncBlockouts(){
+function transSyncBlockouts(box){
   var need={};
-  Object.keys(TRANS_CARD_DATA).forEach(function(id){if(transState[id]==='today')need[id]=1;});
-  need.pronto=1;
+  if(box){
+    var cand=Object.keys(TRANS_CARD_DATA).filter(function(id){return transState[id]==='today';});
+    cand.push('pronto');
+    cand.forEach(function(id){
+      var r=transRect(id);if(!r)return;
+      if(r.left<box.right&&r.right>box.left&&r.top<box.bottom&&r.bottom>box.top)need[id]=1;
+    });
+  }
   Object.keys(need).forEach(function(id){
     var r=transRect(id);if(!r)return;
     var bo=transBlockouts[id];
@@ -2714,8 +2773,7 @@ function transRelinkAll(){
   Object.keys(transPathRegistry).forEach(function(key){
     if(!wanted[key])transRemovePath(key);
   });
-  transFitBox();
-  transSyncBlockouts();
+  transSyncBlockouts(transFitBox());
 }
 function transCardEl(id){return transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');}
 // The board moves several tools on the same page; those groups form one
@@ -2833,7 +2891,7 @@ function transAnimateWave(wi,onDone){
       bEl.classList.remove('consumed');bEl.classList.add('mergingPrimary');
       transState[g.bonus]='atlas';transRelinkAll();
     },600);
-    ltTrans(function(){trans.animating=false;if(onDone)onDone();},2600);
+    ltTrans(function(){trans.animating=false;transRelinkAll();if(onDone)onDone();},2600);
     return;
   }
   groups.forEach(function(wg){
@@ -2864,7 +2922,7 @@ function transAnimateWave(wi,onDone){
       transRelinkAll();
     },3000);
   });
-  ltTrans(function(){trans.animating=false;if(onDone)onDone();},3500);
+  ltTrans(function(){trans.animating=false;transRelinkAll();if(onDone)onDone();},3500);
 }
 // Auto-play: run waves back-to-back, settle, hold, then fade-reset and
 // loop.
@@ -3025,12 +3083,12 @@ function goTo(i,skipFragReset){
 function fwd(){
   var s=slides[cur];
   if(!RM && nextFrag(s))return;
-  goTo(cur+1);
+  goTo(cur+1>=slides.length?0:cur+1);          // wrap: last → first
 }
 function back(){
   var s=slides[cur];
   if(!RM && prevFrag(s))return;
-  goTo(cur-1);
+  goTo(cur-1<0?slides.length-1:cur-1);          // wrap: first → last
 }
 
 document.getElementById('btnNext').addEventListener('click',fwd);
