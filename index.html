@@ -2288,11 +2288,13 @@ function transComputePts(idA,idB){
   if(idA==='procreg'&&idB==='dailydiary'){
     // "Procured rates" — procurement's rates feed the Daily Diary so
     // its tracked quantities can be costed, in BOTH states. Runs along
-    // the lane just above wherever Daily Diary currently sits (above
-    // the whole today top band; just above the box's top row once
-    // landed), entering Diary's top left of centre — Plant Scheduler's
-    // with-Atlas feed enters that edge at dead centre, one lane lower.
-    var laneYpd=b.top-28,entryXpd=b.cx-25;
+    // the lane above wherever Daily Diary currently sits; once Diary
+    // has landed it takes the TOPMOST of the three stacked lanes above
+    // the box's top row (Plant Scheduler -> Diary lowest, Diary -> Cost
+    // Journalling above that, this above both). Its diary entry is the
+    // rightmost of that edge's three connection points, so its drop
+    // never crosses the two lanes below it.
+    var laneYpd=b.top-(transState.dailydiary==='atlas'?42:28),entryXpd=b.cx+25;
     return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd},{x:entryXpd,y:laneYpd},{x:entryXpd,y:b.top}];
   }
   if(idA==='forecasting'&&idB==='streamforecast'){
@@ -2310,21 +2312,20 @@ function transComputePts(idA,idB){
     return [{x:exitXfs,y:a.bottom},{x:exitXfs,y:laneYfs},{x:corrXfs,y:laneYfs},{x:corrXfs,y:b.cy},{x:b.right,y:b.cy}];
   }
   if(idA==='planttracker'&&idB==='dailydiary'){
-    // With-Atlas only: Plant Scheduler feeds the Daily Diary. Invoice
-    // Validation sits between them on the top row — hop over it on the
-    // lane above the row (staggered below Procured rates' lane, which
-    // crosses the same span into Diary's top).
-    var laneYpd2=a.top-16;
-    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd2},{x:b.cx,y:laneYpd2},{x:b.cx,y:b.top}];
+    // With-Atlas only: Plant Scheduler feeds the Daily Diary, hopping
+    // Invoice Validation on the LOWEST of the three stacked lanes above
+    // the row, into the leftmost of Diary's top-edge connection points.
+    var laneYpd2=a.top-14;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd2},{x:b.cx-25,y:laneYpd2},{x:b.cx-25,y:b.top}];
   }
   if(idA==='dailydiary'&&idB==='costjournal'){
-    // With-Atlas only: diary quantities feed Cost Journalling. Exits
-    // left of centre (the Tracked Quantities drop owns dead centre) and
-    // slips through the gap between the top row and Pronto's row,
-    // entering Cost Journalling's bottom left of centre (the Allocated
-    // Cost drop owns dead centre).
-    var laneYdc=transPxY(46),exitXdc=a.cx-25,entryXdc=b.cx-25;
-    return [{x:exitXdc,y:a.bottom},{x:exitXdc,y:laneYdc},{x:entryXdc,y:laneYdc},{x:entryXdc,y:b.bottom}];
+    // With-Atlas only: diary quantities feed Cost Journalling, over the
+    // top of the row on the MIDDLE of the three stacked lanes (above
+    // Plant Scheduler -> Diary, below Procured rates), exiting Diary's
+    // top dead centre and entering Cost Journalling's top right of
+    // centre, clear of the Connx feed's column.
+    var laneYdc=a.top-28;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYdc},{x:b.cx+25,y:laneYdc},{x:b.cx+25,y:b.top}];
   }
   if(idA==='variationreg'&&idB==='procreg'){
     // "Budget/cost allocation" — the board's long loop: below the whole
