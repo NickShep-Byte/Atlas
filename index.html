@@ -1998,41 +1998,66 @@ function lineStop(){
 // itself carries the merged result into Atlas. Nothing ever vanishes
 // and reappears elsewhere: every card is the same DOM element from
 // today's position through to wherever it ends up.
+// Node set, labels and groupings below are sourced directly from "The
+// Atlas Concept" Miro board — see the with-Atlas layout notes above
+// TRANS_GROUPS for how its own final page maps onto this data.
 var TRANS_CARD_DATA={
  procreg:{label:'Procurement Register',fam:'green',branch:true,x:22,y:10},
- rfq:{label:'Request for Quote',fam:'blue',x:6,y:10},
  f111:{label:'F111 Requisition',fam:'yellow',x:38,y:10},
  reqappr:{label:'Requisition Approval',fam:'blue',branch:true,x:38,y:36},
  connx:{label:'Connx',fam:'pink',x:54,y:10},
  dailydiary:{label:'Daily Diary',fam:'green',x:86,y:36},
  docket:{label:'Docket / Delivery Register',fam:'green',dashed:true,x:70,y:36},
- invoiceval:{label:'Invoice Validation / Approval',fam:'orange',x:54,y:62},
- caaps:{label:'CAAPS',fam:'pink',x:62,y:84},
+ invoiceval:{label:'Invoice Validation / Approval Process',fam:'orange',branch:true,x:54,y:62},
+ caaps:{label:'CAAPS',fam:'pink',x:46,y:84},
  costtracker:{label:'Cost Tracker',fam:'green',x:70,y:62},
- forecasting:{label:'Forecasting',fam:'green',x:86,y:62},
- planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88}
+ forecasting:{label:'Project Forecasting',fam:'green',x:86,y:62},
+ planttracker:{label:'Plant Tracker',fam:'green',x:38,y:88},
+ streamforecast:{label:'Stream / Company Forecasting',fam:'green',x:8,y:88},
+ monthlyreport:{label:'Monthly Reporting',fam:'green',x:60,y:88},
+ progressclaim:{label:'Progress Claim',fam:'green',x:76,y:88},
+ variationreg:{label:'Variation Register',fam:'green',x:92,y:88}
 };
-// Order matches the requested merge/move sequence: Plant Tracker,
-// Procurement, CAAPS + Invoice Validation + Docket, Forecasting, Daily
-// Diary, then Cost Tracker (which now becomes Productivity Analysis —
-// the bonus node with no today-tool equivalent is gone; Cost Tracker
-// itself carries that role). Docket has no dedicated Atlas module of
-// its own, so it's absorbed into Invoice Validation & Accruals rather
-// than retiring on its own.
+// The board's own final page keeps Daily Diary, Cost Tracker and
+// Project Forecasting drawn OUTSIDE its "Atlas" box, connected in via
+// dashed lines rather than absorbed — everything else consolidates
+// inside. Those three still get the highlight/move/relabel treatment
+// (their `external:true` just excludes them from the box's own bounds
+// in transFitBox), they simply land beside it, not renamed, rather than
+// inside it. The one entry with `bonus` instead of `primary` — Cost
+// Journalling/Allocation — has no today-tool of its own at all; it's a
+// brand new capability fed by Timesheets and Plant Scheduler, so
+// instead of highlighting/sliding from a today position, it simply
+// fades into its final spot once both of those have landed (handled
+// in transRunGroup).
+// Cost Tracker and Project Forecasting run before the bottom-row group
+// (Variation Register/Stream Forecasting/Monthly Reporting/Progress
+// Claim) so their own before-state link — a straight same-row line
+// running behind where that row lands — is already gone (both cards
+// have moved on) by the time anything settles into that screen space.
+// Progress Claim also runs before Variation Register specifically,
+// since Progress Claim -> Pronto's route passes directly through the
+// spot Variation Register lands in.
 var TRANS_GROUPS=[
- {primary:'planttracker',secondaries:[],afterLabel:'Resource Scheduler',afterX:38,afterY:62},
- {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:12,afterY:62},
- {primary:'procreg',secondaries:['rfq','f111','reqappr'],afterLabel:'Procurement Portal',afterX:20,afterY:16},
- {primary:'invoiceval',secondaries:['caaps','docket'],afterLabel:'Invoice Validation & Accruals',afterX:12,afterY:40},
- {primary:'forecasting',secondaries:[],afterLabel:'CTC Forecasting',afterX:42,afterY:16},
- {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:30,afterY:40},
- {primary:'costtracker',secondaries:[],afterLabel:'Productivity Analysis',afterX:48,afterY:40}
+ {primary:'planttracker',secondaries:[],afterLabel:'Plant Scheduler',afterX:55,afterY:16},
+ {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:35,afterY:16},
+ {primary:'procreg',secondaries:['f111','reqappr'],afterLabel:'Procurement Portal',afterX:15,afterY:16},
+ {bonus:'costjournal',label:'Cost Journalling / Allocation',afterX:35,afterY:40},
+ {primary:'invoiceval',secondaries:['caaps','docket'],afterLabel:'Invoice Validation / Approval Process',afterX:78,afterY:16},
+ {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:94,afterY:16,external:true},
+ {primary:'costtracker',secondaries:[],afterLabel:'Cost Tracker',afterX:94,afterY:40,external:true},
+ {primary:'forecasting',secondaries:[],afterLabel:'Project Forecasting',afterX:94,afterY:64,external:true},
+ {primary:'progressclaim',secondaries:[],afterLabel:'Progress Claim',afterX:55,afterY:64},
+ {primary:'variationreg',secondaries:[],afterLabel:'Revenue Management (Contract + VOs)',afterX:78,afterY:64},
+ {primary:'streamforecast',secondaries:[],afterLabel:'Stream / Company Forecasting',afterX:15,afterY:64},
+ {primary:'monthlyreport',secondaries:[],afterLabel:'Monthly Reporting',afterX:35,afterY:64}
 ];
-// Pronto exists in both states, just in a different spot — it slides
-// from its today position to its with-Atlas position once everything
-// else has been absorbed.
+// Pronto exists in both states, just in a different spot. On the
+// board's own final page it's drawn INSIDE the Atlas box (still its own
+// distinct system, but no longer the single external hub everything
+// else pointed at) rather than staying outside it.
 var TRANS_FIXED=[
- {id:'pronto',label:'Pronto',fam:'purple',before:{x:54,y:36},after:{x:78,y:44}}
+ {id:'pronto',label:'Pronto',fam:'purple',before:{x:54,y:36},after:{x:58,y:40}}
 ];
 // Collision avoidance for the two static rest layouts (today's scattered
 // positions, and everyone's with-Atlas positions) — not text wrapping,
@@ -2062,31 +2087,37 @@ transResolveCollisions(TRANS_GROUPS.map(function(g){
   return {get x(){return g.afterX;},set x(v){g.afterX=v;},get y(){return g.afterY;},set y(v){g.afterY=v;}};
 }).concat([TRANS_FIXED[0].after]));
 var TRANS_LINKS=[
- ['rfq','procreg',false],['procreg','f111',false],['f111','reqappr',false],
- ['reqappr','pronto',false],['procreg','pronto',true],
- ['docket','costtracker',false],['dailydiary','costtracker',false],
- ['costtracker','caaps',false],['costtracker','forecasting',false],
- ['caaps','pronto',false],['invoiceval','pronto',false],
- ['planttracker','pronto',false],['forecasting','pronto',true],
- ['planttracker','dailydiary',false],['procreg','forecasting',false],
- ['procreg','dailydiary',false]
+ ['procreg','f111',false],['f111','reqappr',false],['reqappr','pronto',false],
+ ['procreg','pronto',true],
+ ['connx','pronto',false],['planttracker','pronto',false],
+ ['dailydiary','costtracker',false],['costtracker','forecasting',false],
+ ['docket','invoiceval',false],['invoiceval','caaps',false],['caaps','pronto',false],
+ ['forecasting','pronto',true],['costtracker','pronto',true],
+ ['pronto','streamforecast',false],['pronto','monthlyreport',false],
+ ['variationreg','progressclaim',false],['progressclaim','pronto',false],
+ ['variationreg','procreg',true]
 ];
 function transHasBeforeLink(idA,idB){
   return TRANS_LINKS.some(function(l){return l[0]===idA&&l[1]===idB;});
 }
-// With-Atlas links, referencing the same cards now relabelled/moved.
-// Forecasting carries the CTC Forecasting role and Cost Tracker
-// carries Productivity Analysis, so links that used to target
-// 'costtracker' for the forecasting relationship now target
-// 'forecasting' instead.
+// With-Atlas links. Several pairs (Procurement<->Pronto's "Procured
+// rates", Forecasting/Cost Tracker->Pronto, Variation Register-
+// >Procurement's "Budget/cost allocation", the Stream Forecasting/
+// Monthly Reporting/Progress Claim chains) are the SAME relationship in
+// both states — those id pairs appear in TRANS_LINKS too so they mutate
+// continuously through the merge rather than disappearing and being
+// recreated. Connx/Plant Tracker -> Cost Journalling and Invoice
+// Validation -> Pronto are genuinely new Atlas-only relationships with
+// no before-state equivalent.
 var TRANS_AFTER_LINKS=[
- ['procreg','invoiceval',false],
- ['procreg','forecasting',false],
- ['procreg','dailydiary',false],
- ['dailydiary','invoiceval',false],
- ['dailydiary','forecasting',false],
- ['dailydiary','costtracker',false],
- ['connx','dailydiary',false],['planttracker','dailydiary',false]
+ ['connx','costjournal',false],['planttracker','costjournal',false],['costjournal','pronto',false],
+ ['procreg','pronto',true],
+ ['invoiceval','pronto',false],
+ ['variationreg','progressclaim',false],['progressclaim','pronto',false],
+ ['pronto','streamforecast',false],['pronto','monthlyreport',false],
+ ['variationreg','procreg',true],
+ ['forecasting','pronto',true],['costtracker','pronto',true],
+ ['dailydiary','costtracker',false]
 ];
 var SVGNS='http://www.w3.org/2000/svg';
 var transCanvasEl=document.getElementById('transCanvas');
@@ -2104,6 +2135,7 @@ var transState={};
 function transResetState(){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){transState[id]='today';});
   transState.pronto='today';
+  transState.costjournal='today';
 }
 transResetState();
 function transCard(pos){
@@ -2122,22 +2154,6 @@ function transRect(id){
   var el=transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');
   if(!el)return null;
   var cr=transCanvasEl.getBoundingClientRect(),r=el.getBoundingClientRect();
-  return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
-          cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
-}
-// The box outline's own left/top/width/height are set to their FINAL
-// target values the instant a new primary lands (so it visibly grows
-// via its own .6s CSS transition rather than popping to full size) —
-// reading its rect straight after that write would just give back the
-// same target numbers before any transition frame has rendered. This
-// is for reading the box's true CURRENT on-screen edges on every other
-// call in between (i.e. every live-tick frame while it's mid-grow), so
-// the external Pronto connector's anchors track the box exactly as it
-// grows/moves instead of jumping ahead to where it's headed.
-function transBoxLiveRect(){
-  var r=atlasBoxOutlineEl.getBoundingClientRect();
-  if(!r.width&&!r.height)return null;
-  var cr=transCanvasEl.getBoundingClientRect();
   return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
           cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
 }
@@ -2178,145 +2194,117 @@ function transComputePts(idA,idB){
   var a=transRect(idA),b=transRect(idB);
   if(!a||!b)return null;
   var sA=transState[idA],sB=transState[idB];
-  // These three pairs are wanted continuously across every state
-  // combination — before, after, and the mixed window where one side
-  // has landed in Atlas while the other hasn't moved yet — so they
-  // compute a route directly from live positions instead of being
-  // routed through the mixed-state bypass below (which exists for pairs
-  // whose hand-tuned routes assume a single settled layout).
-  if(idA==='planttracker'&&idB==='dailydiary'){
-    // Dedicated fixed crossing lane (not a dynamic midpoint) so it never
-    // coincidentally lands on the same height as another pair's own
-    // midpoint-based crossing — with several pairs now crossing the
-    // same row gaps, two independently-averaged heights collide often.
-    // Offsets its own exit from Plant Tracker's dead-centre too — while
-    // Plant Tracker is mid-merge, Plant Tracker -> Pronto's generic
-    // fallback route also leaves from that same centre point.
-    var down2pd=b.cy>=a.cy,midYpd=transPxY(54),exitXpd=a.cx+12,entryXpd=b.cx+14;
-    return [{x:exitXpd,y:down2pd?a.bottom:a.top},{x:exitXpd,y:midYpd},{x:entryXpd,y:midYpd},{x:entryXpd,y:down2pd?b.top:b.bottom}];
+  // These pairs are wanted continuously across every state combination —
+  // before, after, and the mixed window where one side has landed in
+  // Atlas while the other hasn't moved yet — so they compute a route
+  // directly from live positions instead of being routed through the
+  // mixed-state bypass below (which exists for pairs whose hand-tuned
+  // routes assume a single settled layout). Pronto is the hub in both
+  // layouts, so most of these converge on it; each gets a distinct,
+  // fixed offset along whichever of its edges it shares with the others
+  // so none of them ever land exactly on top of one another.
+  if(idA==='procreg'&&idB==='pronto'){
+    // Procurement always sits up/left of Pronto in both layouts. Pronto's
+    // top edge is shared with Plant Tracker -> Pronto (today-only, offset
+    // +15 there) and Invoice Validation -> Pronto (with-Atlas only,
+    // offset +25 there) — this one gets the far side.
+    var down2pp=b.cy>=a.cy,midYpp=(a.cy+b.cy)/2,entryXpp=b.cx-25;
+    return [{x:a.cx,y:down2pp?a.bottom:a.top},{x:a.cx,y:midYpp},{x:entryXpp,y:midYpp},{x:entryXpp,y:down2pp?b.top:b.bottom}];
   }
-  if(idA==='procreg'&&idB==='dailydiary'){
-    // Procurement's bottom edge is shared with Invoice Validation ->
-    // Procurement (offset -14 there), and Daily Diary's top edge is
-    // shared with Daily Diary -> CTC Forecasting (offset +14 there) —
-    // offset both ends the other way. Fixed crossing lane, see above.
-    var down2p=b.cy>=a.cy,midYp=transPxY(26),exitXp=a.cx+14,entryXp=b.cx-14;
-    return [{x:exitXp,y:down2p?a.bottom:a.top},{x:exitXp,y:midYp},{x:entryXp,y:midYp},{x:entryXp,y:down2p?b.top:b.bottom}];
-  }
-  if(idA==='procreg'&&idB==='forecasting'){
+  if(idA==='costtracker'&&idB==='pronto'){
     if(Math.abs(b.cy-a.cy)<4){
-      // With-Atlas state: same row, one straight segment — no needless
-      // bend just because the before-state has them on different rows.
-      return [{x:a.right,y:a.cy},{x:b.left,y:b.cy}];
+      // With-Atlas state: same row as Pronto — one straight segment, no
+      // needless bend just because today's layout has them apart.
+      return transElbowPts(a,b);
     }
-    // Procurement always sits above Forecasting whenever they're not
-    // aligned. F111/Connx sit in Procurement's own row and Requisition
-    // Approval/Docket/Daily Diary sit in the row below — dip below both
-    // (a height nothing else occupies) before crossing over. Enters
-    // Forecasting's top edge offset from centre, since Forecasting ->
-    // Pronto exits from dead-centre-top and Cost Tracker -> Forecasting
-    // enters at centre-left.
-    var exitXpf=a.cx+30,dipYpf=transPxY(51),entryXpf=b.cx-20;
-    return [{x:exitXpf,y:a.bottom},{x:exitXpf,y:dipYpf},{x:entryXpf,y:dipYpf},{x:entryXpf,y:b.top}];
+    // Today state: Cost Tracker sits below Pronto. Exits Cost Tracker's
+    // top offset from centre — Daily Diary -> Cost Tracker enters that
+    // same edge dead-centre — and uses its own bend height, distinct
+    // from Forecasting -> Pronto's (which shares Cost Tracker's row),
+    // so the two fanned-out lines don't run collinear.
+    var midYct=(a.cy+b.cy)/2-15,exitXct=a.cx-20,entryXct=b.cx+7;
+    return [{x:exitXct,y:a.top},{x:exitXct,y:midYct},{x:entryXct,y:midYct},{x:entryXct,y:b.bottom}];
   }
-  // Strictly "today" / "atlas" here, not "merging" — the hand-tuned
-  // routes below assume BOTH cards are sitting still in a genuinely
-  // settled position. A card that's mid-flight toward its own merge
-  // target can pass anywhere on the canvas along the way (including
-  // right through a neighbour), so any pair with one side moving falls
-  // back to the generic live elbow instead, same as a fully mixed pair.
+  if(idA==='forecasting'&&idB==='pronto'){
+    // Forecasting sits below Pronto in both layouts — furthest right of
+    // everything sharing Pronto's bottom edge.
+    var midYf=(a.cy+b.cy)/2+15,entryXf=b.cx+35;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
+  }
+  if(idA==='pronto'&&idB==='streamforecast'){
+    // Furthest left of everything sharing Pronto's bottom edge. Jogs
+    // sideways immediately below Pronto (well above the row of cards
+    // Invoice Validation/Cost Tracker/Forecasting occupy in today's
+    // layout) rather than at the halfway point — a midpoint bend would
+    // cut straight through whichever of those sits in the same column.
+    // Each of the four routes sharing Pronto's bottom edge gets its own
+    // jog height too, so none of their sideways jogs run collinear.
+    var jogYs=a.bottom+25,exitXs=a.cx-35;
+    return [{x:exitXs,y:a.bottom},{x:exitXs,y:jogYs},{x:b.cx,y:jogYs},{x:b.cx,y:b.top}];
+  }
+  if(idA==='pronto'&&idB==='monthlyreport'){
+    var jogYm=a.bottom+45,exitXm=a.cx-7;
+    return [{x:exitXm,y:a.bottom},{x:exitXm,y:jogYm},{x:b.cx,y:jogYm},{x:b.cx,y:b.top}];
+  }
+  if(idA==='progressclaim'&&idB==='pronto'){
+    // Exits offset from centre — Variation Register -> Progress Claim
+    // enters that same edge dead-centre (generic elbow, mixed states).
+    var jogYpc=b.bottom+55,exitXpc=a.cx-20,entryXpc=b.cx+21;
+    return [{x:exitXpc,y:a.top},{x:exitXpc,y:jogYpc},{x:entryXpc,y:jogYpc},{x:entryXpc,y:b.bottom}];
+  }
+  if(idA==='variationreg'&&idB==='procreg'){
+    // Long bottom-rail route: Variation Register sits bottom-right in
+    // both layouts, Procurement top-left — a straight diagonal would cut
+    // through most of the canvas. Drop below the whole bottom row, run
+    // left along a lane nothing else occupies, then rise on a corridor
+    // clear of Procurement's own column (which the with-Atlas layout
+    // puts directly above Stream/Company Forecasting's column) before
+    // entering Procurement from the right. Exits offset from centre —
+    // Variation Register -> Progress Claim exits that same edge
+    // dead-centre (generic elbow, mixed states).
+    var railY=Math.max(a.bottom,b.bottom)+26,corridorX=b.right+26,entryY=b.cy+15,exitXvp=a.cx-20;
+    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:corridorX,y:railY},{x:corridorX,y:entryY},{x:b.right,y:entryY}];
+  }
+  // Strictly "today" / "atlas" here, not "merging" — a card mid-flight
+  // toward its own merge target can pass anywhere on the canvas along
+  // the way (including right through a neighbour), so any pair with one
+  // side moving falls back to the generic live elbow instead, same as a
+  // fully mixed pair.
   var pureBefore=sA==='today'&&sB==='today';
   var pureAfter=sA==='atlas'&&sB==='atlas';
   if(!pureBefore&&!pureAfter){
-    // One side has already landed in Atlas while the other hasn't moved
-    // yet (or either is mid-flight) — the hand-tuned special-case routes
-    // below assume a settled before-only or after-only layout, so fall
-    // back to the generic live elbow, which stays correct no matter how
-    // far apart the two ends currently are.
     return transElbowPts(a,b,idA+'|'+idB);
   }
-  if((idA==='costtracker'&&idB==='caaps')||(idA==='caaps'&&idB==='costtracker')){
-    // CAAPS sits below and to the left of Cost Tracker today — dip below
-    // CAAPS's row entirely on a fixed lane (not a dynamic one derived
-    // from their own live positions, which drifts into other pairs'
-    // fixed lanes whenever either card is mid-merge).
-    var dipYcc=transPxY(96);
-    return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipYcc},{x:b.cx,y:dipYcc},{x:b.cx,y:b.bottom}];
-  }
-  if(idA==='docket'&&idB==='costtracker'){
-    // Dedicated fixed crossing lane rather than the generic elbow, which
-    // otherwise lands on the same height as other pairs crossing this
-    // same row gap. Docket and Cost Tracker sit in the same column, and
-    // so does Cost Tracker -> CAAPS's own dip route below — offset both
-    // ends so this doesn't run straight up that same column.
-    var down2dc=b.cy>=a.cy,midYdc=transPxY(56),exitXdc=a.cx+10,entryXdc=b.cx-10;
-    return [{x:exitXdc,y:down2dc?a.bottom:a.top},{x:exitXdc,y:midYdc},{x:entryXdc,y:midYdc},{x:entryXdc,y:down2dc?b.top:b.bottom}];
-  }
   if(idA==='planttracker'&&idB==='pronto'){
-    // Plant Tracker has to cross the whole CAAPS/Invoice/Cost/Forecasting
-    // row to reach Pronto — go around the left of that row, then cross
-    // at the clear gap above Requisition Approval's row and drop into
-    // Pronto from the top, rather than cutting through Requisition
-    // Approval at Pronto's own row height. Offset from centre since
-    // Procurement -> Pronto also enters the top edge.
-    var corridor=transPxX(14),gapY=transPxY(23),entryXpt=b.cx-15;
-    return [{x:a.left,y:a.cy},{x:corridor,y:a.cy},{x:corridor,y:gapY},{x:entryXpt,y:gapY},{x:entryXpt,y:b.top}];
-  }
-  if(idA==='procreg'&&idB==='pronto'){
-    // Shares Pronto's top edge with Plant Tracker -> Pronto (offset -15
-    // there) — offset the other way.
-    var down2pp=b.cy>=a.cy,midYpp=transPxY(29),entryXpp=b.cx+15;
-    return [{x:a.cx,y:down2pp?a.bottom:a.top},{x:a.cx,y:midYpp},{x:entryXpp,y:midYpp},{x:entryXpp,y:down2pp?b.top:b.bottom}];
+    // Today-only. Plant Tracker actually sits ABOVE Pronto once the
+    // collision-avoidance pass has run (its declared spot is nudged up
+    // and over to clear CAAPS), so this enters Pronto's top edge, not
+    // its bottom. Shares that edge with Procurement -> Pronto (offset
+    // -25 there) — offset the other way.
+    var down2pt=b.cy>=a.cy,midYpt=(a.cy+b.cy)/2,entryXpt=b.cx+15;
+    return [{x:a.cx,y:down2pt?a.bottom:a.top},{x:a.cx,y:midYpt},{x:entryXpt,y:midYpt},{x:entryXpt,y:down2pt?b.top:b.bottom}];
   }
   if(idA==='caaps'&&idB==='pronto'){
-    // Three connectors converge on Pronto from below (CAAPS, Invoice
-    // Validation, Forecasting) — give each a distinct entry point along
-    // Pronto's bottom edge instead of all three funnelling through its
-    // centre, where they'd sit exactly on top of one another.
-    var midYc=transPxY(40),entryXc=b.cx-18;
-    return [{x:a.cx,y:a.top},{x:a.cx,y:midYc},{x:entryXc,y:midYc},{x:entryXc,y:b.bottom}];
+    // Exits CAAPS offset from centre — Invoice Validation -> CAAPS enters
+    // that same edge dead-centre.
+    var jogYcp=b.bottom+35,exitXcp=a.cx-15,entryXcp=b.cx-21;
+    return [{x:exitXcp,y:a.top},{x:exitXcp,y:jogYcp},{x:entryXcp,y:jogYcp},{x:entryXcp,y:b.bottom}];
   }
-  if(idA==='forecasting'&&idB==='pronto'){
-    var midYf=transPxY(46),entryXf=b.cx+18;
-    return [{x:a.cx,y:a.top},{x:a.cx,y:midYf},{x:entryXf,y:midYf},{x:entryXf,y:b.bottom}];
+  if(idA==='invoiceval'&&idB==='pronto'){
+    // With-Atlas only. Shares Pronto's top edge with Procurement ->
+    // Pronto (offset -25 there) — offset the other way.
+    var midYiv=(a.cy+b.cy)/2,entryXiv=b.cx+25;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:midYiv},{x:entryXiv,y:midYiv},{x:entryXiv,y:b.top}];
   }
-  if(idA==='dailydiary'&&idB==='costtracker'){
-    if(Math.abs(b.cy-a.cy)<4){
-      // With-Atlas state: Daily Diary -> Productivity Analysis, same row.
-      return [{x:a.right,y:a.cy},{x:b.left,y:b.cy}];
-    }
-    // Before state: fixed crossing lane, distinct from the other pairs
-    // also crossing between this row and the one below. Exits Daily
-    // Diary's bottom edge at +28 rather than +14, since Plant Tracker ->
-    // Daily Diary already enters that same edge at +14.
-    var down2d=b.cy>=a.cy,midYd=transPxY(52);
-    var exitXd=a.cx+28,entryXd=b.cx+14;
-    return [{x:exitXd,y:down2d?a.bottom:a.top},{x:exitXd,y:midYd},{x:entryXd,y:midYd},{x:entryXd,y:down2d?b.top:b.bottom}];
-  }
-  if(idA==='dailydiary'&&idB==='forecasting'){
-    // Shares Daily Diary's top edge with Procurement Register -> Daily
-    // Diary (offset -14 there) — offset the other way.
-    var down2df=b.cy>=a.cy,midYdf=transPxY(28),exitXdf=a.cx+14;
-    return [{x:exitXdf,y:down2df?a.bottom:a.top},{x:exitXdf,y:midYdf},{x:b.cx,y:midYdf},{x:b.cx,y:down2df?b.top:b.bottom}];
-  }
-  if(idA==='costtracker'&&idB==='forecasting'){
-    // Shares Forecasting's left edge with Procurement -> Forecasting
-    // (which enters at dead-centre once the two are aligned) — offset
-    // down slightly so they're never exactly on top of each other.
-    var ycf=a.cy+10;
-    return [{x:a.right,y:ycf},{x:b.left,y:ycf}];
-  }
-  if(idA==='procreg'&&idB==='invoiceval'){
-    // Shares Procurement's bottom edge with Procurement -> Daily Diary
-    // (offset +14 there) — offset the other way.
-    var down2i=b.cy>=a.cy,midYi=transPxY(24),exitXi=a.cx-14;
-    return [{x:exitXi,y:down2i?a.bottom:a.top},{x:exitXi,y:midYi},{x:b.cx,y:midYi},{x:b.cx,y:down2i?b.top:b.bottom}];
-  }
-  if(idA==='connx'&&idB==='dailydiary'){
-    // Shares Daily Diary's bottom edge with Plant Tracker -> Daily
-    // Diary (offset +14 there) — offset the other way.
-    var down2c=b.cy>=a.cy,midYcx=transPxY(50),entryXcx=b.cx-14;
-    return [{x:a.cx,y:down2c?a.bottom:a.top},{x:a.cx,y:midYcx},{x:entryXcx,y:midYcx},{x:entryXcx,y:down2c?b.top:b.bottom}];
+  if(idA==='planttracker'&&idB==='costjournal'){
+    // With-Atlas only. Cost Journalling sits directly below Connx ->
+    // Cost Journalling (a straight dead-centre drop) — offset this one's
+    // entry so the two don't run collinear down Cost Journalling's own
+    // column. Bends higher than the row-to-row midpoint (which is both
+    // collinear with Procurement -> Pronto's own bend and sits inside
+    // Pronto's own row, which is directly between these two rows today).
+    var down2pc=b.cy>=a.cy,midYpc2=(a.cy+b.cy)/2-20,entryXpc2=b.cx+25;
+    return [{x:a.cx,y:down2pc?a.bottom:a.top},{x:a.cx,y:midYpc2},{x:entryXpc2,y:midYpc2},{x:entryXpc2,y:down2pc?b.top:b.bottom}];
   }
   return transElbowPts(a,b,idA+'|'+idB);
 }
@@ -2368,6 +2356,15 @@ function transBuild(){
     transCanvasEl.appendChild(transCard({id:id,label:d.label,fam:d.fam,dashed:d.dashed,branch:d.branch,x:d.x,y:d.y}));
   });
   TRANS_FIXED.forEach(function(c){transCanvasEl.appendChild(transCard({id:c.id,label:c.label,fam:c.fam,x:c.before.x,y:c.before.y}));});
+  // The bonus node (Cost Journalling/Allocation) has no today position —
+  // it's created already sitting at its final spot, styled as a landed
+  // Atlas card, but hidden (consumed) until transRunGroup reveals it.
+  var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
+  if(bonusGroup){
+    var bEl=transCard({id:bonusGroup.bonus,label:bonusGroup.label,fam:'atlas',x:bonusGroup.afterX,y:bonusGroup.afterY});
+    bEl.classList.add('consumed');
+    transCanvasEl.appendChild(bEl);
+  }
   transRelinkAll();
 }
 function transMoveFixed(which,to){
@@ -2380,8 +2377,14 @@ function transMoveFixed(which,to){
 // end already full-size. Returns null (and hides the box) if nothing
 // has landed yet.
 function transFitBox(){
-  var ids=TRANS_GROUPS.filter(function(g){return g.primary&&transState[g.primary]==='atlas';})
+  // Excludes `external` groups (Daily Diary/Cost Tracker/Project
+  // Forecasting stay outside the box even once landed) and includes the
+  // bonus node and Pronto, both of which land inside it but aren't
+  // themselves a TRANS_GROUPS primary.
+  var ids=TRANS_GROUPS.filter(function(g){return g.primary&&!g.external&&transState[g.primary]==='atlas';})
     .map(function(g){return g.primary;});
+  if(transState.costjournal==='atlas')ids.push('costjournal');
+  if(transState.pronto==='atlas')ids.push('pronto');
   var rects=ids.map(transRect).filter(Boolean);
   if(!rects.length){
     transCanvasEl.classList.remove('building');
@@ -2391,16 +2394,6 @@ function transFitBox(){
   var top=Math.min.apply(null,rects.map(function(r){return r.top;}))-40;
   var right=Math.max.apply(null,rects.map(function(r){return r.right;}))+28;
   var bottom=Math.max.apply(null,rects.map(function(r){return r.bottom;}))+28;
-  // Whenever the box's target bounds actually change, keep the live tick
-  // running for the length of its own .6s move/resize transition, so
-  // anything anchored to the box (the external Pronto connector) gets
-  // recomputed every frame against its true current edges as it grows,
-  // instead of only updating once at the start and once whenever it next
-  // happens to be nudged by an unrelated card merge.
-  if(!trans.lastBox||left!==trans.lastBox.left||top!==trans.lastBox.top||right!==trans.lastBox.right||bottom!==trans.lastBox.bottom){
-    trans.boxAnimUntil=Date.now()+650;
-  }
-  trans.lastBox={left:left,top:top,right:right,bottom:bottom};
   atlasBoxOutlineEl.style.left=left+'px';
   atlasBoxOutlineEl.style.top=top+'px';
   atlasBoxOutlineEl.style.width=(right-left)+'px';
@@ -2455,48 +2448,9 @@ function transRelinkAll(){
     transUpsertLink(link[0],link[1],link[2]);
   });
   Object.keys(transPathRegistry).forEach(function(key){
-    if(key==='EXTERNAL_PRONTO_OUT'||key==='EXTERNAL_PRONTO_IN')return;
     if(!wanted[key])transRemovePath(key);
   });
-  var box=transFitBox();
-  // The unified Atlas<->Pronto channel exists from the moment the box
-  // itself exists (the first tool lands), not just once Pronto makes its
-  // own final move — otherwise every individual before-link into Pronto
-  // (caaps-pronto, invoiceval-pronto, etc.) disappears as its card is
-  // absorbed while this replacement doesn't show up until the very end,
-  // reading as a hard cut followed by a disconnected reappearance. It
-  // tracks Pronto's live position throughout, so it's already in place,
-  // still pointed at Pronto's today spot, well before Pronto itself
-  // slides across to its with-Atlas spot.
-  if(box){
-    var pron=transRect('pronto');
-    // Use the box outline's own live rendered rect, not the just-computed
-    // target one above — the box animates to that target over its own
-    // .6s transition, so anchoring to the target directly would make
-    // this connector jump to where the box is headed instead of
-    // following it there, exactly like a card's link used to lag before
-    // it tracked the card's live position frame by frame.
-    var liveBox=transBoxLiveRect()||box;
-    if(pron){
-      // Enters/exits Pronto's LEFT edge (facing the box) rather than its
-      // bottom, which already carries three other before-links
-      // (caaps/invoiceval/forecasting -> pronto) — and offsets the two
-      // legs from each other and from Pronto's dead-centre so neither
-      // ever lands on the same point as those or as each other. Stays at
-      // the box's own safe bottom/top height (clear of every card,
-      // including Productivity Analysis/CTC Forecasting in the box's
-      // right column) until past the box's right edge, only rising to
-      // Pronto's height in the open gap where nothing else sits.
-      var yOut=pron.cy-12,yIn=pron.cy+12;
-      var anchorOutX=liveBox.right-30,anchorInX=liveBox.right-60;
-      var midXo=liveBox.right+15,midXi=liveBox.right+30;
-      transUpsertPath('EXTERNAL_PRONTO_OUT',[{x:anchorOutX,y:liveBox.bottom},{x:midXo,y:liveBox.bottom},{x:midXo,y:yOut},{x:pron.left,y:yOut}],false,'afterLink');
-      transUpsertPath('EXTERNAL_PRONTO_IN',[{x:pron.left,y:yIn},{x:midXi,y:yIn},{x:midXi,y:liveBox.top},{x:anchorInX,y:liveBox.top}],false,'afterLink');
-    }
-  } else {
-    transRemovePath('EXTERNAL_PRONTO_OUT');
-    transRemovePath('EXTERNAL_PRONTO_IN');
-  }
+  transFitBox();
 }
 function transReset(){
   Object.keys(TRANS_CARD_DATA).forEach(function(id){
@@ -2506,6 +2460,12 @@ function transReset(){
     el.style.left=d.x+'%';el.style.top=d.y+'%';
   });
   TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.before);});
+  var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
+  if(bonusGroup){
+    var bEl=transCanvasEl.querySelector('.tCard[data-id="'+bonusGroup.bonus+'"]');
+    bEl.classList.add('consumed');
+    bEl.classList.remove('mergingPrimary');
+  }
   transResetState();
   transClearAllPaths();
   transCanvasEl.classList.remove('settled','building');
@@ -2537,6 +2497,19 @@ function ltTrans(fn,ms){
 function transRunGroup(gi){
   if(!trans.running)return;
   var g=TRANS_GROUPS[gi];
+  if(g.bonus){
+    // No today position to travel from — just fades into its already-
+    // final spot once its inputs (Timesheets, Plant Scheduler) exist.
+    var bEl=transCanvasEl.querySelector('.tCard[data-id="'+g.bonus+'"]');
+    ltTrans(function(){
+      bEl.classList.remove('consumed');
+      bEl.classList.add('mergingPrimary');
+      transState[g.bonus]='atlas';
+      transRelinkAll();
+    },300);
+    ltTrans(function(){transNextGroup(gi);},1300);
+    return;
+  }
   var secs=g.secondaries;
   var secEls=secs.map(function(sid){return transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');});
   var pEl=transCanvasEl.querySelector('.tCard[data-id="'+g.primary+'"]');
@@ -2580,7 +2553,7 @@ function transNextGroup(gi){
     transState.pronto='atlas';
     transRelinkAll();
     transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One controlled hand-off to Pronto.';
+    transNoteEl.textContent='One shared Atlas platform.';
     transNoteEl.classList.add('clean');
   },1150);
   ltTrans(function(){
@@ -2591,6 +2564,12 @@ function transNextGroup(gi){
 function transStart(){
   if(RM){
     TRANS_GROUPS.forEach(function(g){
+      if(g.bonus){
+        var bEl=transCanvasEl.querySelector('.tCard[data-id="'+g.bonus+'"]');
+        bEl.classList.remove('consumed');
+        transState[g.bonus]='atlas';
+        return;
+      }
       g.secondaries.forEach(function(sid){
         var sEl=transCanvasEl.querySelector('.tCard[data-id="'+sid+'"]');
         var primPos=TRANS_CARD_DATA[g.primary];
@@ -2609,7 +2588,7 @@ function transStart(){
     transState.pronto='atlas';
     transRelinkAll();
     transCanvasEl.classList.add('settled');
-    transNoteEl.textContent='One controlled hand-off to Pronto.';
+    transNoteEl.textContent='One shared Atlas platform.';
     transNoteEl.classList.add('clean');
     return;
   }
@@ -2625,8 +2604,7 @@ function transStart(){
 function transLiveTick(){
   if(!trans.running){trans.raf=null;return;}
   var anyMerging=Object.keys(transState).some(function(id){return transState[id]==='merging';});
-  var boxAnimating=Date.now()<(trans.boxAnimUntil||0);
-  if(anyMerging||boxAnimating)transRelinkAll();
+  if(anyMerging)transRelinkAll();
   trans.raf=requestAnimationFrame(transLiveTick);
 }
 function transStop(){
