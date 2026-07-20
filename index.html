@@ -2,8 +2,11 @@
 <html lang="en-AU" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MDOS Executive Leadership Showcase</title>
+<title>Atlas | Vision</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,7 +37,7 @@
   --blue-grey:var(--soft);
   --srf-rgb:255,255,255;
   --brd-rgb:122,170,214;
-  --well:#06283F;
+  --well:var(--bg);
   --card-line:transparent;
   --line-l:#D4DCE5;
   --ink:#003764;
@@ -57,7 +60,7 @@
   --soft-rgb:65,100,125;
   --srf-rgb:0,55,100;
   --brd-rgb:65,100,125;
-  --well:#E6EBF0;
+  --well:var(--bg);
   --card-line:#D4DCE5;
   --shadow:0 30px 90px rgba(0,55,100,.16);
   --card-shadow:0 22px 60px rgba(0,55,100,.12);
@@ -73,6 +76,7 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 button{font-family:inherit;}
+button:hover:not(.sel):not(.hi):not(.on):not(.cur):not(.hub){color:var(--teal);}
 #contourBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 #contourBg .contours path{fill:none;stroke:#C9D6E2;stroke-width:1;opacity:.55;}
 [data-theme="dark"] #contourBg .contours path{stroke:rgba(255,255,255,.10);opacity:1;}
@@ -83,7 +87,7 @@ button{font-family:inherit;}
 .slide{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  padding:max(5.5vh,46px) 5vw max(9vh,64px);
+  padding:max(3vh,46px) 3vw max(9vh,64px);
   opacity:0;visibility:hidden;
   transform:translateX(3.5vw);
   transition:opacity .65s var(--ease),transform .65s var(--ease),visibility 0s linear .65s;
@@ -95,13 +99,13 @@ button{font-family:inherit;}
   pointer-events:auto;
 }
 .slide.prior{transform:translateX(-3.5vw);}
-.inner{width:min(1480px,100%);max-height:100%;}
+.inner{width:90%;max-height:100%;}
 
 /* ---------- Shared vocabulary ---------- */
 .eyebrow{
   display:inline-flex;align-items:center;gap:.6em;
   font-size:clamp(11px,.95vw,14px);font-weight:700;letter-spacing:.28em;
-  text-transform:uppercase;color:var(--blue-bright);
+  color:var(--blue-bright);
 }
 .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--blue-bright);animation:pulse 2.4s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;}55%{opacity:.4;}}
@@ -109,7 +113,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .sub{font-size:clamp(15px,1.3vw,21px);color:var(--grey);line-height:1.55;font-weight:400;}
 .chip{
   display:inline-flex;align-items:center;gap:.5em;
-  font-size:clamp(10px,.82vw,13px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  font-size:clamp(10px,.82vw,13px);font-weight:700;letter-spacing:.12em;
   padding:.5em 1.1em;border-radius:99px;
   background:rgba(var(--acc2-rgb),.14);color:var(--blue-bright);
   border:1px solid rgba(var(--acc2-rgb),.35);
@@ -154,7 +158,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s1.entered .wordmark{opacity:1;transform:none;filter:blur(0);}
 [data-theme="dark"] #s1 .wordmark{color:var(--title);}
 #s1 .expand{
-  font-size:clamp(13px,1.15vw,19px);letter-spacing:.34em;text-transform:uppercase;
+  font-size:clamp(13px,1.15vw,19px);letter-spacing:.34em;
   color:var(--blue-grey);margin-top:2.2vh;font-weight:600;
 }
 #s1 .line{
@@ -167,22 +171,6 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s1 .halo{display:none;}
 #s1.entered .halo{opacity:1;}
 
-/* ============================================================
-   SLIDE 2: The reality today (pain cards)
-   ============================================================ */
-#s2 .head{margin-bottom:4.2vh;max-width:1050px;}
-#s2 .grid{display:grid;grid-template-columns:1fr 1fr;gap:2.2vh 2vw;}
-.pain{
-  padding:3vh 2.2vw;border-radius:14px;position:relative;
-  background:var(--white);color:var(--ink);box-shadow:var(--card-shadow);border:1px solid var(--card-line);
-}
-.pain .pi{
-  width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  background:var(--light);margin-bottom:1.6vh;
-}
-.pain .pi svg{width:24px;height:24px;stroke:var(--navy-mid);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
-.pain h3{font-size:clamp(16px,1.45vw,23px);color:var(--navy);margin-bottom:.7vh;font-weight:700;}
-.pain p{font-size:clamp(13px,1.05vw,16.5px);color:var(--ink-soft);line-height:1.5;}
 
 /* ============================================================
    SLIDE 3: Cost flow + concept (SIGNATURE / HERO)
@@ -193,7 +181,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .layer{
   width:min(1060px,88vw);border-radius:16px;padding:1.8vh 2vw;text-align:center;
 }
-.layer .lt{font-size:clamp(10px,.8vw,13px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--blue-bright);}
+.layer .lt{font-size:clamp(10px,.8vw,13px);font-weight:700;letter-spacing:.2em;color:var(--blue-bright);}
 .layer h3{font-size:clamp(18px,1.7vw,28px);font-weight:800;margin:.2vh 0 .4vh;}
 .layer .role{font-size:clamp(11px,.92vw,14.5px);color:var(--soft);margin-bottom:1.2vh;}
 .layer .role b{color:var(--txt);font-weight:700;}
@@ -214,7 +202,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   padding:1.3vh 1vw;
 }
 .subBox .sbt{
-  font-size:clamp(9.5px,.74vw,12px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  font-size:clamp(9.5px,.74vw,12px);font-weight:700;letter-spacing:.18em;
   color:var(--soft);margin-bottom:.9vh;display:flex;align-items:center;gap:.6em;
 }
 .subBox .sbt::before{content:"";width:14px;height:2px;background:var(--blue-bright);border-radius:1px;}
@@ -234,7 +222,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .railRow + .railRow{border-top:1px solid rgba(var(--brd-rgb),.28);}
 .railLbl{display:flex;flex-direction:column;gap:.2vh;padding-top:.4vh;}
 .railLbl .rn{font-family:var(--font-util);font-size:clamp(9.5px,.74vw,12px);font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--acc2);}
+  letter-spacing:.18em;color:var(--acc2);}
 .railLbl .rt{font-size:clamp(13px,1.2vw,19px);font-weight:800;color:var(--title);line-height:1.15;letter-spacing:-.01em;}
 .railBody{display:grid;grid-template-columns:1fr 1fr;column-gap:1.4vw;align-items:start;}
 .railBody.single{grid-template-columns:1fr;}
@@ -245,7 +233,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 /* boxed cell = Atlas-styled card */
 .rcell{background:var(--well);border:1px solid rgba(var(--acc2-rgb),.35);border-radius:12px;padding:1.2vh 1vw;text-align:center;}
 .rcell.head3 h4{font-size:clamp(14px,1.3vw,20px);font-weight:800;color:var(--title);margin-bottom:.6vh;}
-.rcell .sbt{font-size:clamp(9.5px,.74vw,12px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+.rcell .sbt{font-size:clamp(9.5px,.74vw,12px);font-weight:700;letter-spacing:.16em;
   color:var(--soft);margin-bottom:.7vh;display:flex;align-items:center;justify-content:center;gap:.6em;font-family:var(--font-util);}
 .rcell .sbt::before{content:"";width:14px;height:2px;background:var(--acc2);border-radius:1px;}
 .rcell .chips{display:flex;flex-wrap:wrap;gap:.4vw;justify-content:center;}
@@ -268,13 +256,116 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   font-family:var(--font-util);font-size:clamp(14px,1.4vw,22px);font-weight:700;letter-spacing:.14em;
   color:var(--acc2);}
 [data-theme="light"] .atlasL .atlasFill{fill:rgba(var(--sec-rgb),.07);}
+
+/* ============================================================
+   SLIDE: Today vs With Atlas transition (one-by-one absorption)
+   ============================================================ */
+#s9 .head{text-align:center;margin-bottom:1.6vh;}
+.transCanvas{position:relative;width:min(1500px,96vw);height:58vh;margin:0 auto;}
+.transLinks{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:1;}
+.transLinks path{fill:none;stroke:rgba(var(--brd-rgb),.65);stroke-width:1.6;stroke-linejoin:round;transition:opacity .4s ease,stroke .6s ease,stroke-width .6s ease;}
+.transLinks path.warn{stroke:#E0664C;stroke-width:2;}
+.transLinks path.atlasflow{stroke:var(--acc2);}
+.transLinks path.dashedLink{stroke-dasharray:6 5;}
+.transLinks text{
+  font-size:clamp(8px,.62vw,10px);font-weight:700;fill:var(--soft);
+  paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round;
+  transition:opacity .4s ease,fill .6s ease;
+}
+.transLinks text.warn{fill:#E0664C;}
+.transLinks text.fresh,.transLinks text.gone{opacity:0;}
+.transLinks path.fresh,.transLinks path.gone{opacity:0;}
+/* Travelling dataflow dots (same idea as the cost-flow slide) replace
+   static arrowheads: grey by default, red on an uncontrolled line, Atlas
+   blue when both ends are inside Atlas. */
+.transLinks circle.tDot{fill:rgba(var(--brd-rgb),.8);transition:fill .6s ease;}
+.transLinks circle.tDot.warn{fill:#E0664C;}
+.transLinks circle.tDot.atlasflow{fill:#66ABFF;filter:drop-shadow(0 0 4px #66ABFF);}
+.tCard{
+  position:absolute;transform:translate(-50%,-50%);z-index:1;
+  width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
+  border-radius:9px;padding:.6em .4em;text-align:center;
+  font-size:clamp(8.5px,.66vw,11px);font-weight:700;line-height:1.18;color:var(--navy);
+  border:1.5px solid transparent;
+  transition:opacity 1s var(--ease),transform 1s var(--ease),left 1.6s var(--ease),top 1.6s var(--ease),border-color .5s ease,box-shadow .5s ease;
+}
+.tCard.fam-green{background:#E1F5E9;border-color:#46BE78;}
+.tCard.fam-pink{background:#FBE9ED;border-color:#E6788C;}
+.tCard.fam-blue{background:#E9F1FB;border-color:#78AAE6;}
+.tCard.fam-yellow{background:#FAF5E1;border-color:#E6C85A;}
+.tCard.fam-orange{background:#FAEEE1;border-color:#E6A05A;}
+.tCard.fam-purple{background:#ECE9F9;border-color:#9682DC;}
+.tCard.fam-atlas{background:#fff;border-color:var(--acc2);}
+.tCard.dashed{border-style:dashed;}
+.tCard.branch{border-color:#E0664C;border-width:2px;}
+.tCard.active{transform:translate(-50%,-50%) scale(1.16);box-shadow:0 8px 24px rgba(var(--sec-rgb),.35);border-color:var(--teal);z-index:3;}
+.tCard.mergingPrimary{z-index:6;}
+.tCard.consumed{opacity:0;transform:translate(-50%,-50%) scale(.3);pointer-events:none;}
+.tCard.retired{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(10deg);pointer-events:none;}
+.atlasBoxOutline{
+  position:absolute;border-radius:16px;z-index:0;
+  border:1.5px dashed rgba(var(--acc2-rgb),.5);background:rgba(var(--sec-rgb),.05);
+  opacity:0;
+  transition:border-color 1s ease,border-style 1s ease,background 1s ease,opacity 1s ease,
+             left 1.2s var(--ease),top 1.2s var(--ease),width 1.2s var(--ease),height 1.2s var(--ease);
+}
+.transCanvas.building .atlasBoxOutline{opacity:1;}
+.transCanvas.settled .atlasBoxOutline{border-style:solid;border-color:var(--teal);background:rgba(var(--sec-rgb),.1);}
+/* A card that isn't (yet) part of Atlas sits in its own blocked-out
+   window — the SAME dashed outline as the Atlas box, in plain page
+   background so it reads as a separate system. Pronto keeps its window
+   forever (never absorbed); every other card loses it the moment it's
+   pulled into Atlas. Painted above the box fill, below the cards. */
+.tBlockout{
+  position:absolute;border-radius:12px;z-index:0;
+  background:var(--bg);
+  border:1.5px dashed rgba(var(--acc2-rgb),.5);
+  opacity:1;
+  transition:opacity .8s ease,left 1.2s var(--ease),top 1.2s var(--ease),width 1.2s var(--ease),height 1.2s var(--ease);
+}
+.tBlockout.fresh{opacity:0;}
+/* Instant repositioning (used while invisible during a fade reset) so
+   cards don't visibly glide back to their today spots. */
+.transCanvas.instant .tCard,
+.transCanvas.instant .tBlockout,
+.transCanvas.instant .atlasBoxOutline{transition:none!important;}
+.atlasBoxOutline span{position:absolute;bottom:100%;margin-bottom:4px;left:1.2em;padding:0 .5em;background:var(--bg);
+  font-size:clamp(9.5px,.8vw,12px);font-weight:800;letter-spacing:.06em;color:var(--acc2);}
+.transControls{position:absolute;top:6px;right:6px;z-index:5;display:flex;gap:6px;align-items:center;}
+.transStep{font-size:clamp(9px,.72vw,11px);font-weight:700;color:var(--soft);letter-spacing:.02em;
+  margin-right:2px;min-width:3.4em;text-align:right;font-variant-numeric:tabular-nums;}
+.transCtrl{
+  width:32px;height:32px;border-radius:50%;border:1px solid rgba(var(--brd-rgb),.4);
+  background:rgba(var(--srf-rgb),.08);color:var(--txt);font-size:11px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s ease,transform .25s ease;
+}
+.transCtrl:hover{background:rgba(var(--acc2-rgb),.25);transform:translateY(-2px);}
+.transCtrl:focus-visible{outline:2px solid var(--blue-bright);outline-offset:2px;}
+.transCtrl[disabled]{opacity:.35;cursor:default;pointer-events:none;}
+.transFoot{display:flex;flex-direction:column;align-items:center;gap:1vh;margin-top:1vh;}
+.transNote{font-size:clamp(9.5px,.8vw,12px);color:#E0664C;font-weight:600;text-align:center;font-style:italic;min-height:1.6em;transition:color .4s ease;}
+.transNote.clean{color:var(--teal);}
+.transLegend{display:flex;flex-wrap:wrap;gap:1vw;justify-content:center;font-size:clamp(9.5px,.8vw,12px);font-weight:600;color:var(--soft);}
+.transLegend span{display:inline-flex;align-items:center;gap:.4em;}
+.transLegend .sw{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.transLegend .sw.fam-green{background:rgba(70,190,120,.6);}
+.transLegend .sw.fam-pink{background:rgba(230,120,140,.6);}
+.transLegend .sw.fam-blue{background:rgba(120,170,230,.6);}
+.transLegend .sw.fam-yellow{background:rgba(230,200,90,.65);}
+.transLegend .sw.fam-orange{background:rgba(230,160,90,.65);}
+.transLegend .sw.fam-purple{background:rgba(150,130,220,.65);}
+@media (max-width:820px){
+  .transCanvas{height:70vh;}
+}
+
 /* data-flow arrows (SVG overlay) — house style: solid rail + travelling glow dots, cardinal only */
 .flowLayer{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:visible;}
 .flowLayer .frail{fill:none;stroke:rgba(var(--acc2-rgb),.4);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;}
 .flowLayer .frail.recon{stroke:rgba(var(--soft-rgb),.4);}
 .flowLayer .fdot{fill:var(--acc2);}
 .flowLayer .flowLbl{font-family:var(--font-util);font-size:10px;font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;fill:var(--acc2);}
+  fill:var(--acc2);}
 .flowLayer .flowLbl.recon{fill:var(--grey);}
 .flowLayer .fdot.recon{fill:var(--grey);}
 /* vertical flow connectors */
@@ -290,7 +381,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 }
 .vflow .vlbl{
   position:absolute;top:50%;transform:translateY(-50%);
-  font-size:clamp(9.5px,.76vw,12px);letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  font-size:clamp(9.5px,.76vw,12px);letter-spacing:.14em;font-weight:700;
   color:var(--blue-bright);white-space:nowrap;
 }
 .vp.down{animation:flowD 2.6s linear infinite;}
@@ -307,14 +398,14 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
    SLIDE 4: Feature ecosystem (SIGNATURE 2)
    ============================================================ */
 #s4.slide{overflow-x:hidden;}
-#s4 .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,1fr);gap:2.2vw;align-items:center;}
+#s4 .wrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(340px,1fr);column-gap:1vw;align-items:center;}
 #s4 .head{margin-bottom:1.4vh;}
-.eco{position:relative;width:100%;aspect-ratio:1.18/1;max-height:60vh;margin:0 auto;}
+.eco{position:relative;width:100%;height:60vh;margin:0 auto;}
 .eco svg.links{position:absolute;inset:0;width:100%;height:100%;}
 .eco svg.links line{stroke:rgba(86,148,205,.22);stroke-width:1;transition:opacity .2s ease;}
 .eco svg.links line.atlasLine{stroke:rgba(17,83,138,.35);stroke-width:1.4;}
 .eco .core{
-  --coreD:clamp(90px,min(8.8vw,14vh),140px);
+  --coreD:clamp(90px,min(8.8vw,14vh),185px);
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:var(--coreD);height:var(--coreD);border-radius:50%;
 display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;
@@ -327,8 +418,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   z-index:0;cursor:default;
 }
 .eco.drilled .core{
-  --coreD:clamp(180px,min(17.6vw,28vh),280px);
-  left:calc(55px - var(--coreD)/2);top:50%;cursor:pointer;
+  --coreD:clamp(140px,min(13vw,20vh),225px);
+  left:calc(var(--coreD)/2 + 16px);top:50%;cursor:pointer;
   background-color:transparent;border-color:transparent;
 }
 .eco .core .coreMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
@@ -337,13 +428,15 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .eco.drilled .core .coreMark{color:var(--sec);opacity:.07;}
 [data-theme="dark"] .eco.drilled .core .coreMark{color:var(--acc2);opacity:.10;}
 .eco .core .coreLabel{position:relative;z-index:1;color:#fff;
-  font-size:calc(var(--coreD)*.225);font-weight:800;letter-spacing:-.01em;text-transform:none;line-height:1.05;
+  font-size:calc(var(--coreD)*.27);font-weight:800;letter-spacing:-.01em;text-transform:none;line-height:1.05;
   transition:font-size .7s var(--ease),color .7s var(--ease);}
 .eco.drilled .core .coreLabel{color:var(--navy);}
+[data-theme="dark"] .eco.drilled .core .coreLabel{color:var(--title);}
 .eco .core .coreSub{position:relative;z-index:1;font-size:calc(var(--coreD)*.128)!important;font-weight:700!important;
   letter-spacing:-.01em!important;color:#8fd0ff!important;text-transform:none!important;line-height:1.05;
   transition:font-size .7s var(--ease),color .7s var(--ease);}
 .eco.drilled .core .coreSub{color:var(--sec)!important;}
+[data-theme="dark"] .eco.drilled .core .coreSub{color:var(--acc2)!important;}
 .eco .core .coreSub:empty{display:none;}
 .mod{
   position:absolute;transform:translate(-50%,-50%);
@@ -355,55 +448,55 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .slide.entered .mod{animation:modIn .7s var(--ease) forwards;animation-delay:var(--md,0s);}
 @keyframes modIn{from{opacity:0;transform:translate(-50%,-50%) scale(.5);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
 .mod .node{
-  width:clamp(76px,min(7.6vw,12vh),112px);height:clamp(76px,min(7.6vw,12vh),112px);border-radius:50%;
+  width:clamp(76px,min(7.6vw,12vh),150px);height:clamp(76px,min(7.6vw,12vh),150px);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  background:var(--well);border:1.5px solid rgba(var(--brd-rgb),.55);
-  font-weight:700;font-size:clamp(11.5px,.98vw,15px);line-height:1.22;
+  background:var(--bg);border:1.5px solid rgba(var(--brd-rgb),.55);
+  font-weight:700;font-size:clamp(11.5px,.98vw,19px);line-height:1.22;
   padding:.5em;text-align:center;color:var(--title);
   transition:all .3s var(--ease);
 }
 .mod.hi{transform:translate(-50%,-50%) scale(1.1);z-index:3;}
 .mod.sel{transform:translate(-50%,-50%) scale(1.08);z-index:3;}
-.mod.hi .node,.mod.sel .node{background:var(--grad);border-color:transparent;color:#fff;}
-.mod:hover .node{border-color:rgba(var(--acc2-rgb),.8);}
+.mod.hi .node,.mod.sel .node{background:var(--teal);border-color:transparent;color:#fff;}
+.mod:hover:not(.sel):not(.hi):not(.hub) .node{border-color:rgba(var(--acc2-rgb),.8);}
 .mod{cursor:pointer;}
 .mod.hub{z-index:4;}
 .mod.hub .node{
-  width:clamp(90px,min(8.8vw,14vh),140px);height:clamp(90px,min(8.8vw,14vh),140px);
+  width:clamp(90px,min(8.8vw,14vh),165px);height:clamp(90px,min(8.8vw,14vh),165px);
   background:#0a4673;
   border-color:transparent;color:#fff;position:relative;overflow:hidden;
-  font-weight:800;font-size:clamp(16px,1.6vw,25px);letter-spacing:-.01em;cursor:default;
+  font-weight:800;font-size:clamp(16px,1.6vw,34px);letter-spacing:-.01em;cursor:default;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;
 }
 .mod.hub .hubMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:118%;height:118%;color:#fff;opacity:.16;pointer-events:none;}
-.mod.hub .hubA{position:relative;z-index:1;font-size:clamp(20px,2vw,32px);font-weight:800;letter-spacing:-.01em;line-height:1.05;}
-.mod.hub .hubName{position:relative;z-index:1;font-size:clamp(12px,1.2vw,18px);font-weight:700;
+.mod.hub .hubA{position:relative;z-index:1;font-size:clamp(20px,2.5vw,40px);font-weight:800;letter-spacing:-.01em;line-height:1.05;}
+.mod.hub .hubName{position:relative;z-index:1;font-size:clamp(12px,1.5vw,22px);font-weight:700;
   letter-spacing:-.01em;color:#8fd0ff;line-height:1.05;}
 .mod.out{opacity:0!important;pointer-events:none;}
-.mod.fan .node{width:clamp(36px,3.8vw,52px);height:clamp(36px,3.8vw,52px);font-size:clamp(7.5px,.56vw,9.5px);color:var(--sec);}
-.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),84px);height:clamp(48px,min(6.2vw,9.6vh),84px);font-size:clamp(8.5px,.76vw,12px);}
+.mod.fan .node{width:clamp(36px,3.8vw,70px);height:clamp(36px,3.8vw,70px);font-size:clamp(7.5px,.56vw,13px);color:var(--sec);}
+.eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),98px);height:clamp(48px,min(6.2vw,9.6vh),98px);font-size:clamp(7px,.6vw,11px);}
 .eco.dense10 .mod .node{width:clamp(56px,min(5.4vw,8.6vh),78px);height:clamp(56px,min(5.4vw,8.6vh),78px);font-size:clamp(8.5px,.66vw,10.5px);}
 .eco.dense20 .mod .node{width:clamp(42px,min(4vw,6.4vh),58px);height:clamp(42px,min(4vw,6.4vh),58px);font-size:clamp(6.8px,.54vw,8.3px);padding:.35em;}
 .detail{
   background:rgba(var(--srf-rgb),.05);border:1px solid rgba(var(--brd-rgb),.25);
 
-  border-radius:18px;padding:3vh 1.9vw;min-height:52vh;display:flex;flex-direction:column;justify-content:center;
+  border-radius:18px;padding:2vh 1.2vw;min-height:60vh;display:flex;flex-direction:column;justify-content:center;
 
   backdrop-filter:blur(4px);
 }
-.detail .dnum{font-size:clamp(11px,.85vw,14px);letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--blue-bright);margin-bottom:.8vh;}
+.detail .dnum{font-size:clamp(11px,1vw,17px);letter-spacing:.24em;font-weight:700;color:var(--blue-bright);margin-bottom:.8vh;}
 .detail h3{font-size:clamp(18px,1.7vw,28px);font-weight:800;margin-bottom:1.8vh;line-height:1.15;}
 .detail .chip{margin-bottom:1.2vh;align-self:flex-start;}
 .dSec{margin-bottom:1.7vh;}
 .dSec:last-of-type{margin-bottom:0;}
 .dSec .dt{
-  font-size:clamp(10px,.78vw,12.5px);font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  font-size:clamp(10px,.95vw,15px);font-weight:700;letter-spacing:.18em;
   color:var(--soft);margin-bottom:.45vh;display:flex;align-items:center;gap:.6em;
 }
 .dSec .dt::before{content:"";width:14px;height:2px;background:var(--blue-bright);border-radius:1px;display:inline-block;}
-.dSec p{font-size:clamp(12.5px,1.02vw,16px);color:var(--txt);line-height:1.5;}
-.detail .hint{margin-top:2vh;font-size:clamp(11px,.85vw,13.5px);color:var(--blue-grey);}
+.dSec p{font-size:clamp(12.5px,1.25vw,19px);color:var(--txt);line-height:1.5;}
+.detail .hint{margin-top:2vh;font-size:clamp(11px,1vw,16px);color:var(--blue-grey);}
 
 /* --- Slide 4b: Atlas app modules (guidelines style) --- */
 #s4b .inner{display:flex;flex-direction:column;}
@@ -417,7 +510,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   margin-top:4vh;padding:4vh 2vw;width:min(1080px,90vw);align-self:center;
   background:var(--well);border:1px solid rgba(var(--brd-rgb),.35);border-radius:18px;}
 .modFn{font-family:var(--font-util);font-size:clamp(10px,1.1vw,14px);letter-spacing:.16em;
-  text-transform:uppercase;color:var(--soft);margin-bottom:2vh;}
+  color:var(--soft);margin-bottom:2vh;}
 .modLock{display:flex;align-items:center;gap:clamp(8px,1.4vw,20px);
   font-weight:800;font-size:clamp(40px,6vw,88px);letter-spacing:-.02em;line-height:1;}
 .modLock .mlA{color:var(--title);}
@@ -433,7 +526,6 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 /* ============================================================
    SLIDE 5: Release cadence (looping delivery animation)
    ============================================================ */
-#s5 .inner{max-width:1480px;}
 #s5 .head{margin-bottom:1.2vh;}
 #s5 .tl{width:100%;height:52vh;}
 #s5 .spine{stroke:rgba(var(--acc2-rgb),.22);stroke-width:3;fill:none;stroke-linecap:round;}
@@ -471,11 +563,11 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .station .sNum{
   position:absolute;top:-18px;left:50%;transform:translateX(-50%);
   width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;
+  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;color:var(--title);
   transition:all .5s var(--ease);
 }
 .station h3{font-size:clamp(14px,1.3vw,21px);font-weight:800;margin:.8vh 0 .4vh;}
-.station .own{font-size:clamp(9.5px,.78vw,12px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);}
+.station .own{font-size:clamp(9.5px,.78vw,12px);font-weight:700;letter-spacing:.12em;color:var(--soft);}
 .station p{font-size:clamp(11px,.92vw,14.5px);color:var(--soft);line-height:1.45;margin-top:.8vh;}
 .station .ring{
   width:46px;height:46px;margin:1.4vh auto 0;border-radius:50%;position:relative;
@@ -510,13 +602,13 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   font-weight:800;font-size:clamp(12px,1.05vw,17px);letter-spacing:.02em;
   box-shadow:0 10px 30px rgba(var(--sec-rgb),.35);white-space:nowrap;
 }
-.modToken .tkn{font-size:clamp(9px,.74vw,11.5px);font-weight:700;color:var(--soft);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+.modToken .tkn{font-size:clamp(9px,.74vw,11.5px);font-weight:700;color:var(--soft);letter-spacing:.1em;white-space:nowrap;
   background:var(--well);padding:3px 9px;border-radius:6px;}
 .modToken.flying{transition:left .8s var(--ease),transform .8s var(--ease),opacity .8s ease;transform:translate(-50%,-50%) scale(.5);opacity:0;}
 .shelf{
   margin-top:1.4vh;display:flex;align-items:center;justify-content:center;gap:.6vw;flex-wrap:wrap;min-height:5.4vh;
 }
-.shelf .sl{font-size:clamp(10px,.84vw,13px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue-grey);margin-right:.6vw;}
+.shelf .sl{font-size:clamp(10px,.84vw,13px);font-weight:700;letter-spacing:.16em;color:var(--blue-grey);margin-right:.6vw;}
 .shelf span.dchip{
   font-size:clamp(10.5px,.86vw,13.5px);font-weight:700;padding:.4em .9em;border-radius:99px;
   background:rgba(var(--acc2-rgb),.14);border:1px solid rgba(var(--acc2-rgb),.45);color:var(--txt);
@@ -524,6 +616,31 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 }
 @keyframes chipIn{from{opacity:0;transform:scale(.5);}to{opacity:1;transform:scale(1);}}
 #s6 .cap{text-align:center;margin-top:2vh;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;}
+
+/* ============================================================
+   SLIDE 8: Business consultation structure
+   ============================================================ */
+#s8 .head{text-align:center;margin-bottom:4vh;}
+.roundsWrap{position:relative;width:min(1380px,92vw);margin:0 auto;}
+.roundsTrack{
+  position:absolute;left:3%;right:3%;top:34px;height:2px;
+  background:rgba(var(--acc2-rgb),.4);
+}
+.rounds{display:flex;justify-content:space-between;gap:1.4vw;position:relative;padding:96px 0 1vh;}
+.round{
+  flex:0 1 30vw;min-width:220px;border-radius:16px;text-align:center;
+  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.25);
+  padding:2.4vh 1.4vw 2.2vh;position:relative;
+}
+.round .rNum{
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--well);border:1.5px solid rgba(var(--acc2-rgb),.5);font-weight:800;font-size:15px;color:var(--title);
+}
+.round h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;margin:.8vh 0 .4vh;}
+.round .rOwn{font-size:clamp(10px,.82vw,13px);font-weight:700;letter-spacing:.06em;color:var(--soft);}
+.round p{font-size:clamp(11.5px,.95vw,15px);color:var(--soft);line-height:1.5;margin-top:1vh;}
+#s8 .cap{text-align:center;margin-top:2vh;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;}
 
 /* ============================================================
    SLIDE 7: Proof (design to ~90%, prototype, walkthrough link)
@@ -542,7 +659,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .theme h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;margin-top:1.6vh;}
-.theme p{font-size:clamp(11px,.95vw,14.5px);color:var(--blue-grey);margin-top:.6vh;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.theme p{font-size:clamp(11px,.95vw,14.5px);color:var(--blue-grey);margin-top:.6vh;font-weight:600;letter-spacing:.08em;}
 #s7 .go{margin-top:6.5vh;}
 
 /* ============================================================
@@ -579,8 +696,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 }
 .seg:hover,.seg:focus-visible{background:rgba(var(--srf-rgb),.38);}
 .seg:focus-visible{outline:2px solid var(--blue-bright);outline-offset:3px;}
-.seg.done{background:rgba(var(--acc2-rgb),.55);}
-.seg.cur{background:var(--grad);}
+.seg.done{background:var(--teal);}
+.seg.cur{background:var(--teal);}
 .seg .tip{
   position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
   font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--txt);white-space:nowrap;
@@ -629,12 +746,12 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   #counter{right:calc(2.4vw + 110px);font-size:11px;}
   .seg{height:4px;}
   .head h2{font-size:clamp(16px,2.4vw,28px)!important;}
-  #s4 .eco{max-height:36vh;}
+  #s4 .eco{height:36vh;}
   #s4 .detail{min-height:0;max-height:44vh;overflow-y:auto;}
   #s4 .wrap{gap:1.4vw;}
   .mod .node{width:clamp(32px,min(7.6vw,7.6vh),112px)!important;height:clamp(32px,min(7.6vw,7.6vh),112px)!important;font-size:7px!important;}
   .eco:not(.drilled) .core{--coreD:clamp(52px,min(8.8vw,10vh),140px);width:var(--coreD)!important;height:var(--coreD)!important;}
-  .eco .core .coreLabel{font-size:calc(var(--coreD)*.225)!important;}
+  .eco .core .coreLabel{font-size:calc(var(--coreD)*.27)!important;}
   .eco .core .coreSub{font-size:calc(var(--coreD)*.128)!important;}
   .mod.hub .node{width:clamp(58px,min(8.8vw,11vh),140px)!important;height:clamp(58px,min(8.8vw,11vh),140px)!important;}
   .mod.hub .hubA{font-size:clamp(13px,1.6vw,25px)!important;}
@@ -666,7 +783,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 }
 
 /* ---------- Atlas theme layer ---------- */
-h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
+h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 .eyebrow,.chip,.lt,.sbt,.dt,.own,.sl,.expand,#counter,#hintbar,.seg .tip,.dnum,.vlbl,.tkn,.theme p,#msLogo .ms2,#s1 .prep,.shelf span.dchip{font-family:var(--font-util);}
 #s5 .tick .q{font-family:var(--font-util);}
 #s5 .tick line{stroke:rgba(var(--acc2-rgb),.4);}
@@ -674,7 +791,8 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
 #spineGrad stop:last-child{stop-color:var(--acc2);}
 .eco .core{color:#fff;}
 .eco .core span{color:#9FC6E8;}
-.mod:hover .node,.mod:focus-visible .node,.mod.sel .node{color:#fff;}
+.mod.sel .node{color:#fff;}
+.mod:hover:not(.sel):not(.hi):not(.hub) .node,.mod:focus-visible:not(.sel):not(.hi):not(.hub) .node{color:var(--teal);}
 .mod .node{color:var(--title);}
 </style>
 </head>
@@ -730,38 +848,36 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
 </section>
 
 <!-- Slide 2: The reality today -->
-<section class="slide" id="s2" data-label="Today" data-act="1" data-frags="1">
+<!-- ════════════ ACT 2 ════════════ -->
+
+<!-- Slide 4: Feature ecosystem (SIGNATURE 2) -->
+
+<section class="slide" id="s4" data-label="Features" data-act="3">
+
   <div class="inner">
-    <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>The Reality Today</span>
-      <h2 style="margin-top:1.6vh;">Project delivery runs on spreadsheets, and a ledger that lacks project cost controls.</h2>
-    </div>
-    <div class="grid">
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg></div>
-        <h3>Manual, fragmented tooling</h3>
-        <p>The Daily Diary / Cost Tracker (the "PFC tool") and a sprawl of point solutions hold critical delivery data in Excel.</p>
+    <div class="wrap">
+      <div>
+        <div class="head rv">
+          <span class="eyebrow"><span class="dot"></span>The Feature Ecosystem</span>
+          <h2 style="margin-top:1.4vh;font-size:clamp(24px,2.6vw,40px);">Every module. Every feature. One living platform.</h2>
+        </div>
+        <div class="eco rv d2" id="eco">
+          <svg class="links" id="ecoLinks" aria-hidden="true"></svg>
+          <div class="core"><svg class="coreMark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg><span class="coreLabel" id="coreLabel">Atlas</span><span class="coreSub" id="coreSub"></span></div>
+          <!-- phase/feature nodes injected by JS -->
+        </div>
       </div>
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg></div>
-        <h3>Pronto is an unreliable ledger</h3>
-        <p>Outside purchase orders, costs are hard-coded to a single cost code. PMs and cost controllers can't control how charges land against budget, so cost-to-complete forecasting is difficult and inaccurate.</p>
-      </div>
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg></div>
-        <h3>Reconciliation is painful</h3>
-        <p>Operations and Project Delivery rely on disconnected spreadsheets that are hard to reconcile to the source of truth, undermining project controls.</p>
-      </div>
-      <div class="pain frag">
-        <div class="pi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <h3>Reporting is slow</h3>
-        <p>Monthly Project Reports and Cashflow Reports are heavily manual to collate, frustrating teams and delaying insight to leadership.</p>
+      <div class="detail rv d3" id="roadDetail">
+        <div class="dnum" id="rdNum">The feature set</div>
+        <h3 id="rdName">Seven modules, every feature</h3>
+        <div id="rdBody"><div class="dSec"><p>Select a module to see the features that belong to it.</p></div></div>
+        <div class="hint" id="rdHint" style="display:none;">Select a feature to see its pain point, scope and benefits.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════ ACT 2 ════════════ -->
+<!-- ════════════ ACT 3 ════════════ -->
 
 <!-- Slide 3: Cost flow + the Atlas concept (SIGNATURE / HERO) -->
 <section class="slide" id="s3" data-label="Cost flow" data-act="2">
@@ -771,7 +887,7 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
       <h2 style="margin-top:1.2vh;">Every cost captured and coded in Atlas, before it lands in the ledger.</h2>
     </div>
     <div class="railStack rv d1">
-      <div class="atlasL" aria-hidden="true"><svg id="atlasSvg" preserveAspectRatio="none"><path class="atlasFill" id="atlasPath"/></svg><span class="atlasTag">ATLAS</span></div>
+      <div class="atlasL" aria-hidden="true"><svg id="atlasSvg" preserveAspectRatio="none"><path class="atlasFill" id="atlasPath"/></svg><span class="atlasTag">Atlas</span></div>
       <svg class="flowLayer" id="flowSvg" aria-hidden="true"></svg>
 
       <div class="railRow" data-row="1">
@@ -838,30 +954,38 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
   </div>
 </section>
 
-<!-- ════════════ ACT 3 ════════════ -->
-
-<!-- Slide 4: Feature ecosystem (SIGNATURE 2) -->
-
-<section class="slide" id="s4" data-label="Features" data-act="3">
-
+<!-- Slide: Today vs With Atlas transition -->
+<section class="slide" id="s9" data-label="Transition" data-act="2">
   <div class="inner">
-    <div class="wrap">
-      <div>
-        <div class="head rv">
-          <span class="eyebrow"><span class="dot"></span>The Feature Ecosystem</span>
-          <h2 style="margin-top:1.4vh;font-size:clamp(24px,2.6vw,40px);">Every module. Every feature. One living platform.</h2>
-        </div>
-        <div class="eco rv d2" id="eco">
-          <svg class="links" id="ecoLinks" aria-hidden="true"></svg>
-          <div class="core"><svg class="coreMark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg><span class="coreLabel" id="coreLabel">Atlas</span><span class="coreSub" id="coreSub"></span></div>
-          <!-- phase/feature nodes injected by JS -->
-        </div>
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Shift</span>
+      <h2 style="margin-top:1.4vh;">Today's scattered tools, absorbed one by one into Atlas.</h2>
+    </div>
+    <div class="transCanvas rv d1" id="transCanvas">
+      <svg class="transLinks" id="transLinks">
+        <defs>
+          <marker id="tArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"></path>
+          </marker>
+        </defs>
+      </svg>
+      <div class="atlasBoxOutline" id="atlasBoxOutline"><span>Atlas &middot; Shared Database</span></div>
+      <div class="transControls">
+        <span class="transStep" id="transStep"></span>
+        <button class="transCtrl" id="transPrev" type="button" aria-label="Previous step" title="Previous step">&#10094;</button>
+        <button class="transCtrl" id="transPlayPause" type="button" aria-label="Pause animation" title="Pause animation">&#10074;&#10074;</button>
+        <button class="transCtrl" id="transNext" type="button" aria-label="Next step" title="Next step">&#10095;</button>
       </div>
-      <div class="detail rv d3" id="roadDetail">
-        <div class="dnum" id="rdNum">The feature set</div>
-        <h3 id="rdName">Seven modules, every feature</h3>
-        <div id="rdBody"><div class="dSec"><p>Select a module to see the features that belong to it.</p></div></div>
-        <div class="hint" id="rdHint" style="display:none;">Select a feature to see its pain point, scope and benefits.</div>
+    </div>
+    <div class="transFoot rv d2">
+      <div class="transNote" id="transNote">Multiple uncontrolled hand-offs between systems.</div>
+      <div class="transLegend">
+        <span><i class="sw fam-green"></i>Excel</span>
+        <span><i class="sw fam-pink"></i>Specific application</span>
+        <span><i class="sw fam-blue"></i>Outlook</span>
+        <span><i class="sw fam-yellow"></i>Jotform</span>
+        <span><i class="sw fam-orange"></i>Format varies</span>
+        <span><i class="sw fam-purple"></i>Core system</span>
       </div>
     </div>
   </div>
@@ -894,8 +1018,8 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
 <section class="slide" id="s6" data-label="Process" data-act="4">
   <div class="inner">
     <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>How We Build Each Module</span>
-      <h2 style="margin-top:1.4vh;">Four steps. Repeated for every module.</h2>
+      <span class="eyebrow"><span class="dot"></span>How We Build Each Feature</span>
+      <h2 style="margin-top:1.4vh;">Four steps. Repeated for every feature.</h2>
     </div>
     <div class="lineWrap rv d1">
       <div class="lineTrack" aria-hidden="true"></div>
@@ -904,7 +1028,7 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
           <div class="sNum">1</div>
           <h3>Design</h3>
           <div class="own">Product Manager &amp; Developer</div>
-          <p>A detailed high-level design of the module.</p>
+          <p>A detailed high-level design of the feature.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
         <div class="station">
@@ -930,12 +1054,45 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
         </div>
       </div>
       <div class="modToken" id="modToken" aria-hidden="true">
-        <span class="tk" id="tokenLabel">M01</span>
-        <span class="tkn" id="tokenName">MPR Auto-Generation</span>
+        <span class="tkn" id="tokenName">Plant Allocation &amp; Scheduling</span>
       </div>
     </div>
     <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
-    <div class="cap rv d3">"The same four steps, module after module."</div>
+    <div class="cap rv d3">"The same four steps, feature after feature."</div>
+  </div>
+</section>
+
+<!-- Slide 8: Business consultation structure -->
+<section class="slide" id="s8" data-label="Consultation" data-act="4">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The Consultation</span>
+      <h2 style="margin-top:1.4vh;">Three rounds of consultation, before any module reaches development.</h2>
+    </div>
+    <div class="roundsWrap rv d1">
+      <div class="roundsTrack" aria-hidden="true"></div>
+      <div class="rounds">
+        <div class="round">
+          <div class="rNum">1</div>
+          <h3>End User / Site Feedback Workshop</h3>
+          <div class="rOwn">Random selection of module users</div>
+          <p>Frontline and site staff who’ll actually use the module review it directly and give feedback before the design is locked in.</p>
+        </div>
+        <div class="round">
+          <div class="rNum">2</div>
+          <h3>SME Architecture Workshop</h3>
+          <div class="rOwn">MPR, Kosti, Greg — at least one person per stream (EGM nominated)</div>
+          <p>Subject-matter experts examine the architecture and design in depth, making sure the build reflects real operational needs across every stream.</p>
+        </div>
+        <div class="round">
+          <div class="rNum">3</div>
+          <h3>Executive Briefing</h3>
+          <div class="rOwn">Optional attendance</div>
+          <p>A quick 30-minute show-and-tell for executives — the final gate before development starts.</p>
+        </div>
+      </div>
+    </div>
+    <div class="cap rv d3">Group membership is indicative only — to be confirmed with Jacob.</div>
   </div>
 </section>
 
@@ -968,95 +1125,58 @@ h2,.layer h3,.station h3,.theme h3,.detail h3{color:var(--title);}
 <div id="hintbar">← → · Space · Home/End · F fullscreen · T theme</div>
 
 <script>
+/* ============================================================
+   Deck script — one IIFE, organised per slide in HTML document
+   order. Each slide's section below holds its own background
+   data (content constants) directly above the script logic
+   (rendering/animation/interaction) that consumes it, since the
+   two are tightly coupled per slide rather than reusable across
+   the deck.
+   Shared cross-slide utilities (fragments, progress bar, nav,
+   theme) are grouped at the end, after every slide's own section.
+   ============================================================ */
 (function(){
 "use strict";
 var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
 var cur = 0;
 
-/* ---------- Module data ---------- */
-var MODS = [
- {n:"00",name:"General Ledger Journaling",
-  pain:"GL journals are prepared manually across spreadsheets and re-keyed into Pronto, with no structured workflow, audit trail, or easy way to review what was posted.",
-  scope:"Standardises and automates the creation, review and posting of general ledger journals straight into Pronto, with validation and an auditable record of every entry.",
-  ben:"Removes manual re-keying, gives a clean audit trail, speeds up month-end, and underpins the accuracy of every downstream module."},
- {n:"01",name:"MPR Auto-Generation",m1:true,
-  pain:"MPRs are generated manually. Slow, time-consuming, and with no structured workflow.",
-  scope:"Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.",
-  ben:"Major reduction in MPR effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs."},
- {n:"02",name:"Cost Coding Control",
-  pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
-  scope:"Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.",
-  ben:"Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking."},
- {n:"03",name:"Registers & Quick Links",
-  pain:"Qualitative project data lives in disconnected Excel registers of varying quality.",
-  scope:"A Risk & Opportunity Register, a basic Procurement Register, the already-built Digital Dockets, and quick links to Safety 2, Procore, Hammertech, SharePoint and Pronto.",
-  ben:"One delivery workspace, register data accessible via AI, and qualitative data connected to the numbers (contingency, variations and more)."},
- {n:"04",name:"Plant Scheduling & Cost Allocation",
-  pain:"Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility.",
-  scope:"Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant.",
-  ben:"Retires fragile macros, speeds up plant-cost processing, feeds Module 2, and is the critical enabler of an accurate Daily Diary."},
- {n:"05",name:"Progress Claims (Upstream)",
-  pain:"80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.",
-  scope:"Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.",
-  ben:"Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable."},
- {n:"06",name:"Subcontractor Claims",
-  pain:"Subcontractor claims arrive in personal mailboxes under strict SoPA rules, often left unprocessed and captured in error-prone Excel.",
-  scope:"Ingests, standardises and evaluates subcontractor claims for one consistent view of what subcontractors are claiming.",
-  ben:"Standardised capture, clearer evaluation, better subcontractor-exposure visibility and improved SoPA compliance."},
- {n:"07",name:"Daily Diary",
-  pain:"Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.",
-  scope:"Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.",
-  ben:"Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool."},
- {n:"08",name:"Cost to Complete Forecast",
-  pain:"Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.",
-  scope:"Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.",
-  ben:"Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls."},
- {n:"09",name:"Cashflow Forecast",
-  pain:"Monthly cashflow forecasts are stitched together by hand across systems. Slow, and hard to trust.",
-  scope:"Uses data across Pronto, Atlas and CAAPS to help teams produce a monthly cashflow forecast, building on Module 8.",
-  ben:"Cross-system cashflow visibility in one view, supporting finance and project leadership."},
- {n:"10",name:"Resource Management & Planning",
-  pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
-  scope:"Expands Module 4 for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.",
-  ben:"A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking."}
-];
 
-/* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas modules.
-   Click zooms the node to centre, replacing the core with an "Atlas | Name" hero.
-   TODO: once the features-by-module Word doc lands, replace each
-   FEATURE_MODS[i].feats with that module's feature list (currently empty). */
-/* Build ecosystem ring (slide 4) — 11 phase nodes orbit the Atlas core (uses MODS,
-   defined above). A module chip row selects one of the 7 Atlas modules: the core
-   relabels to "Atlas / ModuleName" and the ring rebuilds to show ONLY that
-   module's features (not the full 11). Clicking any node (phase or feature)
-   shows its pain/scope/benefit in the panel below. Data sourced from
-   Atlas_Description_Text_updated.docx. */
+
+/* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas
+   modules. A module chip row selects one: the core relabels to
+   "Atlas / ModuleName" and the ring rebuilds to show that module's
+   features. Clicking any node shows its pain/scope/benefit in the panel
+   below. Data sourced from Atlas_Description_Text_updated.docx. */
 var FEATURE_MODS=[
- {name:'People',fn:'PEOPLE & PAYROLL',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:[
-  {n:'01',name:'Onboarding & Offboarding',
-   pain:'New starters are onboarded from disconnected spreadsheets and email, so staff can be added to payroll and given system access before their first day is even confirmed.',
-   scope:'Digitises onboarding and offboarding as shared checklists across HR, Payroll, IT and Line Managers, staging new starters separately from the live employee database until a Day 1 Confirmation Gate is completed, and locking IT access out until final pay is confirmed on exit.',
-   ben:'Removes premature payroll and system access, gives every team visibility of outstanding tasks, and closes off gaps in the starter/leaver process.'},
-  {n:'02',name:'EBA Aware Timesheets',
-   pain:'Timesheets and award interpretation are handled manually via ConnX and spreadsheets, which is slow, inconsistent across sites and prone to error at pay time.',
-   scope:'Digitises timesheet entry and approval, and applies award/EBA rules automatically — ordinary time, overtime, penalties, allowances and RDOs — before exporting approved timesheets straight to MicrOpay.',
-   ben:'Accurate, consistent pay outcomes, faster approvals, and one less manual step between the field and payroll.'},
-  {n:'03',name:'Leave Management',
-   pain:'Leave applications, balances and accruals are tracked inconsistently, leaving employees and managers guessing at entitlements.',
-   scope:'Digitises leave applications with live balance and accrual calculations, structured approval workflows, and a direct feed into timesheet and payroll data.',
-   ben:'Employees see accurate balances in real time, managers approve with confidence, and payroll gets clean, exportable leave data.'},
-  {n:'04',name:'HR Case Management',
-   pain:'Return-to-work cases, licence tracking, medical records and policy sign-off are scattered across spreadsheets and email, with no reliable compliance record.',
-   scope:'Centralises RTW case management, licence and medical record tracking, and policy acknowledgements, with automatic reminders and escalation when items fall overdue.',
-   ben:'A defensible compliance record, fewer lapsed licences and overdue acknowledgements, and better visibility of RTW cases for HR and Line Managers.'},
-  {n:'05',name:'End-to-End Paycycle',
-   pain:'Payroll relies on manual reconciliation between HR data and MicrOpay, with corrections handled ad hoc and little visibility of exceptions before a pay run.',
-   scope:'Gives Payroll a pay run dashboard integrated with MicrOpay, surfacing exceptions and corrections before export and providing one place to manage the pay cycle end-to-end.',
-   ben:'Fewer pay errors, faster pay runs, and clear visibility of exceptions before they become a payslip problem.'}
+ {name:'People',fn:'People & Payroll',desc:'A single platform to manage the entire employee lifecycle — from recruitment and onboarding through payroll, performance and workforce management.',feats:[
+  {n:'01',name:'Employee Profile & Core HR',
+   pain:'Employee information is spread across multiple systems and spreadsheets, making it difficult to maintain a complete, accurate view of each employee and identify actions requiring attention.',
+   scope:'A single employee profile covering personal, employment, contract and compliance information, supported by dashboards for Line Managers and Administrators to manage key activities such as probation, medical expiries and required actions.',
+   ben:'One trusted employee record across all entities, reduced administration, and better visibility of workforce information.'},
+  {n:'02',name:'Onboarding',
+   pain:'The onboarding process relies on manual data entry across multiple systems, creating duplication, limited visibility and a risk of payroll or system access being provided before a new starter is confirmed.',
+   scope:'A digital onboarding workflow that coordinates HR, Payroll, IT and Line Managers through shared checklists, stages employees until Day 1 confirmation, and integrates with recruitment systems to eliminate duplicate data entry.',
+   ben:'A streamlined recruitment-to-employment process, improved visibility for all stakeholders, fewer manual tasks, and reduced risk.'},
+  {n:'03',name:'Timesheets',
+   pain:'Timesheet submission and approval is inconsistent, labour intensive and disconnected from project costing, limiting visibility of labour costs and delaying approvals.',
+   scope:'A simple, mobile-friendly timesheet with project-based approvals and labour cost allocations through integration with Atlas Projects and dashboards that highlight outstanding approvals and exceptions.',
+   ben:'Faster approvals, improved user experience, better project costing and greater operational visibility.'},
+  {n:'04',name:'Leave Management',
+   pain:'Company leave policies are enforced manually after submissions, creating unnecessary Payroll effort and inconsistent policy compliance.',
+   scope:'Automated leave rules that validate requests against company policy before submission.',
+   ben:'Consistent policy compliance, reduced Payroll intervention and a simpler approval process for managers.'},
+  {n:'05',name:'End-to-End Payroll',
+   pain:'Payroll relies on manual reconciliation and limited visibility of issues before processing, increasing effort and the risk of pay errors.',
+   scope:'A central payroll dashboard that integrates with MicrOpay, highlights exceptions before processing and supports the full payroll lifecycle.',
+   ben:'Faster payroll processing, fewer errors and greater confidence before each pay run.'},
+  {n:'06',name:'Performance & Talent',
+   pain:'Performance reviews, career development and succession planning are managed inconsistently, making it difficult to develop talent and identify future leaders.',
+   scope:'Digital management of goals, KPIs, performance reviews, probation, development plans and succession planning.',
+   ben:'Consistent performance management, stronger succession planning and improved employee development.'}
  ]},
- {name:'Learn',fn:'LEARNING & DEVELOPMENT',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:[
-  {n:'01',name:'Learning & Training',
+ {name:'Learn',fn:'Learning & Development',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:[
+  {n:'01',name:'E-Learning',
    pain:'Training records and compliance/recertification training are managed outside core systems via Acorn, making them hard to track and report on.',
    scope:'Provides an LMS course catalogue, compliance and recertification training, and a structured training record for every employee, replacing and decommissioning Acorn.',
    ben:'One source of truth for training compliance, easier recertification tracking, and reporting that ties training directly to the workforce.'},
@@ -1064,78 +1184,90 @@ var FEATURE_MODS=[
    pain:'Site and company inductions are tracked manually across spreadsheets and paper sign-offs, making it hard to confirm who is actually cleared to be on site.',
    scope:'Digitises company and site induction sign-off with a structured, auditable record for every worker, linked to their employee profile.',
    ben:'A defensible, always-current induction record, faster site access for compliant workers, and one less manual check for site teams.'},
-  {n:'03',name:'Courses',
+  {n:'03',name:'Course Requests',
    pain:'Course enrolments and completions sit in disconnected systems and spreadsheets, with no easy way to see who has done what.',
    scope:'A structured course catalogue with enrolment, progress tracking and completion records, tied directly to each employee\u2019s training history.',
    ben:'Clear visibility of course completion across the workforce, easier planning of upcoming training, and one record instead of many.'}
  ]},
- {name:'Tenders',fn:'TENDER MANAGEMENT',desc:'The whole pipeline, driven — every opportunity from first lead to job won, built on our existing Tender Management Application as the framework\u2019s basis.',feats:[
-  {n:'01',name:'Pipeline Tracking',
+ {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won, built on our existing Tender Management Application as the framework\u2019s basis.',feats:[
+  {n:'01',name:'Tender/ Project Histories',
+   pain:'Win/loss outcomes and customer relationship history both exist in the TMA, but neither is easy to trace back against actual project performance or connected to who the client is.',
+   scope:'Connects the TMA’s existing win/loss outcomes and customer history to the original opportunity, submission and delivered project for one combined view.',
+   ben:'Win/loss history and customer relationship context sit next to actual project performance in the same platform, so the next submission is informed by exactly how past jobs for that client actually performed.'},
+  {n:'02',name:'Pipeline Tracking',
    pain:'Pipeline visibility already exists in the TMA, but it sits in its own environment, separate from project and financial data, so leadership has to check it apart from everything else.',
    scope:'Brings the TMA\u2019s existing pipeline view into Atlas, surfaced alongside project and financial data rather than as a separate system to check.',
    ben:'Leadership sees the pipeline in the same place as live project and financial performance — one platform to judge capacity and cash flow against what\u2019s coming, instead of stitching two systems together.'},
-  {n:'02',name:'Opportunities',
-   pain:'Opportunities are already captured in the TMA, but that record is disconnected from the rest of the business, making it hard to trace a lead through to the project it becomes.',
-   scope:'Connects the TMA\u2019s existing opportunity records into Atlas, linking each one through to delivery once it\u2019s won.',
-   ben:'A won opportunity flows straight into the same environment where the project will actually be delivered — no re-keying, and a direct line from the tender to the numbers that follow it.'},
-  {n:'03',name:'Approvals',
-   pain:'Go/no-go and submission approvals happen around the TMA rather than in it, tracked over email with no consistent, auditable record.',
-   scope:'Adds a structured approval workflow on top of the existing TMA data, giving go/no-go and submission decisions a clear sign-off trail.',
-   ben:'Approvals sit alongside the same governance and financial records used everywhere else in Atlas, so a go/no-go decision can be made with cost, capacity and risk data already in view.'},
-  {n:'04',name:'Win History',
-   pain:'Win/loss outcomes already exist in the TMA but aren\u2019t easy to analyse alongside the reasons behind them, so patterns are hard to see.',
-   scope:'Draws on the TMA\u2019s existing outcome data and connects it back to the original opportunity and submission for analysis.',
-   ben:'Win/loss history sits next to actual project performance in the same platform, so we can see which wins genuinely paid off — not just which tenders were won.'},
-  {n:'05',name:'Customer History',
-   pain:'Customer relationship context sits outside the TMA, in people\u2019s heads and scattered files, disconnected from the tender record itself.',
-   scope:'Connects customer history to the TMA\u2019s existing tender and project records, showing past work and relationship context in one place.',
-   ben:'A customer\u2019s tender, project and financial history all live in the same environment, so the next submission is informed by exactly how past jobs for that client actually performed.'}
+  {n:'03',name:'Opportunity Tracking',
+   pain:'Opportunities are captured in the TMA and go/no-go approvals happen around it over email, so there is no single, auditable trail from a captured opportunity through to a signed-off submission.',
+   scope:'Connects the TMA\u2019s existing opportunity records into Atlas and adds a structured go/no-go and submission approval workflow on top, linking each opportunity through to delivery once it\u2019s won.',
+   ben:'A won opportunity flows straight into the same environment where the project will actually be delivered, with a clear, auditable approval trail alongside the same governance and financial records used everywhere else in Atlas.'},
+  {n:'04',name:'Risk Identification',
+   pain:'Tender-stage risks are identified informally and rarely captured in a structured way, so they aren\u2019t visible again until they resurface during delivery.',
+   scope:'A structured risk identification step at tender stage, capturing risks against each opportunity so they carry through into the project\u2019s own risk register once won.',
+   ben:'Risks are visible from the tender stage onward, with a clear line from what was flagged at submission to what’s actually managed during delivery.'},
+  {n:'05',name:'Unified Status',
+   pain:'Tender and project status is spread across Pronto, the TMA, SharePoint and other systems, with no single source of truth, so different people report different states of the same opportunity or project.',
+   scope:'Draws status directly from Pronto, the TMA, SharePoint and other connected systems into one consistent, always-current status view for every opportunity and project.',
+   ben:'One trusted status for every opportunity and project, removing the inconsistency of checking multiple systems that don\u2019t agree with each other.'}
  ]},
- {name:'Projects',fn:'PROJECT DELIVERY',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:[
-  {n:'01',name:'Monthly Project Report Auto-Generation',
-   pain:'MPRs are generated manually. Slow, time-consuming, and out of sync with the EoM timelines.',
-   scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
-   ben:'Major reduction in Project Reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'},
-  {n:'02',name:'Cost Coding Control',
+ {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:[
+  {n:'01',name:'Cost Coding Control',
    pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
    scope:'Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.',
    ben:'Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking. Builds on the Finance module\u2019s journaling framework to give project teams more control of their costs.'},
-  {n:'03',name:'Registers & Quick Links',
-   pain:'Qualitative project data lives in disconnected Excel registers of varying quality.',
-   scope:'A Risk & Opportunity Register, a basic Procurement Register, the already-built Digital Dockets, and quick links to Safety 2, Procore, Hammertech, SharePoint and Pronto.',
-   ben:'One delivery workspace, register data accessible via AI, and qualitative data connected to the numbers (contingency, variations and more).'},
+  {n:'02',name:'Revenue Management',
+   pain:'Revenue \u2014 contract value, variations and claims \u2014 is tracked in disconnected Excel registers with no direct link to what\u2019s actually been billed or recognised.',
+   scope:'A structured revenue register covering contract value, variations and claims, connected directly to Progress Claims and Profit Recognition.',
+   ben:'One accurate view of revenue position per project, less manual reconciliation, and a clear line from contract to what\u2019s actually claimed.'},
+  {n:'03',name:'Procurement Controls',
+   pain:'Procurement commitments and purchase orders are tracked in a basic Excel register, disconnected from budget and cost data.',
+   scope:'A structured procurement register that tracks commitments and purchase orders against budget, integrated with Cost Coding Control.',
+   ben:'Clear visibility of committed spend against budget, fewer surprises at cost-to-complete, and one place to check procurement status.'},
   {n:'04',name:'Progress Claims (Upstream)',
    pain:'80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.',
    scope:'Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.',
    ben:'Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable.'},
-  {n:'05',name:'Subcontractor Claims',
-   pain:'Subcontractor claims arrive in personal mailboxes under strict SoPA rules, often left unprocessed and captured in error-prone Excel.',
-   scope:'Ingests, standardises and evaluates subcontractor claims for one consistent view of what subcontractors are claiming.',
-   ben:'Standardised capture, clearer evaluation, better subcontractor-exposure visibility and improved SoPA compliance.'},
-  {n:'06',name:'Daily Diary',
+  {n:'05',name:'Vendor Claim Validation',
+   pain:'Vendor claims arrive in personal mailboxes under strict compliance rules, often left unprocessed and captured in error-prone Excel.',
+   scope:'Ingests, standardises and validates vendor claims for one consistent view of what vendors are claiming.',
+   ben:'Standardised capture, clearer validation, better vendor-exposure visibility and improved compliance.'},
+  {n:'06',name:'Productivity Analysis',
+   pain:'Labour and plant productivity on site is difficult to measure, so under-performance against budgeted hours or output isn\u2019t identified until well after the fact.',
+   scope:'Analyses labour and plant productivity against budgeted rates and output using data already captured in Daily Diary and Cost Coding Control.',
+   ben:'Earlier visibility of productivity issues, better-informed resourcing decisions, and a clearer link between site performance and cost outcomes.'},
+  {n:'07',name:'Daily Diary',
    pain:'Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.',
    scope:'Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.',
    ben:'Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool.'},
-  {n:'07',name:'Cost to Complete Forecast',
+  {n:'08',name:'Cost to Complete Forecast',
    pain:'Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.',
    scope:'Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.',
    ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'}
  ]},
- {name:'Operations',fn:'RESOURCES & SCHEDULING',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
-  {n:'01',name:'Plant Scheduling & Cost Allocation',
-   pain:'Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility. Most streams complete the scheduling elsewhere then copy it into the trackers, as the workbooks aren\u2019t user friendly enough.',
-   scope:'Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant, and as the source of truth for all plant-related data.',
-   ben:'Retires fragile macros, speeds up plant-cost processing, feeds Cost Coding Control, and is the critical enabler of an accurate Daily Diary.'},
-  {n:'02',name:'Resource Management & Planning',
-   pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
-   scope:'Expands Plant Scheduling & Cost Allocation for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
-   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
-  {n:'03',name:'Skills Matrix',
+ {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
+  {n:'01',name:'Resource Requests',
+   pain:"Requesting extra plant or people happens over email and phone calls, with no record of what's been asked for, approved, or already committed to another project.",
+   scope:'A structured request-and-approval workflow for additional plant or labour, checked against live Plant Allocation & Scheduling and Resource Management & Planning data before it’s approved.',
+   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'},
+  {n:'02',name:'Skills Matrix',
    pain:'Who can actually do what — tickets, licences, competencies — lives in scattered spreadsheets and is rarely up to date, making resourcing a guessing game.',
    scope:'A live skills and competency matrix per worker, drawing on licences and training records, so resourcing decisions are made against real, current capability.',
-   ben:'Faster, safer resourcing decisions, clear visibility of skills gaps across the workforce, and one place to check who is qualified for a task.'}
+   ben:'Faster, safer resourcing decisions, clear visibility of skills gaps across the workforce, and one place to check who is qualified for a task.'},
+  {n:'03',name:'Plant Allocation & Scheduling',
+   pain:'Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility. Most streams complete the scheduling elsewhere then copy it into the trackers, as the workbooks aren\u2019t user friendly enough.',
+   scope:'Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant, and as the source of truth for all plant-related data.',
+   ben:'Retires fragile macros, speeds up plant-cost processing, feeds Cost Coding Control, and is the critical enabler of an accurate Daily Diary. Integrated with the same system that holds upcoming jobs, so plant is allocated against what’s actually coming up, not just what’s already on foot.'},
+  {n:'04',name:'Resource Management & Planning',
+   pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
+   scope:'Expands Plant Allocation & Scheduling for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
+   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
+  {n:'05',name:'Mobilisation',
+   pain:'Getting plant and people onto site — inductions, licences, transport, accommodation — is coordinated informally, so mobilisation delays are common and hard to see coming.',
+   scope:'Tracks each mobilisation step from resource allocation through to on-site readiness, drawing on the same scheduling, licence and skills data already in Atlas.',
+   ben:'Fewer mobilisation delays, early visibility of what’s blocking a start date, and a single record of readiness for every project.'}
  ]},
- {name:'Finance',fn:'FINANCE & REPORTING',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
+ {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
   {n:'01',name:'General Ledger Journaling',
    pain:'GL journals are prepared manually across spreadsheets and re-keyed into Pronto, with no structured workflow, audit trail, or easy way to review what was posted.',
    scope:'Standardises and automates the creation, review and posting of general ledger journals straight into Pronto, with validation and an auditable record of every entry.',
@@ -1151,9 +1283,53 @@ var FEATURE_MODS=[
   {n:'04',name:'Profit Recognition',
    pain:'Profit take-up is run manually in Pronto at least twice a month by three to four accountants, and cost recognised has differed from actual cost in 1,136 instances across 488 projects over eleven straight months \u2014 a structural gap that unsubmitted variations, cost overruns and Won/Tender mismatches make very easy to miss by hand.',
    scope:'Reproduces our declared profit recognition method exactly in a single deterministic pass across every company and project, automatically quarantining anything that can\u2019t be safely recognised, and produces an auditable review dashboard with by-stream and by-company summaries for accountant sign-off before any journal is posted.',
-   ben:'Removes the mechanical, repetitive recognition work, catches invalid or borderline recognition automatically, and leaves a saved, reviewable audit trail every cycle \u2014 while keeping the same maker-checker control we use today.'}
+   ben:'Removes the mechanical, repetitive recognition work, catches invalid or borderline recognition automatically, and leaves a saved, reviewable audit trail every cycle \u2014 while keeping the same maker-checker control we use today.'},
+  {n:'05',name:'EoM Control',
+   pain:'Month-end close is run as a checklist of emails and spreadsheet trackers, so it\u2019s hard to see what\u2019s outstanding, blocked, or already signed off until the numbers are due.',
+   scope:'A structured month-end close checklist across Atlas, tracking journals, accruals and reconciliations as they\u2019re completed so nothing closes the books unchecked.',
+   ben:'A faster, more confident month-end close, with a clear record of what was checked and by whom.'},
+  {n:'06',name:'Board Reports',
+   pain:'Board packs are compiled by hand from several systems each month, which is slow and hard to trace back to the underlying numbers.',
+   scope:'Builds board-ready reports directly from Atlas project, cost and finance data, drawing on the same figures used in Monthly Reporting and Cashflow Forecast.',
+   ben:'Faster, more consistent board reporting with a clear line back to the source data behind every figure.'},
+  {n:'07',name:'Invoicing',
+   pain:'Customer invoices are raised and tracked outside Pronto in spreadsheets and email, with no clear link back to the claim or milestone they were billed against.',
+   scope:'Generates and tracks customer invoices directly from progress claims and milestones already in Atlas, posting into Pronto with a clear audit trail.',
+   ben:'Faster invoicing, fewer billing errors, and a clean link from every invoice back to the claim it was raised against.'}
+ ]},
+ {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:[
+  {n:'01',name:'Master Admin Control',
+   pain:'Overall system configuration and cross-module settings sit with whoever last changed them, with no single place to see or control how Atlas is configured.',
+   scope:'A top-level control panel for core Atlas settings — company structure, lookups and system-wide configuration — that every other module reads from.',
+   ben:'One source of truth for how Atlas is configured, with fewer conflicting settings between modules.'},
+  {n:'02',name:'Finance Admin Control',
+   pain:'Finance-specific settings — cost codes, GL mappings, approval limits — are configured directly in Pronto by a small group, with no visibility for the wider team.',
+   scope:'Gives Finance administrators a dedicated screen to manage cost codes, GL mappings and approval thresholds that flow through to every Finance feature.',
+   ben:'Finance configuration changes are visible and auditable, and no longer require a Pronto specialist to make.'},
+  {n:'03',name:'Project Admin Control',
+   pain:'Project-level setup — templates, stages, default team structures — is recreated manually for every new project, with no consistent starting point.',
+   scope:'Lets Project administrators manage project templates, stage gates and default structures that new projects inherit automatically.',
+   ben:'Faster, more consistent project setup, and less rework fixing inconsistent starting configurations.'},
+  {n:'04',name:'Learn Admin Control',
+   pain:'Course assignments, competency requirements and training pathways are managed ad hoc, with no central owner keeping them current.',
+   scope:'A dedicated admin screen for managing courses, competency requirements and training pathways that feed the Learn module.',
+   ben:'Training content stays current and consistently assigned, without relying on one person’s memory.'},
+  {n:'05',name:'User Access & Permissions',
+   pain:'Granting or revoking system access happens through scattered requests to whoever administers each system, and access levels are granted individually per person rather than by role, so both provisioning and permissions drift out of sync with what someone should actually have.',
+   scope:'A single screen to provision, modify and revoke user access across every Atlas module, built on role-based permission sets that control what each user can see and do — assigned once per role rather than per person.',
+   ben:'Faster onboarding and offboarding, a clear, current record of who can access what, and consistent, easy-to-audit permissions that scale as the workforce changes.'},
+  {n:'06',name:'Atlas Alerts',
+   pain:'Automated emails and alerts are hardcoded per feature, so changing wording, recipients or triggers means a development request.',
+   scope:'A configurable notification centre for managing alert templates, triggers and recipient rules across all Atlas modules — alerts surface both in Atlas itself and as an email notification.',
+   ben:'Business users can adjust notifications themselves, without waiting on development changes, and nothing gets missed whether someone is in Atlas or checking email.'},
+  {n:'07',name:'Audit Log',
+   pain:'There’s no consolidated record of who changed what and when across Atlas, making it hard to investigate errors or unauthorised changes.',
+   scope:'A system-wide audit trail capturing every material change across Atlas modules, searchable by user, date and record.',
+   ben:'Full traceability for compliance and troubleshooting, without digging through individual module logs.'}
  ]}
 ];
+/* ---------- Slide 4: Feature ecosystem (SIGNATURE 2) — script logic;
+   background data (FEATURE_MODS) is above ---------- */
 var ATLAS_MARK_SVG='<svg class="hubMark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg>';
 var eco = document.getElementById('eco');
 var linksSvg = document.getElementById('ecoLinks');
@@ -1161,7 +1337,24 @@ var core = eco.querySelector('.core');
 var coreLabel=document.getElementById('coreLabel'),coreSub=document.getElementById('coreSub');
 var roadDetail=document.getElementById('roadDetail'),rdNum=document.getElementById('rdNum'),
     rdName=document.getElementById('rdName'),rdBody=document.getElementById('rdBody'),rdHint=document.getElementById('rdHint');
-var ECO_AR = 1.18;  // .eco aspect-ratio (width/height) — keeps orbit a true circle
+// .eco's rendered aspect ratio (width/height) — read live since .eco now simply
+// fills its grid cell (width:100%, height:60vh) rather than holding a fixed
+// aspect-ratio, so the width:height relationship varies a lot more by viewport.
+// Used only for initial/one-shot % placement (fan-out); ring placements are
+// corrected afterward to a true circle via relinkRing's px-based math.
+function ecoAR(){
+  var r=eco.getBoundingClientRect();
+  return (r.width && r.height) ? r.width/r.height : 1.18;
+}
+// %-of-eco-width x-offset that lands a node at pixel-radius `frac` of
+// min(ecoWidth,ecoHeight) — i.e. the same true-circle target relinkRing
+// corrects to. Without this, a fixed %-of-width guess overshoots badly on a
+// wide (non-square) .eco, so relinkRing's first correction pass reads it as
+// a stale/transitional position and hides the line instead of just moving it.
+function ringKPct(frac){
+  return frac*100/Math.max(1,ecoAR());
+}
+var HUB_X_GUESS = 63; // rough initial % x-guess for feature nodes before the hub's actual (dynamically computed) position lands and relinkRing corrects them
 var selBtn=null, STATE='root', genID=0;
 function showDetail(node,label){
   rdNum.textContent=(label||'Feature');
@@ -1195,17 +1388,16 @@ function spawnFeatures(m,myGen){
   var atlasSlot = 0;
   var BASE_ANG = -180;
   var atlasLn=document.createElementNS('http://www.w3.org/2000/svg','line');
-  atlasLn.setAttribute('x1','2%');atlasLn.setAttribute('y1','50%');
-  atlasLn.setAttribute('x2','50%');atlasLn.setAttribute('y2','50%');
   atlasLn.setAttribute('class','atlasLine');
   linksSvg.appendChild(atlasLn);
+  positionAtlasLine();
   if(feats.length){
     feats.forEach(function(f,i){
       var slot = i<atlasSlot ? i : i+1;
       var ang = BASE_ANG + slot*(360/nSlots);
       var rad = ang*Math.PI/180;
       var R = window.matchMedia('(max-height:600px)').matches ? 46 : 26;
-      var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+      var x = HUB_X_GUESS + R*Math.cos(rad), y = 50 + R*ecoAR()*Math.sin(rad);
       var b = document.createElement('button');
       b.className='mod';
       b.dataset.kind='feature';
@@ -1229,8 +1421,8 @@ function spawnFeatures(m,myGen){
       'No features currently mapped to this module.');
   }
   if(hubBtn){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID)relinkRing(hubBtn,hubRingFrac());});});
-    setTimeout(function(){if(myGen===genID)relinkRing(hubBtn,hubRingFrac());},1100);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();relinkFeatureAngles();}});});
+    setTimeout(function(){if(myGen===genID){relinkRing(hubBtn,hubRingFrac());positionAtlasLine();relinkFan();relinkFeatureAngles();}},1100);
   }
 }
 function renderRoot(){
@@ -1244,8 +1436,8 @@ function renderRoot(){
   FEATURE_MODS.forEach(function(m,i){
     var ang = -90 + i*(360/FEATURE_MODS.length);
     var rad = ang*Math.PI/180;
-    var R = 42;
-    var x = 50 + R*Math.cos(rad), y = 50 + R*ECO_AR*Math.sin(rad);
+    var R = ringKPct(0.40); // matches relinkRing(core,0.40)'s true-circle target
+    var x = 50 + R*Math.cos(rad), y = 50 + R*ecoAR()*Math.sin(rad);
     var b = document.createElement('button');
     b.className='mod';
     b.dataset.kind='module';
@@ -1254,7 +1446,11 @@ function renderRoot(){
     b.setAttribute('aria-label','Module: '+m.name);
     b._mod=m;
     b.innerHTML='<span class="node">'+m.name+'</span>';
-    b.addEventListener('click',function(e){e.stopPropagation();drillInto(m,b);});
+    b.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(b.classList.contains('hub'))return; // already the active/drilled-in module — no-op
+      drillInto(m,b);
+    });
     eco.appendChild(b);
     var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
     ln.setAttribute('x1','50%');ln.setAttribute('y1','50%');
@@ -1278,29 +1474,53 @@ function drillInto(m,btn){
   eco.querySelectorAll('.mod[data-kind="feature"]').forEach(function(b){b.remove();});
   // fan every other module into an arc that hugs the OUTSIDE of the giant Atlas
   // circle (its own centre, not the hub) — computed from Atlas's actual geometry
-  // so the arc sits on the far side of Atlas, facing back toward the hub
+  // so the arc sits on the far side of Atlas, facing back toward the hub. The
+  // circle itself stays fully on-screen (left edge inset by a small margin,
+  // matching #s4 .core CSS), and the hub shifts right of centre to leave it room.
   var others=[].slice.call(eco.querySelectorAll('.mod[data-kind="module"]')).filter(function(b){return b!==btn;});
   var n=others.length;
   var er=eco.getBoundingClientRect();
   var vw=window.innerWidth, vh=window.innerHeight;
-  var giantD=Math.min(280,Math.max(180,Math.min(0.176*vw,0.28*vh)));
-  var atlasCxPct=((55-giantD/2)/er.width)*100;      // Atlas's own centre, % of eco width
+  var giantD=Math.min(225,Math.max(140,Math.min(0.13*vw,0.20*vh)));
+  var atlasCxPct=(((giantD/2)+16)/er.width)*100;    // Atlas's own centre, % of eco width
   var atlasRPct=((giantD/2)/er.width)*100;          // Atlas's own radius, % of eco width
   var ARC_R=atlasRPct+9;                            // just outside Atlas's edge
-  var ARC_START=-58, ARC_END=58;                    // degrees either side of due-east (facing the hub)
+  // the module directly on the due-east slot (angle 0, if n is odd) sits on the
+  // exact same axis as the circle-to-hub line, so it's the tightest possible
+  // fit: circle radius + gap + chip diameter + gap + hub radius must not
+  // exceed the circle-to-hub distance. Mirror the hub/chip CSS clamp() formulas
+  // here so the hub is pushed only as far right as actually necessary — a
+  // fixed % would eventually run into this on some viewport no matter what
+  // constant was picked. Cap it against the feature ring's own reach on the
+  // *right* side too, so fixing the left doesn't push the ring off-canvas.
+  var hubOuterD=Math.min(165,Math.max(90,Math.min(0.088*vw,0.14*vh)))+12;
+  var chipOuterD=Math.min(98,Math.max(48,Math.min(0.062*vw,0.096*vh)))+12;
+  var GAP=10;
+  // base span is 20% wider than the original ±58; grow further, if needed,
+  // so adjacent unselected-module chips (all sitting at radius ARC_R from
+  // Atlas's centre) never land closer than a 5px gap apart.
+  var ARC_R_px=ARC_R/100*er.width;
+  var minChordPx=chipOuterD+5;
+  var minStepDeg=n>1?2*Math.asin(Math.min(1,minChordPx/(2*ARC_R_px)))*180/Math.PI:0;
+  var span=Math.max(180,n>1?minStepDeg*(n-1):0);
+  var ARC_START=-span/2, ARC_END=span/2;
+  var neededHubCenterPx=(giantD/2+16)+giantD/2+GAP+chipOuterD+GAP+hubOuterD/2;
+  var ringRadiusPx=Math.min(er.width,er.height)*hubRingFrac();
+  var rightMaxHubCenterPx=er.width-14-ringRadiusPx-chipOuterD/2;
+  var hubXPct=Math.max(63,(Math.min(neededHubCenterPx,rightMaxHubCenterPx)/er.width)*100);
   others.forEach(function(b,i){
     b.classList.remove('hub','sel');
     b.classList.add('fan');
     b.innerHTML='<span class="node">'+b._mod.name+'</span>';
     var ang = n>1 ? ARC_START + i*((ARC_END-ARC_START)/(n-1)) : (ARC_START+ARC_END)/2;
     var rad = ang*Math.PI/180;
-    var x = atlasCxPct + ARC_R*Math.cos(rad), y = 50 + ARC_R*ECO_AR*Math.sin(rad);
+    var x = atlasCxPct + ARC_R*Math.cos(rad), y = 50 + ARC_R*ecoAR()*Math.sin(rad);
     placeAt(b,x,y);
   });
   // the clicked module morphs in place into the central hub
   btn.classList.remove('fan');
   btn.classList.add('hub');
-  placeAt(btn,50,50);
+  placeAt(btn,hubXPct,50);
   btn.setAttribute('aria-label','Module: '+m.name);
   btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'<span class="hubA">Atlas</span><span class="hubName">'+m.name+'</span></span>';
   clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>','');
@@ -1371,10 +1591,140 @@ function relinkRing(centerEl,radiusFrac){
   });
   return {cx:cx,cy:cy};
 }
+function positionAtlasLine(){
+  var atlasLn=linksSvg.querySelector('.atlasLine');
+  if(!atlasLn)return;
+  var er=eco.getBoundingClientRect();
+  if(!er.width)return;
+  var cr=core.getBoundingClientRect();
+  var hubBtn=eco.querySelector('.mod.hub');
+  var hx,hy;
+  if(hubBtn){
+    var hr=hubBtn.getBoundingClientRect();
+    hx=hr.left+hr.width/2-er.left;hy=hr.top+hr.height/2-er.top;
+  }else{
+    hx=er.width*0.5;hy=er.height*0.5;
+  }
+  // start the line at the giant Atlas circle's actual edge (nearest the hub),
+  // not a guessed percentage, so it never draws underneath/through the circle
+  var ccx=cr.left+cr.width/2-er.left, ccy=cr.top+cr.height/2-er.top;
+  var ang=Math.atan2(hy-ccy,hx-ccx);
+  var edgeX=ccx+(cr.width/2)*Math.cos(ang), edgeY=ccy+(cr.height/2)*Math.sin(ang);
+  linksSvg.setAttribute('viewBox','0 0 '+er.width+' '+er.height);
+  linksSvg.setAttribute('preserveAspectRatio','none');
+  atlasLn.setAttribute('x1',edgeX);atlasLn.setAttribute('y1',edgeY);
+  atlasLn.setAttribute('x2',hx);atlasLn.setAttribute('y2',hy);
+}
+function relinkFan(){
+  // the "other module" chips fan out just outside the giant circle's edge,
+  // facing the hub — their initial angle/radius (drillInto) is a good guess,
+  // but circle/hub sizes both scale with viewport, so at some combinations
+  // the gap between them is too tight for a chip to sit in cleanly. Clamp
+  // each chip's actual on-screen radius (same angle, same centre) so it never
+  // sits closer than a safe margin to either the circle or the hub — the
+  // circle-facing angle (0°, "just outside" the circle) is the tight case,
+  // since that's the same axis the circle and hub sit on.
+  if(STATE!=='drilled')return;
+  var hubBtn=eco.querySelector('.mod.hub');if(!hubBtn)return;
+  var er=eco.getBoundingClientRect();if(!er.width)return;
+  var hr=hubBtn.getBoundingClientRect(), cr=core.getBoundingClientRect();
+  var hcx=hr.left+hr.width/2-er.left, hcy=hr.top+hr.height/2-er.top, hRad=hr.width/2;
+  var ccx=cr.left+cr.width/2-er.left, ccy=cr.top+cr.height/2-er.top, cRad=cr.width/2;
+  var GAP=10;
+  [].slice.call(eco.querySelectorAll('.mod.fan')).forEach(function(b){
+    var n=b.querySelector('.node');if(!n)return;
+    var nr=n.getBoundingClientRect(), bRad=nr.width/2;
+    var bx=nr.left+nr.width/2-er.left, by=nr.top+nr.height/2-er.top;
+    var dx=bx-ccx, dy=by-ccy;
+    var curR=Math.hypot(dx,dy);
+    if(curR<1)return; // node collapsed mid-transition — skip, next pass will catch it
+    var ang=Math.atan2(dy,dx), dirx=Math.cos(ang), diry=Math.sin(ang);
+    var minR=cRad+bRad+GAP;
+    // farthest this chip can sit along its ray from the circle's centre before
+    // it starts crossing into the hub's circle (ray/circle intersection);
+    // Infinity if this ray never reaches the hub at all
+    var ox=ccx-hcx, oy=ccy-hcy, need=hRad+bRad+GAP;
+    var B=2*(ox*dirx+oy*diry), C=(ox*ox+oy*oy)-need*need;
+    var disc=B*B-4*C, maxR=Infinity;
+    if(disc>=0){
+      var sq=Math.sqrt(disc), r1=(-B+sq)/2, r2=(-B-sq)/2;
+      var pos=[r1,r2].filter(function(v){return v>0;});
+      if(pos.length)maxR=Math.min.apply(null,pos)-1;
+    }
+    var targetR=Math.max(curR,minR);
+    if(maxR<targetR)targetR=Math.max(minR,maxR);
+    if(Math.abs(targetR-curR)>0.5){
+      var tx=ccx+targetR*dirx, ty=ccy+targetR*diry;
+      var br=b.getBoundingClientRect();
+      var offX=(nr.left+nr.width/2)-(br.left+br.width/2);
+      var offY=(nr.top+nr.height/2)-(br.top+br.height/2);
+      b.style.left=(((tx-offX)/er.width)*100)+'%';
+      b.style.top=(((ty-offY)/er.height)*100)+'%';
+    }
+  });
+}
+function relinkFeatureAngles(){
+  // the feature ring surrounds the hub on all sides (a full circle), but the
+  // module chips sit between the hub and the giant circle — so feature nodes
+  // on that side of the ring can end up close to a module chip. Nudge each
+  // feature node's angle (same radius, same hub centre — relinkRing already
+  // made this a true circle) away from whichever module chip it's closest
+  // to, starting from its original angle so repeated calls don't drift.
+  if(STATE!=='drilled')return;
+  var hubBtn=eco.querySelector('.mod.hub');if(!hubBtn)return;
+  var er=eco.getBoundingClientRect();if(!er.width)return;
+  var hr=hubBtn.getBoundingClientRect();
+  var cx=hr.left+hr.width/2-er.left, cy=hr.top+hr.height/2-er.top;
+  var Rpx=Math.min(er.width,er.height)*hubRingFrac();
+  var fanChips=[].slice.call(eco.querySelectorAll('.mod.fan')).map(function(b){
+    var n=b.querySelector('.node');if(!n)return null;
+    var nr=n.getBoundingClientRect();
+    return {cx:nr.left+nr.width/2-er.left, cy:nr.top+nr.height/2-er.top, r:nr.width/2};
+  }).filter(Boolean);
+  if(!fanChips.length)return;
+  var GAP=10;
+  var lines=[].slice.call(linksSvg.querySelectorAll('line')).filter(function(ln){
+    return ln._btn && ln._btn.dataset.kind==='feature';
+  });
+  lines.forEach(function(ln){
+    var b=ln._btn, n=b.querySelector('.node');if(!n)return;
+    var bRad=n.getBoundingClientRect().width/2;
+    var baseAng=ln._ang;
+    function minGapAt(ang){
+      var px=cx+Rpx*Math.cos(ang), py=cy+Rpx*Math.sin(ang);
+      var mg=Infinity;
+      fanChips.forEach(function(c){
+        var g=Math.hypot(px-c.cx,py-c.cy)-(c.r+bRad);
+        if(g<mg)mg=g;
+      });
+      return {ang:ang,gap:mg};
+    }
+    var best=minGapAt(baseAng);
+    if(best.gap<GAP){
+      for(var d=2; d<=70 && best.gap<GAP; d+=2){
+        [1,-1].forEach(function(sign){
+          var cand=minGapAt(baseAng+sign*d*Math.PI/180);
+          if(cand.gap>best.gap)best=cand;
+        });
+      }
+    }
+    var chosen=best.ang;
+    var tx=cx+Rpx*Math.cos(chosen), ty=cy+Rpx*Math.sin(chosen);
+    var br=b.getBoundingClientRect(), nr=n.getBoundingClientRect();
+    var offX=(nr.left+nr.width/2)-(br.left+br.width/2);
+    var offY=(nr.top+nr.height/2)-(br.top+br.height/2);
+    b.style.left=(tx-offX)+'px'; b.style.top=(ty-offY)+'px';
+    ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);
+    ln.setAttribute('x2',tx);ln.setAttribute('y2',ty);
+  });
+}
 function relinkEco(){
   if(STATE==='drilled'){
     var hubBtn=eco.querySelector('.mod.hub');
     if(hubBtn)relinkRing(hubBtn,hubRingFrac());
+    positionAtlasLine();
+    relinkFan();
+    relinkFeatureAngles();
   }else{
     relinkRing(core,0.40);
   }
@@ -1391,13 +1741,13 @@ window.addEventListener('resize',relinkEcoDebounced);
 
 /* ---------- Slide 4b: Atlas app modules selector ---------- */
 var APPMODS=[
- {name:'People',fn:'PEOPLE & PAYROLL',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:['Onboarding','Employee Records','Medical Management','Leave','Timesheets','Performance Management','Employee Development','Payroll Integration']},
- {name:'Learn',fn:'LEARNING & DEVELOPMENT',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:['Inductions','E-Learning','Courses','Competencies','Certifications','Toolbox Talks','Compliance','Skills Matrix']},
- {name:'Tenders',fn:'TENDER MANAGEMENT',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Pipeline Tracking','Opportunities','Tenders','Supporting Invitations','Approvals','Go/Get','Win History','Customer History']},
- {name:'Projects',fn:'PROJECT DELIVERY',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Daily Diary','Cost Allocation','Procurement','Progress Claims','Variations','Forecasting','Accruals','Monthly Reporting']},
- {name:'Operations',fn:'RESOURCES & SCHEDULING',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Scheduling','People','Plant','Tracking','Resource Requests','Utilisation','Mobilisation','Subcontractors']},
- {name:'Finance',fn:'FINANCE & REPORTING',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['Journals','MPR Administration','Cashflow','EoM Control','Board Reports','Invoicing','Reconciliation','Accounts Payable']},
- {name:'Admin',fn:'SYSTEM ADMINISTRATION',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access','Email Notifications','Roles & Permissions','Audit Log']}
+ {name:'People',fn:'People & Payroll',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:['Employee Profile & Core HR','Onboarding','Timesheets','Leave Management','End-to-End Payroll','Performance & Talent']},
+ {name:'Learn',fn:'Learning & Development',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:['E-Learning','Company Inductions','Course Requests']},
+ {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Tender/ Project Histories','Pipeline Tracking','Opportunity Tracking','Risk Identification','Unified Status']},
+ {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast']},
+ {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Resource Requests','Skills Matrix','Plant Allocation & Scheduling','Resource Management & Planning','Mobilisation']},
+ {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']},
+ {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access & Permissions','Atlas Alerts','Audit Log']}
 ];
 (function(){
   var chips=document.getElementById('modChips');
@@ -1419,17 +1769,22 @@ var APPMODS=[
   show(0);
 })();
 
+/* ---------- Slide 5: Release cadence (looping delivery animation) ---------- */
+// Delivery sequence follows the Transition slide's absorption order,
+// mapping each of its nodes to the matching Atlas feature. Quarters stay
+// fixed (Q3 2026 → Q4 2028); the first delivery keeps the milestone
+// marker. Shared by slide 5 (cadence) and slide 6 (process).
 var CAD=[
- ["Q3 2026","01","MPR Auto-Generation",true],
- ["Q4 2026","02","Cost Coding Control"],
- ["Q1 2027","03","Registers & Quick Links"],
- ["Q2 2027","04","Plant Scheduling & Cost Alloc."],
- ["Q3 2027","05","Progress Claims (Upstream)"],
- ["Q4 2027","06","Subcontractor Claims"],
- ["Q1 2028","07","Daily Diary"],
- ["Q2 2028","08","Cost to Complete Forecast"],
- ["Q3 2028","09","Cashflow Forecast"],
- ["Q4 2028","10","Resource Mgmt & Planning"]
+ ["Q3 2026","Plant Allocation & Scheduling",true],
+ ["Q4 2026","Procurement Controls"],
+ ["Q1 2027","Progress Claims (Upstream)"],
+ ["Q2 2027","Revenue Management"],
+ ["Q3 2027","Vendor Claim Validation"],
+ ["Q4 2027","Cashflow Forecast"],
+ ["Q1 2028","Cost to Complete Forecast"],
+ ["Q2 2028","Daily Diary"],
+ ["Q3 2028","Cost Coding Control"],
+ ["Q4 2028","Resource Management & Planning"]
 ];
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
@@ -1446,7 +1801,7 @@ CAD.forEach(function(c,i){
   stem.setAttribute('stroke','rgba(var(--acc2-rgb),.4)');stem.setAttribute('stroke-width','1.5');
   g.appendChild(stem);
   var dot=document.createElementNS(NS,'circle');
-  dot.setAttribute('cx',x);dot.setAttribute('cy',MIDY);dot.setAttribute('r',c[3]?11:9);
+  dot.setAttribute('cx',x);dot.setAttribute('cy',MIDY);dot.setAttribute('r',c[2]?11:9);
   g.appendChild(dot);
   var ck=document.createElementNS(NS,'text');
   ck.setAttribute('x',x);ck.setAttribute('y',MIDY+4.5);
@@ -1460,7 +1815,7 @@ CAD.forEach(function(c,i){
   }
   var baseY = up? MIDY-70 : MIDY+82;
   g.appendChild(txt(c[0], up? baseY-38 : baseY+2 ,'q'));
-  var words=('M'+c[1]+' · '+c[2]);
+  var words=c[1];
   if(words.length>22){
     var br=words.lastIndexOf(' ',Math.ceil(words.length/2)+3);
     g.appendChild(txt(words.slice(0,br), up? baseY-18: baseY+22,'mn'));
@@ -1516,10 +1871,9 @@ function cadenceStop(){
   if(cadence.raf)cancelAnimationFrame(cadence.raf);
 }
 
-/* ---------- Production line (slide 6) ---------- */
+/* ---------- Slide 6: Delivery process, production line ---------- */
 var line={timers:[],running:false,modIdx:0};
 var token=document.getElementById('modToken');
-var tokenLabel=document.getElementById('tokenLabel');
 var tokenName=document.getElementById('tokenName');
 var shelf=document.getElementById('shelf');
 var stationEls=Array.prototype.slice.call(document.querySelectorAll('#stations .station'));
@@ -1536,14 +1890,14 @@ function clearShelfChips(){
 }
 function runModule(){
   if(!line.running)return;
-  var m=MODS[line.modIdx%MODS.length];
+  var ci=line.modIdx%CAD.length;
+  var m={name:CAD[ci][1]};
   var centers=stationCenters();
   // reset stations
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
-  // new shelf cycle when back at module 01
-  if(line.modIdx%MODS.length===0)clearShelfChips();
+  // new shelf cycle when back at the first feature
+  if(ci===0)clearShelfChips();
   // token enters
-  tokenLabel.textContent='M'+m.n;
   tokenName.textContent=m.name;
   token.classList.remove('flying');
   token.style.transition='none';
@@ -1583,7 +1937,7 @@ function runModule(){
   lt(function(){
     var chip=document.createElement('span');
     chip.className='dchip';
-    chip.textContent='M'+m.n+' · '+m.name;
+    chip.textContent=m.name;
     shelf.appendChild(chip);
     // keep shelf tidy: max 5 chips visible
     var chips=shelf.querySelectorAll('.dchip');
@@ -1599,9 +1953,9 @@ function lineStart(){
   if(RM){
     stationEls.forEach(function(st){st.classList.add('done');st.style.setProperty('--pr',100);});
     clearShelfChips();
-    MODS.slice(0,3).forEach(function(m){
+    CAD.slice(0,3).forEach(function(c){
       var chip=document.createElement('span');
-      chip.className='dchip';chip.textContent='M'+m.n+' · '+m.name;
+      chip.className='dchip';chip.textContent=c[1];
       shelf.appendChild(chip);
     });
     return;
@@ -1617,6 +1971,1087 @@ function lineStop(){
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
   clearShelfChips();
 }
+
+/* ---------- Slide 9: Today → Atlas absorption ---------- */
+// Single canvas. Starts laid out like the current-state process map
+// (today's tools converging on Pronto through controlled/uncontrolled
+// hand-offs). Each tool is absorbed one by one; once the canvas is
+// clear, the with-Atlas map's own nodes and arrows appear as one clean
+// unit, with Pronto sliding to the one position it keeps talking to
+// Atlas from. Connector paths are computed from each card's
+// real measured position (getBoundingClientRect), so arrows are always
+// edge-anchored and never distorted, the same technique the ecosystem
+// diagram on the Features slide already uses.
+// Grouped by with-Atlas destination. Each group has one "primary" (the
+// card that physically slides + relabels into the Atlas position) and
+// zero or more "secondaries" that first converge on the primary's
+// original spot — reading as merging together — before the primary
+// itself carries the merged result into Atlas. Nothing ever vanishes
+// and reappears elsewhere: every card is the same DOM element from
+// today's position through to wherever it ends up.
+// Node set, labels and groupings below are sourced directly from "The
+// Atlas Concept" Miro board — see the with-Atlas layout notes above
+// TRANS_GROUPS for how its own final page maps onto this data.
+// Positions are traced from the board PDF's own coordinates (its pages
+// share one coordinate space), lightly rescaled so this canvas's larger
+// cards keep clear of each other: a staggered top band of feeds
+// (Procurement Register/F111/Connx slightly below Plant Tracker/Docket/
+// Daily Diary), the invoice chain in a middle band with CAAPS tucked
+// below it, Requisition Approval and Pronto on their own row, and the
+// reporting/claims tools along the bottom. Connx sits directly above
+// Pronto — the board's Connx feed is a straight drop.
+var TRANS_CARD_DATA={
+ procreg:{label:'Procurement Register',fam:'green',branch:true,x:10,y:18},
+ f111:{label:'F111 Requisition',fam:'yellow',x:25,y:18},
+ connx:{label:'Connx',fam:'pink',x:43,y:18},
+ planttracker:{label:'Plant Tracker',fam:'green',x:54,y:12},
+ docket:{label:'Docket / Delivery Register',fam:'green',dashed:true,x:66,y:12},
+ dailydiary:{label:'Daily Diary',fam:'green',x:82,y:12},
+ caaps:{label:'CAAPS',fam:'pink',x:56,y:48},
+ invoiceval:{label:'Invoice Validation / Approval Process',fam:'orange',branch:true,x:70,y:48},
+ costtracker:{label:'Cost Tracker',fam:'green',x:82,y:39},
+ forecasting:{label:'Project Forecasting',fam:'green',x:95,y:39},
+ reqappr:{label:'Requisition Approval',fam:'blue',branch:true,x:25,y:62},
+ streamforecast:{label:'Stream / Company Forecasting',fam:'green',x:22,y:78},
+ monthlyreport:{label:'Monthly Reporting',fam:'green',x:39,y:87},
+ progressclaim:{label:'Progress Claim',fam:'green',x:76,y:85},
+ variationreg:{label:'Variation Register',fam:'green',x:90,y:85}
+};
+// Groups run in the Miro board's own page order — the board dedicates
+// a page to each absorption step and that sequence IS the story this
+// slide tells: Monthly Reporting first (p4), Cost Journalling/
+// Allocation appearing as a brand-new capability (p5), Plant Tracker
+// becoming Plant Scheduler (p6), procurement consolidating into the
+// Procurement Portal (p7), Progress Claim and Variation Register
+// becoming the claims/revenue pair (p8), Invoice Validation absorbing
+// CAAPS and the docket register (p9), the two forecasting tools (p10),
+// the site-data pair Daily Diary/Cost Tracker (p11), and finally Connx
+// handing over to Timesheets (p12). Do not reorder these for layout
+// convenience — fix routing in transComputePts instead.
+// Landing spots are the board's final page on a standardised grid:
+// both rows sit on a uniform 10%-pitch of column-aligned slots (top:
+// Procurement Portal 23, Timesheets 33, Cost Journalling 43, Plant
+// Scheduler 53, Invoice Validation 63, Daily Diary 73; bottom: Stream/
+// Company Forecasting 33, Monthly Reporting 43, Progress Claim 53,
+// Revenue Management 63, Project Forecasting 73), with Pronto's fixed
+// column at 43 (Cost Journalling above it, Monthly Reporting below)
+// and Cost Tracker mid-height in Daily Diary's x73 column — EVERYTHING
+// ends inside the box. The slots also keep every landing clear of the
+// today cards that outlive it in the board's order (e.g. Daily Diary
+// lands at p11 while Cost Tracker's today card survives to p12).
+// `withPrev` marks a group the board moves ON THE SAME PAGE as the one
+// before it — the two animate simultaneously as one wave (see
+// transRunGroup). The `bonus` entry — Cost Journalling/Allocation —
+// has no today-tool of its own; it simply fades into its spot between
+// Connx and Pronto (p5), splitting the Connx feed.
+var TRANS_GROUPS=[
+ {primary:'monthlyreport',secondaries:[],afterLabel:'Monthly Reporting',afterX:43,afterY:88},
+ {bonus:'costjournal',label:'Cost Journalling / Allocation',afterX:43,afterY:36},
+ {primary:'planttracker',secondaries:[],afterLabel:'Plant Scheduler',afterX:53,afterY:36},
+ {primary:'procreg',secondaries:['f111','reqappr'],afterLabel:'Procurement Portal',afterX:23,afterY:36},
+ {primary:'progressclaim',secondaries:[],afterLabel:'Progress Claim',afterX:53,afterY:88},
+ {primary:'variationreg',secondaries:[],afterLabel:'Revenue Management (Contract + VOs)',afterX:63,afterY:88,withPrev:true},
+ {primary:'invoiceval',secondaries:['caaps','docket'],afterLabel:'Invoice Validation / Approval Process',afterX:63,afterY:36},
+ {primary:'streamforecast',secondaries:[],afterLabel:'Stream / Company Forecasting',afterX:33,afterY:88},
+ {primary:'forecasting',secondaries:[],afterLabel:'Project Forecasting',afterX:73,afterY:88,withPrev:true},
+ {primary:'dailydiary',secondaries:[],afterLabel:'Daily Diary',afterX:73,afterY:36},
+ {primary:'costtracker',secondaries:[],afterLabel:'Cost Tracker',afterX:73,afterY:62,withPrev:true},
+ {primary:'connx',secondaries:[],afterLabel:'Timesheets',afterX:33,afterY:36}
+];
+// Pronto NEVER moves — tracing the board pages shows it at the exact
+// same coordinates on every page, with the Atlas box growing around it.
+// It's kept in the fixed list (before === after) so the existing
+// state machinery still flips it to 'atlas' at the end.
+var TRANS_FIXED=[
+ {id:'pronto',label:'Pronto',fam:'purple',before:{x:43,y:62},after:{x:43,y:62}}
+];
+// Collision avoidance for the two static rest layouts (today's scattered
+// positions, and everyone's with-Atlas positions) — not text wrapping,
+// card-footprint wrapping: if a card's assigned spot is too close to one
+// already placed, nudge it down by a fraction of a card-height, and if
+// that runs past the bottom of the canvas, wrap it into the next column
+// instead, the same way text wraps to a new line when it runs out of
+// room. Runs once at load, mutating the position data in place, so a
+// future edit that accidentally reuses a spot gets moved apart
+// automatically instead of silently overlapping (as CAAPS and Resource
+// Scheduler once did).
+function transResolveCollisions(items){
+  // Footprint just above the true card size (~7.2% x ~9.5%) — the
+  // board-traced grid packs columns as tightly as 9% apart, which is
+  // deliberate, so the guard only fires on genuine overlaps.
+  var fpW=8.5,fpH=9.5,maxY=94,stepY=fpH*0.65,stepX=fpW*0.65;
+  var placed=[];
+  items.forEach(function(it){
+    var tries=0;
+    while(tries<60&&placed.some(function(p){return Math.abs(p.x-it.x)<fpW&&Math.abs(p.y-it.y)<fpH;})){
+      it.y+=stepY;
+      if(it.y>maxY){it.y=it.y-maxY+6;it.x+=stepX;}
+      tries++;
+    }
+    placed.push({x:it.x,y:it.y});
+  });
+}
+transResolveCollisions(Object.keys(TRANS_CARD_DATA).map(function(id){return TRANS_CARD_DATA[id];}).concat([TRANS_FIXED[0].before]));
+transResolveCollisions(TRANS_GROUPS.map(function(g){
+  return {get x(){return g.afterX;},set x(v){g.afterX=v;},get y(){return g.afterY;},set y(v){g.afterY=v;}};
+}).concat([TRANS_FIXED[0].after]));
+// Each entry is [from, to, uncontrolled, cls]: `uncontrolled` (warn)
+// draws the red "Uncontrolled Transfers" stroke from the board's
+// legend, matched line-for-line to the board's today page — Raise PO,
+// PO Approval, Procured rates, CTC Forecast, the forecast roll-up,
+// Budget/cost allocation and the claims web are red; the rest are
+// controlled grey. The Cost Tracker -> Project Forecasting link is the
+// board's dashed line, in both states. Cost Tracker itself never feeds
+// Pronto — its numbers reach Pronto via Forecasting and the claims.
+var TRANS_LINKS=[
+ ['procreg','f111',true],['f111','reqappr',false],['reqappr','pronto',true],
+ ['procreg','pronto',true],['procreg','dailydiary',true],
+ ['connx','pronto',false],['planttracker','pronto',false],
+ ['dailydiary','costtracker',false],['costtracker','forecasting',true,'dashedLink'],
+ ['dailydiary','invoiceval',false],
+ ['docket','invoiceval',false],['invoiceval','caaps',false],['caaps','pronto',false],
+ ['forecasting','pronto',true],['forecasting','streamforecast',true],
+ ['pronto','streamforecast',false],['pronto','monthlyreport',false],
+ ['variationreg','progressclaim',true],['progressclaim','pronto',true],
+ ['variationreg','procreg',true]
+];
+function transBeforeLink(idA,idB){
+  for(var i=0;i<TRANS_LINKS.length;i++){
+    if(TRANS_LINKS[i][0]===idA&&TRANS_LINKS[i][1]===idB)return TRANS_LINKS[i];
+  }
+  return null;
+}
+// With-Atlas links. Several pairs (Procurement -> Daily Diary's
+// "Procured rates", Forecasting->Pronto, the forecast roll-up,
+// Variation Register->Procurement's "Budget/cost allocation", the
+// Stream Forecasting/Monthly Reporting/Progress Claim chains) are the
+// SAME relationship in both states — those id pairs appear in TRANS_LINKS
+// too so they mutate continuously through the merge rather than
+// disappearing and being recreated. Connx/Plant Tracker -> Cost
+// Journalling, Invoice Validation -> Pronto, and Daily Diary's
+// with-Atlas wiring (fed by Plant Scheduler, feeding Cost Journalling)
+// are genuinely new Atlas-only relationships with no before-state
+// equivalent.
+// Every after-link is controlled (no red on the board's final page):
+// once a relationship's tool is absorbed into Atlas, its uncontrolled-
+// transfer red flips to the controlled grey — that colour change is
+// the board's own point.
+var TRANS_AFTER_LINKS=[
+ ['connx','costjournal',false],['planttracker','costjournal',false],['costjournal','pronto',false],
+ ['procreg','pronto',false],['procreg','dailydiary',false],
+ ['invoiceval','pronto',false],
+ ['variationreg','progressclaim',false],['progressclaim','pronto',false],
+ ['pronto','streamforecast',false],['pronto','monthlyreport',false],
+ ['variationreg','procreg',false],
+ ['forecasting','pronto',false],['forecasting','streamforecast',false],
+ ['planttracker','dailydiary',false],['dailydiary','costjournal',false],
+ ['dailydiary','costtracker',false],['costtracker','forecasting',false,'dashedLink']
+];
+// Connector text labels, traced from the board (same key = same label
+// in both states). "Raised Approved PO" is the with-Atlas replacement
+// for today's Raise PO/Submission/Approval chain.
+var TRANS_LINK_LABELS={
+ 'f111|reqappr':'Submission / Approval',
+ 'reqappr|pronto':'PO Approval',
+ 'procreg|dailydiary':'Procured rates',
+ 'procreg|pronto':'Raise PO',
+ 'connx|pronto':'All 555',
+ 'planttracker|pronto':'All AP01',
+ 'dailydiary|costtracker':'Tracked Quantities',
+ 'forecasting|pronto':'CTC Forecast (monthly)',
+ 'progressclaim|pronto':'Cost Actuals',
+ 'variationreg|procreg':'Budget/cost allocation',
+ 'costjournal|pronto':'Allocated Cost'
+};
+var SVGNS='http://www.w3.org/2000/svg';
+var transCanvasEl=document.getElementById('transCanvas');
+var transLinksEl=document.getElementById('transLinks');
+var atlasBoxOutlineEl=document.getElementById('atlasBoxOutline');
+var transNoteEl=document.getElementById('transNote');
+var trans={running:false,paused:false,mode:'auto',step:0,animating:false,timers:[],raf:null};
+var transPlayPauseEl=document.getElementById('transPlayPause');
+var transPrevEl=document.getElementById('transPrev');
+var transNextEl=document.getElementById('transNext');
+var transStepEl=document.getElementById('transStep');
+// One dashed "blocked-out" window per card that isn't part of Atlas.
+var transBlockouts={};
+// Per-card lifecycle state, driving which links are currently valid:
+// 'today'   — still at its original spot, before-links apply
+// 'merging' — moving toward its primary's spot, no links apply
+// 'gone'    — merged/retired away, no links apply
+// 'atlas'   — landed in its final with-Atlas spot, after-links apply
+var transState={};
+function transResetState(){
+  Object.keys(TRANS_CARD_DATA).forEach(function(id){transState[id]='today';});
+  transState.pronto='today';
+  transState.costjournal='today';
+}
+transResetState();
+function transCard(pos){
+  var d=document.createElement('div');
+  d.className='tCard fam-'+pos.fam+(pos.dashed?' dashed':'')+(pos.branch?' branch':'');
+  d.dataset.id=pos.id;
+  d.style.left=pos.x+'%';d.style.top=pos.y+'%';
+  d.textContent=pos.label;
+  return d;
+}
+// Every connector is anchored to the real rendered edges of its two
+// cards (not their centres), measured live via getBoundingClientRect —
+// the same approach the Features-slide ecosystem diagram already uses,
+// so arrows are never distorted regardless of viewport size.
+function transRect(id){
+  var el=transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');
+  if(!el)return null;
+  var cr=transCanvasEl.getBoundingClientRect(),r=el.getBoundingClientRect();
+  return {left:r.left-cr.left,top:r.top-cr.top,right:r.right-cr.left,bottom:r.bottom-cr.top,
+          cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top};
+}
+function transPxX(pct){return transCanvasEl.getBoundingClientRect().width*pct/100;}
+function transPxY(pct){return transCanvasEl.getBoundingClientRect().height*pct/100;}
+function transKeyHash(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return Math.abs(h);}
+// Manhattan-style elbow: same row/column pairs get one straight segment
+// between their facing edges; everything else exits vertically, crosses
+// at the halfway row, then enters the target vertically — a clean
+// 90-degree-bend connector every time. The crossing height is nudged by
+// a small deterministic amount derived from `seed` (each link's own
+// registry key) so two unrelated pairs that happen to cross at a
+// similar height never land perfectly collinear with each other.
+function transElbowPts(a,b,seed){
+  var dx=b.cx-a.cx,dy=b.cy-a.cy;
+  if(Math.abs(dy)<4){
+    var dir=dx>=0?1:-1;
+    return [{x:dir>0?a.right:a.left,y:a.cy},{x:dir>0?b.left:b.right,y:b.cy}];
+  }
+  if(Math.abs(dx)<4){
+    var down=dy>=0;
+    return [{x:a.cx,y:down?a.bottom:a.top},{x:b.cx,y:down?b.top:b.bottom}];
+  }
+  var down2=dy>=0;
+  var jitter=seed?(transKeyHash(seed)%7-3)*8:0;
+  var midY=(a.cy+b.cy)/2+jitter;
+  return [
+    {x:a.cx,y:down2?a.bottom:a.top},{x:a.cx,y:midY},
+    {x:b.cx,y:midY},{x:b.cx,y:down2?b.top:b.bottom}
+  ];
+}
+function pathD(points){return 'M'+points.map(function(p){return p.x+','+p.y;}).join(' L ');}
+// Computes the connector path between two cards, live from their
+// current rendered positions. Most pairs just use the generic elbow;
+// a handful of pairs share an edge with another connector and get a
+// bespoke path so the two are never geometrically coincident.
+function transComputePts(idA,idB){
+  var a=transRect(idA),b=transRect(idB);
+  if(!a||!b)return null;
+  // With the layout traced from the board (Pronto fixed, Connx/Cost
+  // Journalling stacked above it, column-aligned landing rows), most
+  // pairs are same-row/same-column straights the generic elbow already
+  // produces. The custom routes below are the handful the board draws
+  // as long detours (Procured rates over the top, Budget/cost
+  // allocation around the bottom-left) plus the fan of lines converging
+  // on Pronto, each given its own fixed lane and edge offset so none of
+  // them ever run collinear. Every route here is computed from live
+  // rects, so it stays correct in before, after and mixed states.
+  if(idA==='procreg'&&idB==='pronto'){
+    // "Raise PO" — exits Procurement's BOTTOM edge right of centre,
+    // mirroring Budget/cost allocation which enters that same edge left
+    // of centre. Runs along a lane above Requisition Approval, drops
+    // through the clear gap just left of Pronto, and enters Pronto's
+    // centre-left — so it never clips Requisition Approval, which sits on
+    // Pronto's row immediately to its left.
+    var exitXrp=a.cx+22,hiYrp=transPxY(50),gapXrp=b.left-14;
+    return [{x:exitXrp,y:a.bottom},{x:exitXrp,y:hiYrp},{x:gapXrp,y:hiYrp},{x:gapXrp,y:b.cy},{x:b.left,y:b.cy}];
+  }
+  if(idA==='procreg'&&idB==='dailydiary'){
+    // "Procured rates" — procurement's rates feed the Daily Diary so
+    // its tracked quantities can be costed, in BOTH states. Runs along
+    // the lane above wherever Daily Diary currently sits; once Diary
+    // has landed it takes the TOPMOST of the three stacked lanes above
+    // the box's top row (Plant Scheduler -> Diary lowest, Diary -> Cost
+    // Journalling above that, this above both). Its diary entry is the
+    // rightmost of that edge's three connection points, so its drop
+    // never crosses the two lanes below it.
+    var laneYpd=b.top-(transState.dailydiary==='atlas'?42:28),entryXpd=b.cx+25;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd},{x:entryXpd,y:laneYpd},{x:entryXpd,y:b.top}];
+  }
+  if(idA==='forecasting'&&idB==='streamforecast'){
+    // The project-to-company forecast roll-up. Landed: both sit on the
+    // box's bottom row with three cards between them — dip below the
+    // row (staggered above Budget/cost allocation's rail).
+    if(Math.abs(b.cy-a.cy)<4){
+      var dipYfs=Math.max(a.bottom,b.bottom)+16;
+      return [{x:a.cx,y:a.bottom},{x:a.cx,y:dipYfs},{x:b.cx,y:dipYfs},{x:b.cx,y:b.bottom}];
+    }
+    // Pre-settle: a single bend, exiting at 2/3 along Project
+    // Forecasting's bottom edge (CTC -> Pronto takes the 1/3 point),
+    // straight down then along Stream/Company's row into its right edge.
+    var x23fs=a.left+(a.right-a.left)*2/3;
+    return [{x:x23fs,y:a.bottom},{x:x23fs,y:b.cy},{x:b.right,y:b.cy}];
+  }
+  if(idA==='planttracker'&&idB==='dailydiary'){
+    // With-Atlas only: Plant Scheduler feeds the Daily Diary, hopping
+    // Invoice Validation on the LOWEST of the three stacked lanes above
+    // the row, into the leftmost of Diary's top-edge connection points.
+    var laneYpd2=a.top-14;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpd2},{x:b.cx-25,y:laneYpd2},{x:b.cx-25,y:b.top}];
+  }
+  if(idA==='dailydiary'&&idB==='costjournal'){
+    // With-Atlas only: diary quantities feed Cost Journalling, over the
+    // top of the row on the MIDDLE of the three stacked lanes (above
+    // Plant Scheduler -> Diary, below Procured rates), exiting Diary's
+    // top dead centre and entering Cost Journalling's top right of
+    // centre, clear of the Connx feed's column.
+    var laneYdc=a.top-28;
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYdc},{x:b.cx,y:laneYdc},{x:b.cx,y:b.top}];
+  }
+  if(idA==='variationreg'&&idB==='procreg'){
+    // "Budget/cost allocation" — down below the whole bottom row, left
+    // along a clear rail to Procurement's column, then up into
+    // Procurement's BOTTOM edge LEFT of centre, so it enters left of
+    // Procurement -> Pronto ("Raised Approved PO"), which drops from
+    // Procurement's bottom centre.
+    var railY=Math.max(a.bottom,b.bottom)+26,exitXvp=a.cx-20,entryXvp=b.cx-22;
+    return [{x:exitXvp,y:a.bottom},{x:exitXvp,y:railY},{x:entryXvp,y:railY},{x:entryXvp,y:b.bottom}];
+  }
+  if(idA==='planttracker'&&idB==='pronto'){
+    // Today-only (dies when Plant Tracker becomes Plant Scheduler).
+    // Pronto's top edge is shadowed by Cost Journalling's card from p5,
+    // so this comes around the right into Pronto's right edge, on its
+    // own corridor between Cost Journalling's and CAAPS's columns.
+    var laneYpt=transPxY(27),corrXpt=transPxX(48.7),entryYpt=b.cy-8;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYpt},{x:corrXpt,y:laneYpt},{x:corrXpt,y:entryYpt},{x:b.right,y:entryYpt}];
+  }
+  if(idA==='forecasting'&&idB==='pronto'){
+    // "CTC Forecast (monthly)".
+    if(transState.forecasting==='atlas'){
+      // Settled: up the clear gap between Revenue Management's and Cost
+      // Tracker's columns, then straight into Pronto's right edge at its
+      // own height — no dip.
+      var corrXcf=transPxX(68);
+      return [{x:a.left,y:a.cy},{x:corrXcf,y:a.cy},{x:corrXcf,y:b.cy},{x:b.right,y:b.cy}];
+    }
+    // Pre-settle: a single bend, exiting at 1/3 along Project
+    // Forecasting's bottom edge (the roll-up to Company takes 2/3),
+    // straight down then along Pronto's row into Pronto's right edge.
+    var x13cf=a.left+(a.right-a.left)/3;
+    return [{x:x13cf,y:a.bottom},{x:x13cf,y:b.cy},{x:b.right,y:b.cy}];
+  }
+  if(idA==='invoiceval'&&idB==='pronto'){
+    // Appears the moment Invoice Validation lands (board p9). Enters
+    // Pronto's top edge right of centre — the Allocated Cost drop from
+    // Cost Journalling owns the dead-centre slot.
+    var laneYiv=transPxY(50),entryXiv=b.cx+25;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYiv},{x:entryXiv,y:laneYiv},{x:entryXiv,y:b.top}];
+  }
+  if(idA==='caaps'&&idB==='pronto'){
+    // Today-only, and CAAPS sits above-right of Pronto. Same
+    // right-of-centre top-edge slot as Invoice Validation's hand-off —
+    // CAAPS dies at the exact step that link appears (p9), so the slot
+    // is never shared.
+    var laneYcp=transPxY(56),entryXcp=b.cx+25;
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYcp},{x:entryXcp,y:laneYcp},{x:entryXcp,y:b.top}];
+  }
+  if(idA==='invoiceval'&&idB==='caaps'){
+    // Today-only: CAAPS sits on the same row as Invoice Validation,
+    // just to its left — a straight horizontal segment edge-to-edge.
+    if(Math.abs(b.cy-a.cy)<8)return [{x:a.left,y:a.cy},{x:b.right,y:b.cy}];
+    var midXic=(a.left+b.right)/2;
+    return [{x:a.left,y:a.cy},{x:midXic,y:a.cy},{x:midXic,y:b.cy},{x:b.right,y:b.cy}];
+  }
+  if(idA==='dailydiary'&&idB==='invoiceval'){
+    // Today link: out of Daily Diary's LEFT edge, into Invoice
+    // Validation's RIGHT edge, via a mid corridor between them.
+    var midXdi=(b.right+a.left)/2;
+    return [{x:a.left,y:a.cy},{x:midXdi,y:a.cy},{x:midXdi,y:b.cy},{x:b.right,y:b.cy}];
+  }
+  if(idA==='pronto'&&idB==='streamforecast'){
+    // Exits Pronto's bottom edge left of centre (Monthly Reporting's
+    // straight drop owns dead centre once landed) and crosses on a
+    // fixed lane squeezed between Requisition Approval's and the
+    // today bottom row's bands.
+    var laneYs=transPxY(70.7),exitXs=a.cx-30;
+    return [{x:exitXs,y:a.bottom},{x:exitXs,y:laneYs},{x:b.cx,y:laneYs},{x:b.cx,y:b.top}];
+  }
+  if(idA==='pronto'&&idB==='monthlyreport'){
+    if(Math.abs(b.cx-a.cx)<4){
+      // Landed: Monthly Reporting sits directly below Pronto — one
+      // straight drop, like the board.
+      return [{x:a.cx,y:a.bottom},{x:b.cx,y:b.top}];
+    }
+    var laneYm=transPxY(78);
+    return [{x:a.cx,y:a.bottom},{x:a.cx,y:laneYm},{x:b.cx,y:laneYm},{x:b.cx,y:b.top}];
+  }
+  if(idA==='progressclaim'&&idB==='pronto'){
+    // "Cost Actuals" — rises from Progress Claim on its own lane into
+    // Pronto's bottom edge at 75% of Pronto's width (right of centre).
+    var laneYpc=transPxY(74.4),entryXpc=b.left+0.75*(b.right-b.left);
+    return [{x:a.cx,y:a.top},{x:a.cx,y:laneYpc},{x:entryXpc,y:laneYpc},{x:entryXpc,y:b.bottom}];
+  }
+  if(idA==='variationreg'&&idB==='progressclaim'){
+    if(Math.abs(b.cy-a.cy)<4){
+      return [{x:a.left,y:a.cy},{x:b.right,y:b.cy}];
+    }
+    // Mixed window (Progress Claim landed one step before Variation
+    // Register, board p8): a small Z between the near-same rows.
+    var midXvp=(a.left+b.right)/2;
+    return [{x:a.left,y:a.cy},{x:midXvp,y:a.cy},{x:midXvp,y:b.cy},{x:b.right,y:b.cy}];
+  }
+  if(idA==='dailydiary'&&idB==='costtracker'){
+    // "Tracked Quantities" — a straight drop in both rest states (Cost
+    // Tracker sits directly below Daily Diary today AND once landed).
+    if(Math.abs(b.cx-a.cx)<4){
+      return [{x:a.cx,y:a.bottom},{x:b.cx,y:b.top}];
+    }
+    if(Math.abs(b.cy-a.cy)<30){
+      // p11 window: Daily Diary has landed one column left of Cost
+      // Tracker's today spot, at nearly the same height — small Z.
+      var midXdc=(a.right+b.left)/2;
+      return [{x:a.right,y:a.cy},{x:midXdc,y:a.cy},{x:midXdc,y:b.cy},{x:b.left,y:b.cy}];
+    }
+    return transElbowPts(a,b,idA+'|'+idB);
+  }
+  return transElbowPts(a,b,idA+'|'+idB);
+}
+// Every connector is a persistent DOM element keyed by "idA|idB" (or a
+// fixed key for the external Pronto link). Calling upsert again just
+// mutates its `d` attribute in place — links never disappear and
+// reappear as a card moves; they're only actually removed (with a
+// fade) once the relationship they represent stops applying at all.
+var transPathRegistry={};
+var transLabelRegistry={};
+// Rebuilt each relink pass — the bounding boxes of labels already placed
+// this pass, so a newly-placed label can nudge clear of them.
+var transLabelBoxes=[];
+// Picks where a connector's text label sits: the midpoint of the
+// route's best segment, preferring horizontal runs (horizontal text
+// reads along them); a vertical-only route gets the text set just
+// beside its longest drop.
+function transPlaceLabel(el,pts,key){
+  var best=null,bestScore=0;
+  for(var i=0;i<pts.length-1;i++){
+    var dx=Math.abs(pts[i+1].x-pts[i].x),dy=Math.abs(pts[i+1].y-pts[i].y);
+    var horiz=dx>=dy,score=horiz?dx:dy*0.55;
+    if(score>bestScore){
+      bestScore=score;
+      best={x:(pts[i].x+pts[i+1].x)/2,y:(pts[i].y+pts[i+1].y)/2,horiz:horiz,
+            lo:Math.min(pts[i].x,pts[i+1].x),hi:Math.max(pts[i].x,pts[i+1].x)};
+    }
+  }
+  if(!best)return;
+  var ox,oy;
+  if(best.horiz){
+    el.setAttribute('text-anchor','middle');
+    ox=best.x;oy=best.y-7;
+    // Budget/cost allocation sits on the long bottom rail — pin it to
+    // the LEFT quarter of that rail so it stays clear of the forecasting
+    // arrows that cross the rail's centre.
+    if(key==='variationreg|procreg')ox=best.lo+(best.hi-best.lo)*0.22;
+  }else{
+    el.setAttribute('text-anchor','start');
+    ox=best.x+8;oy=best.y+3;
+  }
+  el.setAttribute('x',ox);el.setAttribute('y',oy);
+  // Budget/cost allocation: nudge a further 80% of its own width to the
+  // left, clear of the forecasting arrow.
+  if(key==='variationreg|procreg'){
+    var lbb;try{lbb=el.getBBox();}catch(e){lbb=null;}
+    if(lbb&&lbb.width){ox-=0.8*lbb.width;ox+=20;el.setAttribute('x',ox);}
+  }
+  // Nudge clear of labels already placed this pass so no two labels
+  // (and, since a label sits just off its own line, no label/other-line
+  // pairing at that height) overlap. Horizontal labels step upward;
+  // vertical labels step right.
+  var bb;try{bb=el.getBBox();}catch(e){bb=null;}
+  var tries=0;
+  function hit(x){return transLabelBoxes.some(function(p){
+    return !(x.x>p.x+p.w||x.x+x.width<p.x||x.y>p.y+p.h||x.y+x.height<p.y);
+  });}
+  while(bb&&tries<10&&hit(bb)){
+    if(best.horiz){oy-=13;}else{ox+=12;}
+    el.setAttribute('x',ox);el.setAttribute('y',oy);
+    try{bb=el.getBBox();}catch(e){break;}
+    tries++;
+  }
+  if(bb&&bb.width)transLabelBoxes.push({x:bb.x,y:bb.y,w:bb.width,h:bb.height});
+}
+function transUpsertLabel(key,pts,warn,label){
+  var el=transLabelRegistry[key];
+  if(!label){
+    if(el){if(el.parentNode)el.parentNode.removeChild(el);delete transLabelRegistry[key];}
+    return;
+  }
+  if(!el){
+    el=document.createElementNS(SVGNS,'text');
+    el.setAttribute('class','tLabel fresh');
+    el.textContent=label;
+    transLinksEl.appendChild(el);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.remove('fresh');});});
+    transLabelRegistry[key]=el;
+  }
+  el.classList.toggle('warn',!!warn);
+  el.classList.remove('gone');
+  transPlaceLabel(el,pts,key);
+}
+// Travelling dataflow dots along each connector. Colour: red on an
+// uncontrolled line, Atlas blue when both ends are inside Atlas (or an
+// Atlas card ↔ Pronto), grey otherwise. Dots are driven by our own rAF
+// (not SMIL) so they slide ALONG the live path every frame — moving in
+// lockstep with a connector as it mutates, instead of lagging and being
+// rebuilt/faded afterwards. Only the dot COUNT is (re)built, and only
+// when settled.
+var transDotRegistry={};
+var DOT_SPEED=60,DOT_SPACING=64;
+function transPtLen(pts){var L=0;for(var i=1;i<pts.length;i++){var dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y;L+=Math.sqrt(dx*dx+dy*dy);}return L;}
+function transPtAt(pts,t){
+  var L=transPtLen(pts);if(L<=0)return {x:pts[0].x,y:pts[0].y};
+  var target=t*L,acc=0;
+  for(var i=1;i<pts.length;i++){
+    var dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y,seg=Math.sqrt(dx*dx+dy*dy);
+    if(seg>0&&acc+seg>=target){var r=(target-acc)/seg;return {x:pts[i-1].x+dx*r,y:pts[i-1].y+dy*r};}
+    acc+=seg;
+  }
+  var last=pts[pts.length-1];return {x:last.x,y:last.y};
+}
+function transMakeDot(cls){var c=document.createElementNS(SVGNS,'circle');c.setAttribute('r','3.2');c.setAttribute('class',cls);transLinksEl.appendChild(c);return c;}
+function transDotTick(dtSec){
+  Object.keys(transDotRegistry).forEach(function(key){
+    var reg=transDotRegistry[key];if(!reg.len)return;
+    var dph=(DOT_SPEED*dtSec)/reg.len;
+    reg.dots.forEach(function(dt){
+      dt.phase=(dt.phase+dph)%1;
+      var p=transPtAt(reg.pts,dt.phase);
+      dt.el.setAttribute('cx',p.x);dt.el.setAttribute('cy',p.y);
+    });
+  });
+}
+// Flow kind for a connector: 'warn' (red) if it's an uncontrolled line;
+// 'atlasflow' (Atlas blue) if BOTH ends are inside Atlas — Pronto counts
+// as inside for this purpose ("atlas card + Pronto"); '' otherwise.
+function transFlow(key,warn){
+  if(warn)return 'warn';
+  var p=key.split('|');
+  function ai(id){return transState[id]==='atlas'||id==='pronto';}
+  return (ai(p[0])&&ai(p[1]))?'atlasflow':'';
+}
+function transUpsertDots(key,pts,warn){
+  var flow=transFlow(key,warn),cls='tDot '+flow,reg=transDotRegistry[key];
+  var len=transPtLen(pts);
+  // Atlas dots get twice the spacing (fewer, glowing dots).
+  var spacing=(flow==='atlasflow')?DOT_SPACING*2:DOT_SPACING;
+  var n=Math.max(1,Math.round(len/spacing));
+  if(reg){
+    reg.pts=pts;reg.len=len;reg.cls=cls;
+    reg.dots.forEach(function(dt){dt.el.setAttribute('class',cls);});
+    // Only change the dot COUNT when settled — never mid-merge, so dots
+    // aren't destroyed/recreated while a line is gliding.
+    if(!trans.animating&&reg.dots.length!==n){
+      reg.dots.forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
+      reg.dots=[];for(var k=0;k<n;k++)reg.dots.push({el:transMakeDot(cls),phase:k/n});
+    }
+    return;
+  }
+  var dots=[];for(var k=0;k<n;k++)dots.push({el:transMakeDot(cls),phase:k/n});
+  transDotRegistry[key]={pts:pts,len:len,cls:cls,dots:dots};
+}
+function transRemoveDots(key){
+  var reg=transDotRegistry[key];if(!reg)return;
+  reg.dots.forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
+  delete transDotRegistry[key];
+}
+function transUpsertPath(key,pts,warn,cls){
+  var d=pathD(pts),el=transPathRegistry[key],flow=transFlow(key,warn);
+  transUpsertLabel(key,pts,warn,TRANS_LINK_LABELS[key]);
+  transUpsertDots(key,pts,warn);
+  if(el){
+    if(el.getAttribute('d')!==d)el.setAttribute('d',d);
+    // Flow class is re-applied on every mutation, not just at creation —
+    // a persistent link's colour flips from uncontrolled red to Atlas
+    // blue the moment both its ends are inside Atlas (CSS animates it).
+    el.classList.toggle('warn',flow==='warn');
+    el.classList.toggle('atlasflow',flow==='atlasflow');
+    el.classList.remove('gone');
+    return el;
+  }
+  el=document.createElementNS(SVGNS,'path');
+  el.setAttribute('class','tLink'+(flow?' '+flow:'')+(cls?' '+cls:'')+' fresh');
+  el.dataset.key=key;
+  el.setAttribute('d',d);
+  transLinksEl.appendChild(el);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.remove('fresh');});});
+  transPathRegistry[key]=el;
+  return el;
+}
+function transRemovePath(key){
+  var el=transPathRegistry[key];
+  if(!el)return;
+  el.classList.add('gone');
+  delete transPathRegistry[key];
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},450);
+  transRemoveDots(key);
+  var lbl=transLabelRegistry[key];
+  if(lbl){
+    lbl.classList.add('gone');
+    delete transLabelRegistry[key];
+    setTimeout(function(){if(lbl.parentNode)lbl.parentNode.removeChild(lbl);},450);
+  }
+}
+function transClearAllPaths(){
+  Object.keys(transDotRegistry).forEach(transRemoveDots);
+  Object.keys(transLabelRegistry).forEach(function(key){
+    var el=transLabelRegistry[key];
+    if(el.parentNode)el.parentNode.removeChild(el);
+  });
+  transLabelRegistry={};
+  Object.keys(transPathRegistry).forEach(function(key){
+    var el=transPathRegistry[key];
+    if(el.parentNode)el.parentNode.removeChild(el);
+  });
+  transPathRegistry={};
+}
+function transUpsertLink(idA,idB,warn,cls){
+  var pts=transComputePts(idA,idB);
+  if(!pts)return;
+  transUpsertPath(idA+'|'+idB,pts,warn,cls);
+}
+function transBuild(){
+  Object.keys(TRANS_CARD_DATA).forEach(function(id){
+    var d=TRANS_CARD_DATA[id];
+    transCanvasEl.appendChild(transCard({id:id,label:d.label,fam:d.fam,dashed:d.dashed,branch:d.branch,x:d.x,y:d.y}));
+  });
+  TRANS_FIXED.forEach(function(c){transCanvasEl.appendChild(transCard({id:c.id,label:c.label,fam:c.fam,x:c.before.x,y:c.before.y}));});
+  // The bonus node (Cost Journalling/Allocation) has no today position —
+  // it's created already sitting at its final spot, styled as a landed
+  // Atlas card, but hidden (consumed) until its wave reveals it.
+  var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
+  if(bonusGroup){
+    var bEl=transCard({id:bonusGroup.bonus,label:bonusGroup.label,fam:'atlas',x:bonusGroup.afterX,y:bonusGroup.afterY});
+    bEl.classList.add('consumed');
+    transCanvasEl.appendChild(bEl);
+  }
+  transRelinkAll();
+}
+function transMoveFixed(which,to){
+  var el=transCanvasEl.querySelector('.tCard[data-id="'+which+'"]');
+  if(el){el.style.left=to.x+'%';el.style.top=to.y+'%';}
+}
+// Fits the Atlas box outline snugly around whichever primaries have
+// actually landed so far — called on every state change, so the box
+// visibly grows as each new tool arrives instead of popping in at the
+// end already full-size. Returns null (and hides the box) if nothing
+// has landed yet.
+function transFitBox(){
+  // Every landed primary counts — the board's final page wraps its box
+  // around EVERYTHING, Pronto and the right column included. The bonus
+  // node and Pronto land inside it too but aren't TRANS_GROUPS
+  // primaries, so they're added explicitly.
+  var ids=TRANS_GROUPS.filter(function(g){return g.primary&&transState[g.primary]==='atlas';})
+    .map(function(g){return g.primary;});
+  if(transState.costjournal==='atlas')ids.push('costjournal');
+  if(transState.pronto==='atlas')ids.push('pronto');
+  var rects=ids.map(transRect).filter(Boolean);
+  if(!rects.length){
+    transCanvasEl.classList.remove('building');
+    return null;
+  }
+  // Wrap the box around everything currently INSIDE it — landed cards
+  // plus the geometry/labels of links that connect two in-box cards.
+  // A link with one end still at a scattered today spot must NOT expand
+  // the box (that would balloon it across the whole canvas the instant
+  // the first tool lands); only both-ends-in-Atlas links count.
+  var inBox={};ids.forEach(function(id){inBox[id]=1;});
+  function bothIn(key){var p=key.split('|');return inBox[p[0]]&&inBox[p[1]];}
+  var minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  function ext(l,t,r,b){if(l<minX)minX=l;if(t<minY)minY=t;if(r>maxX)maxX=r;if(b>maxY)maxY=b;}
+  rects.forEach(function(r){ext(r.left,r.top,r.right,r.bottom);});
+  Object.keys(transPathRegistry).forEach(function(k){
+    var el=transPathRegistry[k];
+    if(!el||el.classList.contains('gone')||!bothIn(k))return;
+    var nums=(el.getAttribute('d')||'').match(/-?\d+(?:\.\d+)?/g);
+    if(!nums)return;
+    for(var i=0;i+1<nums.length;i+=2){var x=+nums[i],y=+nums[i+1];ext(x,y,x,y);}
+  });
+  Object.keys(transLabelRegistry).forEach(function(k){
+    var el=transLabelRegistry[k];
+    if(!el||el.classList.contains('gone')||!bothIn(k))return;
+    var bb;try{bb=el.getBBox();}catch(e){return;}
+    if(bb&&bb.width)ext(bb.x,bb.y,bb.x+bb.width,bb.y+bb.height);
+  });
+  // A little extra headroom up top so the "Atlas · Shared Database"
+  // title (which now sits fully above the top border) has clear air.
+  var pad=8,topPad=12;
+  var left=minX-pad,top=minY-topPad,right=maxX+pad,bottom=maxY+pad;
+  atlasBoxOutlineEl.style.left=left+'px';
+  atlasBoxOutlineEl.style.top=top+'px';
+  atlasBoxOutlineEl.style.width=(right-left)+'px';
+  atlasBoxOutlineEl.style.height=(bottom-top)+'px';
+  transCanvasEl.classList.add('building');
+  return {left:left,top:top,right:right,bottom:bottom,cx:(left+right)/2,cy:(top+bottom)/2};
+}
+// A card counts as linkable while it's at its today position AND while
+// it's mid-merge/move/rename — its original links stay attached and
+// visibly track it (transComputePts falls back to the live elbow route
+// while 'merging') instead of vanishing the instant it starts moving.
+// They only disappear once the card has actually landed as 'gone' (fully
+// absorbed) or become a distinct new 'atlas' identity.
+function transStillLinkable(id){return transState[id]==='today'||transState[id]==='merging';}
+// Diffs the set of connectors that should be visible right now against
+// what's already on screen: links that still apply get their geometry
+// mutated in place (transUpsertLink), links that stop applying fade out
+// and get removed, and everything else is left completely untouched.
+// Nothing is ever blanket-removed-and-redrawn.
+// One dashed window per card that isn't part of Atlas AND actually sits
+// over the Atlas box background (a blockout only earns its keep where it
+// punches a hole in that tinted fill — a scattered today card off on its
+// own needs none). Candidates: any card still at its today spot, plus
+// Pronto forever (it's never absorbed). `box` is the current box rect or
+// null (no box yet → no blockouts at all).
+function transBlockoutPad(id){return id==='pronto'?40:9;}
+function transSyncBlockouts(box){
+  var need={};
+  if(box){
+    var cand=Object.keys(TRANS_CARD_DATA).filter(function(id){return transState[id]==='today';});
+    cand.push('pronto');
+    cand.forEach(function(id){
+      var r=transRect(id);if(!r)return;
+      if(r.left<box.right&&r.right>box.left&&r.top<box.bottom&&r.bottom>box.top)need[id]=1;
+    });
+  }
+  Object.keys(need).forEach(function(id){
+    var r=transRect(id);if(!r)return;
+    var bo=transBlockouts[id];
+    if(!bo){
+      bo=document.createElement('div');bo.className='tBlockout fresh';
+      transCanvasEl.appendChild(bo);transBlockouts[id]=bo;
+      requestAnimationFrame(function(){requestAnimationFrame(function(){bo.classList.remove('fresh');});});
+    }
+    var p=transBlockoutPad(id);
+    bo.style.left=(r.left-p)+'px';bo.style.top=(r.top-p)+'px';
+    bo.style.width=(r.right-r.left+p*2)+'px';bo.style.height=(r.bottom-r.top+p*2)+'px';
+  });
+  Object.keys(transBlockouts).forEach(function(id){
+    if(need[id])return;
+    var bo=transBlockouts[id];bo.classList.add('fresh');
+    delete transBlockouts[id];
+    setTimeout(function(){if(bo.parentNode)bo.parentNode.removeChild(bo);},800);
+  });
+}
+function transClearBlockouts(){
+  Object.keys(transBlockouts).forEach(function(id){var bo=transBlockouts[id];if(bo.parentNode)bo.parentNode.removeChild(bo);});
+  transBlockouts={};
+}
+function transRelinkAll(){
+  var wanted={};
+  TRANS_LINKS.forEach(function(link){
+    if(transStillLinkable(link[0])&&transStillLinkable(link[1])){
+      // Connx feeds Pronto directly only until Cost Journalling/
+      // Allocation exists — from that board page (p5) onward the Connx
+      // feed is redrawn into the new node instead (see the matching
+      // early-show rule below), long before Connx itself is absorbed.
+      if(link[0]==='connx'&&link[1]==='pronto'&&transState.costjournal==='atlas')return;
+      wanted[link[0]+'|'+link[1]]=link;
+    }
+  });
+  TRANS_AFTER_LINKS.forEach(function(link){
+    var sA=transState[link[0]],sB=transState[link[1]];
+    // The board wires the new Cost Journalling/Allocation node up the
+    // moment it appears (p5): the Connx feed redirects into it while
+    // Connx is still sitting at its today spot, and its "Allocated
+    // Cost" hand-off to Pronto is drawn immediately. Invoice
+    // Validation's own Pronto hand-off likewise appears the moment it
+    // lands (p9), not only once Pronto makes its final move.
+    if(link[0]==='connx'&&link[1]==='costjournal'&&sB==='atlas'&&sA!=='gone'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    if(link[0]==='costjournal'&&link[1]==='pronto'&&sA==='atlas'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    if(link[0]==='invoiceval'&&link[1]==='pronto'&&sA==='atlas'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    // "Raised Approved PO" appears the moment the Procurement Portal
+    // lands (board p7) — it's the with-Atlas replacement for the
+    // F111/Requisition Approval chain that is absorbed at that same
+    // step, so it can't wait for Pronto's own final flip.
+    if(link[0]==='procreg'&&link[1]==='pronto'&&sA==='atlas'){
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    if(sA==='atlas'&&sB==='atlas'){
+      // Both ends have landed — this is a genuinely new Atlas-only
+      // relationship with no before-state equivalent, so it's created
+      // once, right here, and never touched again.
+      wanted[link[0]+'|'+link[1]]=link;
+      return;
+    }
+    // Exception: a pair that's ALSO a literal before-link (same id order
+    // in TRANS_LINKS, e.g. dailydiary-costtracker — neither card is ever
+    // absorbed, so the relationship is continuously real) should mutate
+    // straight through rather than being removed once its first side
+    // lands and recreated once its second side does. Every other after-
+    // link has no before-state route to speak of, so showing it early —
+    // from an already-landed card all the way out to a partner still
+    // sitting at its scattered today position — would draw a long,
+    // messy line across the whole canvas that isn't what either state
+    // actually looks like. The after entry's colour applies from this
+    // moment: an uncontrolled red hand-off flips to controlled grey at
+    // the very step its tool is absorbed into Atlas, not at the end.
+    if(sA!=='gone'&&sB!=='gone'&&(sA==='atlas'||sB==='atlas')&&transBeforeLink(link[0],link[1])){
+      wanted[link[0]+'|'+link[1]]=link;
+    }
+  });
+  transLabelBoxes=[];
+  Object.keys(wanted).forEach(function(key){
+    var link=wanted[key];
+    transUpsertLink(link[0],link[1],link[2],link[3]);
+  });
+  Object.keys(transPathRegistry).forEach(function(key){
+    if(!wanted[key])transRemovePath(key);
+  });
+  transSyncBlockouts(transFitBox());
+}
+function transCardEl(id){return transCanvasEl.querySelector('.tCard[data-id="'+id+'"]');}
+// The board moves several tools on the same page; those groups form one
+// "wave" (a group plus any immediately-following withPrev groups) that
+// animates together. Steps run 0 (today) → 1..N (after each wave), with
+// the final wave completion also settling Pronto.
+var TRANS_WAVES=(function(){
+  var out=[],i=0;
+  while(i<TRANS_GROUPS.length){
+    var w=[i],j=i;
+    while(j+1<TRANS_GROUPS.length&&TRANS_GROUPS[j+1].withPrev){j++;w.push(j);}
+    out.push(w);i=j+1;
+  }
+  return out;
+})();
+var TRANS_STEPS=TRANS_WAVES.length;
+function transStepTimers(){trans.timers.forEach(function(t){clearTimeout(t.id);});trans.timers=[];}
+function transUpdateStepUI(){
+  if(transStepEl)transStepEl.textContent=Math.min(trans.step,TRANS_STEPS)+' / '+TRANS_STEPS;
+  if(transPrevEl)transPrevEl.disabled=trans.step<=0;
+  if(transNextEl)transNextEl.disabled=trans.step>=TRANS_STEPS;
+}
+// Pronto never moves, so settling only flips its state and switches the
+// box/notes to the unified look.
+function transSettle(){
+  transState.pronto='atlas';
+  transRelinkAll();
+  transCanvasEl.classList.add('settled');
+  transNoteEl.textContent='One shared Atlas platform.';
+  transNoteEl.classList.add('clean');
+}
+// Set the whole board to a given step INSTANTLY (no per-card glide) —
+// used for the fade reset and manual "previous".
+function transApplyStep(step){
+  Object.keys(TRANS_CARD_DATA).forEach(function(id){
+    var d=TRANS_CARD_DATA[id],el=transCardEl(id);
+    el.className='tCard fam-'+d.fam+(d.dashed?' dashed':'')+(d.branch?' branch':'');
+    el.textContent=d.label;el.style.left=d.x+'%';el.style.top=d.y+'%';
+  });
+  TRANS_FIXED.forEach(function(c){transMoveFixed(c.id,c.before);});
+  transResetState();
+  for(var wi=0;wi<step&&wi<TRANS_WAVES.length;wi++){
+    TRANS_WAVES[wi].forEach(function(gi){
+      var g=TRANS_GROUPS[gi];
+      if(g.bonus){var b=transCardEl(g.bonus);b.classList.remove('consumed');b.classList.add('mergingPrimary');transState[g.bonus]='atlas';return;}
+      g.secondaries.forEach(function(sid){var s=transCardEl(sid);s.classList.add('consumed');transState[sid]='gone';});
+      var p=transCardEl(g.primary);
+      p.classList.remove('fam-'+TRANS_CARD_DATA[g.primary].fam,'branch','dashed');
+      p.classList.add('fam-atlas','mergingPrimary');
+      p.textContent=g.afterLabel;p.style.left=g.afterX+'%';p.style.top=g.afterY+'%';
+      transState[g.primary]='atlas';
+    });
+  }
+  var bonusGroup=TRANS_GROUPS.filter(function(g){return g.bonus;})[0];
+  if(bonusGroup&&transState[bonusGroup.bonus]!=='atlas'){
+    var bEl=transCardEl(bonusGroup.bonus);bEl.classList.add('consumed');bEl.classList.remove('mergingPrimary');
+  }
+  transClearAllPaths();
+  if(step>=TRANS_STEPS){
+    transState.pronto='atlas';
+    transCanvasEl.classList.add('settled');
+    transNoteEl.textContent='One shared Atlas platform.';transNoteEl.classList.add('clean');
+  }else{
+    transCanvasEl.classList.remove('settled');
+    transNoteEl.textContent='Multiple uncontrolled hand-offs between systems.';transNoteEl.classList.remove('clean');
+  }
+  transRelinkAll();
+}
+// Fade the canvas out, jump to `step` while invisible (cards repositioned
+// with transitions off, so nothing glides), then fade back in.
+function transFadeTo(step,after){
+  transStepTimers();
+  transCanvasEl.style.transition='opacity .6s ease';
+  transCanvasEl.style.opacity='0';
+  ltTrans(function(){
+    transCanvasEl.classList.add('instant');
+    transApplyStep(step);trans.step=step;transUpdateStepUI();
+    void transCanvasEl.offsetWidth;
+    transCanvasEl.classList.remove('instant');
+    transCanvasEl.style.opacity='1';
+    ltTrans(function(){transCanvasEl.style.transition='';if(after)after();},650);
+  },650);
+}
+// Timers are tracked as {fn,firesAt,id} rather than bare setTimeout ids
+// so a pause can compute exactly how much time was left on each one and
+// resume with that same remaining delay instead of restarting the whole
+// step or skipping ahead.
+function ltTrans(fn,ms){
+  var timer={fn:fn,firesAt:Date.now()+ms};
+  timer.id=setTimeout(function(){
+    var i=trans.timers.indexOf(timer);
+    if(i>-1)trans.timers.splice(i,1);
+    fn();
+  },ms);
+  trans.timers.push(timer);
+}
+// Runs one group at a time: every card in the group — the primary AND
+// all of its secondaries — is selected together, then merges, moves and
+// (for the primary) renames/restyles into the final Atlas position all
+// in the same concurrent motion, landing together rather than the
+// secondaries arriving first and the primary following on afterwards.
+// Their original links stay attached and tracking throughout (see
+// transStillLinkable/transLiveTick) instead of cutting out the instant
+// they start moving.
+// Animate ONE wave into Atlas, calling onDone once it has landed. All
+// timings are 2x the original so the story reads slowly.
+function transAnimateWave(wi,onDone){
+  var groups=TRANS_WAVES[wi].map(function(gi){return TRANS_GROUPS[gi];});
+  trans.animating=true;
+  if(groups.length===1&&groups[0].bonus){
+    // No today position — the new capability just fades into its final
+    // spot; its feeds rewire immediately (see transRelinkAll).
+    var g=groups[0],bEl=transCardEl(g.bonus);
+    ltTrans(function(){
+      bEl.classList.remove('consumed');bEl.classList.add('mergingPrimary');
+      transState[g.bonus]='atlas';transRelinkAll();
+    },600);
+    ltTrans(function(){trans.animating=false;transRelinkAll();if(onDone)onDone();},2600);
+    return;
+  }
+  groups.forEach(function(wg){
+    var secs=wg.secondaries;
+    var secEls=secs.map(function(sid){return transCardEl(sid);});
+    var pEl=transCardEl(wg.primary);
+    ltTrans(function(){
+      pEl.classList.add('active');
+      secEls.forEach(function(el){el.classList.add('active');});
+    },0);
+    ltTrans(function(){
+      pEl.classList.remove('active');
+      pEl.classList.remove('fam-'+TRANS_CARD_DATA[wg.primary].fam,'branch','dashed');
+      pEl.classList.add('fam-atlas','mergingPrimary');
+      pEl.textContent=wg.afterLabel;
+      pEl.style.left=wg.afterX+'%';pEl.style.top=wg.afterY+'%';
+      transState[wg.primary]='merging';
+      secs.forEach(function(sid,i){
+        secEls[i].classList.remove('active');
+        secEls[i].style.left=wg.afterX+'%';secEls[i].style.top=wg.afterY+'%';
+        transState[sid]='merging';
+      });
+      transRelinkAll();
+    },1300);
+    ltTrans(function(){
+      secs.forEach(function(sid,i){secEls[i].classList.add('consumed');transState[sid]='gone';});
+      transState[wg.primary]='atlas';
+      transRelinkAll();
+    },3000);
+  });
+  ltTrans(function(){trans.animating=false;transRelinkAll();if(onDone)onDone();},3500);
+}
+// Auto-play: run waves back-to-back, settle, hold, then fade-reset and
+// loop.
+function transAutoStep(){
+  if(!trans.running||trans.paused||trans.mode!=='auto')return;
+  if(trans.step>=TRANS_STEPS){
+    transFadeTo(0,function(){if(trans.running&&!trans.paused&&trans.mode==='auto')transAutoStep();});
+    return;
+  }
+  transAnimateWave(trans.step,function(){
+    trans.step++;transUpdateStepUI();
+    if(trans.step>=TRANS_STEPS){
+      transSettle();
+      ltTrans(function(){if(trans.running&&!trans.paused&&trans.mode==='auto')transAutoStep();},9500);
+    }else if(trans.running&&!trans.paused&&trans.mode==='auto'){
+      transAutoStep();
+    }
+  });
+}
+function transPlay(){
+  trans.paused=false;trans.mode='auto';transSetPlayPauseUI(false);
+  if(trans.animating)return;                 // current wave will chain on
+  transStepTimers();
+  if(trans.step>=TRANS_STEPS)transFadeTo(0,function(){transAutoStep();});
+  else transAutoStep();
+}
+// Pause does NOT abort an in-flight wave — it lets it land (the auto
+// chain checks `paused` in its onDone and stops there), so `animating`
+// always resolves and a paused frame is always a clean landed step.
+function transPause(){trans.paused=true;trans.mode='manual';transSetPlayPauseUI(true);}
+function transManualNext(){
+  transPause();
+  if(trans.animating||trans.step>=TRANS_STEPS)return;
+  transAnimateWave(trans.step,function(){
+    trans.step++;transUpdateStepUI();
+    if(trans.step>=TRANS_STEPS)transSettle();
+  });
+}
+function transManualPrev(){
+  transPause();
+  if(trans.animating||trans.step<=0)return;
+  transFadeTo(trans.step-1);
+}
+function transStart(){
+  if(RM){transApplyStep(TRANS_STEPS);return;}
+  trans.running=true;trans.mode='auto';trans.paused=false;trans.animating=false;trans.step=0;trans.lastT=null;
+  transCanvasEl.classList.add('instant');
+  transApplyStep(0);
+  void transCanvasEl.offsetWidth;
+  transCanvasEl.classList.remove('instant');
+  transUpdateStepUI();
+  if(trans.raf)cancelAnimationFrame(trans.raf);
+  trans.raf=requestAnimationFrame(transLiveTick);
+  transAutoStep();
+}
+// While any card is mid-merge, keep re-diffing the links every frame so
+// the ones still attached to it (transStillLinkable) visibly track its
+// live position as it slides, rather than only updating at the fixed
+// timer checkpoints above.
+function transLiveTick(ts){
+  if(!trans.running){trans.raf=null;return;}
+  if(trans.lastT==null)trans.lastT=ts;
+  var dtSec=Math.min(0.05,(ts-trans.lastT)/1000);trans.lastT=ts;
+  var anyMerging=Object.keys(transState).some(function(id){return transState[id]==='merging';});
+  if(anyMerging)transRelinkAll();
+  transDotTick(dtSec);                          // dots slide along the live paths every frame
+  trans.raf=requestAnimationFrame(transLiveTick);
+}
+function transStop(){
+  trans.running=false;trans.paused=false;trans.animating=false;
+  transStepTimers();
+  if(trans.raf){cancelAnimationFrame(trans.raf);trans.raf=null;}
+  transClearBlockouts();
+  transCanvasEl.style.opacity='';transCanvasEl.style.transition='';
+  transCanvasEl.classList.remove('instant');
+}
+function transSetPlayPauseUI(paused){
+  if(!transPlayPauseEl)return;
+  transPlayPauseEl.innerHTML=paused?'&#9654;':'&#10074;&#10074;';
+  var label=paused?'Play animation':'Pause animation';
+  transPlayPauseEl.setAttribute('aria-label',label);
+  transPlayPauseEl.title=label;
+}
+if(transPlayPauseEl){
+  if(RM){
+    var tc=document.querySelector('.transControls');if(tc)tc.style.display='none';
+  } else {
+    transPlayPauseEl.addEventListener('click',function(){trans.paused?transPlay():transPause();});
+    if(transPrevEl)transPrevEl.addEventListener('click',transManualPrev);
+    if(transNextEl)transNextEl.addEventListener('click',transManualNext);
+  }
+}
+transBuild();
 
 /* ---------- Fragments ---------- */
 function frags(slide){return Array.prototype.slice.call(slide.querySelectorAll('.frag'));}
@@ -1653,11 +3088,13 @@ function onEnter(s){
   if(s.id==='s4')requestAnimationFrame(function(){requestAnimationFrame(relinkEco);});
   if(s.id==='s5')cadenceStart();
   if(s.id==='s6')lineStart();
+  if(s.id==='s9')transStart();
   if(RM)frags(s).forEach(function(f){f.classList.add('shown');});
 }
 function onLeave(s){
   if(s.id==='s5')cadenceStop();
   if(s.id==='s6')lineStop();
+  if(s.id==='s9')transStop();
 }
 function goTo(i,skipFragReset){
   if(i<0||i>=slides.length||(i===cur&&slides[i].classList.contains('active')))return;
@@ -1685,12 +3122,12 @@ function goTo(i,skipFragReset){
 function fwd(){
   var s=slides[cur];
   if(!RM && nextFrag(s))return;
-  goTo(cur+1);
+  goTo(cur+1>=slides.length?0:cur+1);          // wrap: last → first
 }
 function back(){
   var s=slides[cur];
   if(!RM && prevFrag(s))return;
-  goTo(cur-1);
+  goTo(cur-1<0?slides.length-1:cur-1);          // wrap: first → last
 }
 
 document.getElementById('btnNext').addEventListener('click',fwd);
@@ -1716,8 +3153,9 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-/* init */
-/* Size the Atlas L-background to wrap rows 1-2, notch aligned to External cell */
+/* ---------- Slide 3: Cost flow diagram (Atlas L background sizing) ----------
+   Lives here (called from onEnter/resize below) rather than beside its
+   HTML further up, since it's driven entirely by navigation/resize events. */
 function sizeAtlasL(){
   var stack=document.querySelector('.railStack');
   var L=document.querySelector('.atlasL');
@@ -1842,6 +3280,7 @@ window.addEventListener('resize',sizeAtlasL);
 slides[0].classList.add('active');
 requestAnimationFrame(function(){requestAnimationFrame(function(){slides[0].classList.add('entered');});});
 segEls[0].classList.add('cur');
+counter.textContent=(cur+1)+' / '+slides.length;
 if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('shown');});});
 })();
 </script>
