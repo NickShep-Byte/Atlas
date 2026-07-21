@@ -284,8 +284,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 /* Atlas flows read as a gradient "shine" sweeping along the line rather
    than a travelling dot: a short bright segment of the line whose ends
    fade out via a per-streak linear gradient. */
-.transLinks path.tShine{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
-.transLinks .tShineG{filter:drop-shadow(0 0 2.5px #8FD3F7);pointer-events:none;}
+.transLinks path.tShine{fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px #8FD3F7);pointer-events:none;}
 .tCard{
   position:absolute;transform:translate(-50%,-50%);z-index:1;
   width:clamp(70px,7.8vw,108px);min-height:44px;display:flex;align-items:center;justify-content:center;
@@ -2554,49 +2553,81 @@ function transPtAt(pts,t){
   }
   var last=pts[pts.length-1];return {x:last.x,y:last.y};
 }
-var SHINE_BAND=128;  // length of the bright part of a shine (px of arc)
-var SHINE_SEG=11;    // target px per tiling segment (smaller = smoother gradient)
-// Grey/red flows use travelling circles. Atlas flows use a shine built from
-// many short segments that TILE the actual path (so it follows every bend
-// exactly) whose OPACITY is graded by a scrolling bell curve — giving a soft
-// gradient highlight that sweeps along. This avoids a straight-line gradient
-// (which breaks at corners) and a solid dash (which reads as a flat block).
+var SHINE_HALF=20;      // half-length of a moving gradient shine (short = clean through bends)
+var SHINE_SPACING=95;   // arc distance between successive shines on a line
+// Grey/red flows use travelling circles. Atlas flows use one or more SHORT
+// gradient streaks, each a single element that glides along the path by
+// arc-length. Being short it stays ~straight (so its linear gradient reads
+// correctly) and pivots cleanly through bends — one element, so no seams to
+// break, unlike tiled segments; soft-ended, unlike a solid dash.
 function transMakeCircle(cls){var c=document.createElementNS(SVGNS,'circle');c.setAttribute('r','3.2');c.setAttribute('class',cls);transDotLayer.appendChild(c);return c;}
-// (Re)build the tiled segments for a shine line. Segment geometry is computed
-// once here; the animation only tweaks per-segment opacity each frame.
-function transBuildShine(reg){
-  if(reg.g&&reg.g.parentNode)reg.g.parentNode.removeChild(reg.g);
-  var g=document.createElementNS(SVGNS,'g');g.setAttribute('class','tShineG');
-  var len=reg.len,count=Math.max(4,Math.min(72,Math.round(len/SHINE_SEG))),segLen=len/count;
-  reg.segs=[];
-  for(var i=0;i<count;i++){
-    var pa=transPtAt(reg.pts,(i*segLen)/len),pb=transPtAt(reg.pts,Math.min(len,(i+1)*segLen+0.6)/len);
-    var p=document.createElementNS(SVGNS,'path');
-    p.setAttribute('class','tShine');p.style.stroke='#AEDEFF';p.style.strokeLinecap='round';
-    p.setAttribute('d','M'+pa.x+','+pa.y+' L '+pb.x+','+pb.y);p.style.opacity='0';
-    g.appendChild(p);reg.segs.push({el:p,mid:i*segLen+segLen/2});
+// Points of the sub-polyline of `pts` between arc-lengths a and b, keeping
+// vertices in between so a streak that spans a bend still follows it.
+function transSubPathPts(pts,a,b){
+  var out=[],acc=0;
+  for(var i=1;i<pts.length;i++){
+    var p0=pts[i-1],p1=pts[i],dx=p1.x-p0.x,dy=p1.y-p0.y,seg=Math.sqrt(dx*dx+dy*dy);
+    if(seg<=0)continue;
+    var s0=acc,s1=acc+seg;
+    if(s1>=a&&s0<=b){
+      var ra=(Math.max(a,s0)-s0)/seg,rb=(Math.min(b,s1)-s0)/seg;
+      if(!out.length)out.push({x:p0.x+dx*ra,y:p0.y+dy*ra});
+      out.push({x:p0.x+dx*rb,y:p0.y+dy*rb});
+    }
+    acc=s1;
   }
-  transDotLayer.appendChild(g);reg.g=g;
-  reg.band=Math.min(SHINE_BAND,len*0.55);   // bright-band length (shrinks on short lines)
-  reg.period=reg.band/0.42;                 // band ~42% of the cycle, rest dark
+  if(out.length<2){var e=transPtAt(pts,1);out=[e,{x:e.x,y:e.y}];}
+  return out;
+}
+function transMakeShineStreak(){
+  var id='tShine'+(transShineSeq++);
+  var g=document.createElementNS(SVGNS,'linearGradient');
+  g.setAttribute('id',id);g.setAttribute('gradientUnits','userSpaceOnUse');
+  [['0','#8FD3F7','0'],['0.5','#E4F3FF','1'],['1','#8FD3F7','0']].forEach(function(s){
+    var st=document.createElementNS(SVGNS,'stop');
+    st.setAttribute('offset',s[0]);st.setAttribute('stop-color',s[1]);st.setAttribute('stop-opacity',s[2]);
+    g.appendChild(st);
+  });
+  transShineDefs.appendChild(g);
+  var p=document.createElementNS(SVGNS,'path');
+  p.setAttribute('class','tShine');p.style.stroke='url(#'+id+')';p.style.strokeLinecap='round';
+  transDotLayer.appendChild(p);
+  return {el:p,grad:g};
+}
+function transBuildShine(reg){
+  (reg.streaks||[]).forEach(transDropStreak);
+  var n=Math.max(1,Math.round(reg.len/SHINE_SPACING));
+  reg.streaks=[];
+  for(var k=0;k<n;k++){var s=transMakeShineStreak();s.phase=k/n;reg.streaks.push(s);}
+}
+function transDropStreak(s){
+  if(s.el.parentNode)s.el.parentNode.removeChild(s.el);
+  if(s.grad&&s.grad.parentNode)s.grad.parentNode.removeChild(s.grad);
 }
 function transDropReg(reg){
-  if(reg.g&&reg.g.parentNode)reg.g.parentNode.removeChild(reg.g);
+  (reg.streaks||[]).forEach(transDropStreak);
   (reg.dots||[]).forEach(function(dt){if(dt.el.parentNode)dt.el.parentNode.removeChild(dt.el);});
 }
 function transDotTick(dtSec){
   Object.keys(transDotRegistry).forEach(function(key){
     var reg=transDotRegistry[key];if(!reg.len)return;
+    var dph=(DOT_SPEED*dtSec)/reg.len;
     if(reg.kind==='shine'){
-      var per=reg.period,band=reg.band;
-      reg.scroll=((reg.scroll||0)+DOT_SPEED*dtSec)%per;
-      for(var i=0;i<reg.segs.length;i++){
-        var s=reg.segs[i],x=((s.mid-reg.scroll)%per+per)%per;
-        var op=x<band?Math.sin(Math.PI*(x/band)):0;   // smooth 0->1->0 bell over the band
-        s.el.style.opacity=op<0.02?'0':op.toFixed(3);
-      }
+      reg.streaks.forEach(function(st){
+        st.phase=(st.phase+dph)%1;
+        var c=st.phase*reg.len,a=Math.max(0,c-SHINE_HALF),b=Math.min(reg.len,c+SHINE_HALF);
+        // Fade in/out over one streak-length at each endpoint so it dissolves
+        // into the card, and the phase wrap happens while invisible (no pop).
+        var e=1;if(c<SHINE_HALF)e=c/SHINE_HALF;else if(c>reg.len-SHINE_HALF)e=(reg.len-c)/SHINE_HALF;
+        st.el.style.opacity=e<0?0:e.toFixed(3);
+        if(b-a<=0.5){st.el.setAttribute('d','M-9 -9');return;}
+        var sp=transSubPathPts(reg.pts,a,b);
+        st.el.setAttribute('d',pathD(sp));
+        var g0=sp[0],g1=sp[sp.length-1];
+        st.grad.setAttribute('x1',g0.x);st.grad.setAttribute('y1',g0.y);
+        st.grad.setAttribute('x2',g1.x);st.grad.setAttribute('y2',g1.y);
+      });
     }else{
-      var dph=(DOT_SPEED*dtSec)/reg.len;
       reg.dots.forEach(function(dt){
         dt.phase=(dt.phase+dph)%1;
         var p=transPtAt(reg.pts,dt.phase);
@@ -2635,7 +2666,10 @@ function transUpsertDots(key,pts,warn){
   if(reg){
     reg.pts=pts;reg.len=len;reg.cls=cls;
     if(kind==='shine'){
-      transBuildShine(reg);   // rebuild tiled segments for the new geometry
+      // Streaks read reg.pts live each frame, so geometry updates need no
+      // rebuild — only when the streak COUNT changes (and only when settled).
+      var want=Math.max(1,Math.round(len/SHINE_SPACING));
+      if(!trans.animating&&reg.streaks.length!==want)transBuildShine(reg);
     }else{
       reg.dots.forEach(function(dt){dt.el.setAttribute('class',cls);});
       var n=Math.max(1,Math.round(len/DOT_SPACING));
@@ -3394,7 +3428,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-20T23:57:01Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-21T00:37:55Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
