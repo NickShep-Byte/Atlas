@@ -1779,13 +1779,11 @@ window.addEventListener('resize',relinkEcoDebounced);
 
 /* ---------- Slide 4b: Atlas app modules selector ---------- */
 var APPMODS=[
- {name:'People',fn:'People & Payroll',desc:'Timesheets, payroll, HR and return to work — every person, every record, one home.',feats:['Employee Profile & Core HR','Onboarding','Timesheets','Leave Management','End-to-End Payroll','Performance & Talent']},
- {name:'Learn',fn:'Learning & Development',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:['E-Learning','Company Inductions','Course Requests']},
+ {name:'People',fn:'People, Payroll & Learning',desc:'Timesheets, payroll, HR and return to work, plus learning, inductions and competencies — every person, every record, one home.',feats:['Employee Profile & Core HR','Onboarding','Timesheets','Leave Management','End-to-End Payroll','Performance & Talent','E-Learning','Company Inductions','Course Requests']},
  {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Tender/ Project Histories','Pipeline Tracking','Opportunity Tracking','Risk Identification','Unified Status']},
  {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast']},
  {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Resource Requests','Skills Matrix','Plant Allocation & Scheduling','Resource Management & Planning','Mobilisation']},
- {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']},
- {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:['Master Admin Control','Finance Admin Control','Project Admin Control','Learn Admin Control','User Access & Permissions','Atlas Alerts','Audit Log']}
+ {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']}
 ];
 (function(){
   var chips=document.getElementById('modChips');
@@ -3428,7 +3426,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-21T00:37:55Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-21T01:09:04Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
