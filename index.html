@@ -967,7 +967,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The Atlas Vision</span>
-      <h2 style="margin-top:1.2vh;font-size:clamp(24px,2.6vw,40px);">One brand. Seven modules.</h2>
+      <h2 style="margin-top:1.2vh;font-size:clamp(24px,2.6vw,40px);">One brand. Five modules.</h2>
     </div>
     <div class="modSelect rv d1" id="modChips" role="tablist" aria-label="Atlas modules"></div>
     <div class="modShow rv d2">
@@ -1001,7 +1001,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       </div>
       <div class="detail rv d3" id="roadDetail">
         <div class="dnum" id="rdNum">The feature set</div>
-        <h3 id="rdName">Seven modules, every feature</h3>
+        <h3 id="rdName">Five modules, every feature</h3>
         <div id="rdBody"><div class="dSec"><p>Select a module to see the features that belong to it.</p></div></div>
         <div class="hint" id="rdHint" style="display:none;">Select a feature to see its pain point, scope and benefits.</div>
       </div>
@@ -1206,7 +1206,7 @@ var cur = 0;
    features. Clicking any node shows its pain/scope/benefit in the panel
    below. Data sourced from Atlas_Description_Text_updated.docx. */
 var FEATURE_MODS=[
- {name:'People',fn:'People & Payroll',desc:'A single platform to manage the entire employee lifecycle — from recruitment and onboarding through payroll, performance and workforce management.',feats:[
+ {name:'People',fn:'People, Payroll & Learning',desc:'A single platform to manage the entire employee lifecycle — from recruitment and onboarding through payroll, performance, learning and workforce management.',feats:[
   {n:'01',name:'Employee Profile & Core HR',
    pain:'Employee information is spread across multiple systems and spreadsheets, making it difficult to maintain a complete, accurate view of each employee and identify actions requiring attention.',
    scope:'A single employee profile covering personal, employment, contract and compliance information, supported by dashboards for Line Managers and Administrators to manage key activities such as probation, medical expiries and required actions.',
@@ -1230,18 +1230,16 @@ var FEATURE_MODS=[
   {n:'06',name:'Performance & Talent',
    pain:'Performance reviews, career development and succession planning are managed inconsistently, making it difficult to develop talent and identify future leaders.',
    scope:'Digital management of goals, KPIs, performance reviews, probation, development plans and succession planning.',
-   ben:'Consistent performance management, stronger succession planning and improved employee development.'}
- ]},
- {name:'Learn',fn:'Learning & Development',desc:'Courses, inductions and competencies — skills tracked from enrolled to certified.',feats:[
-  {n:'01',name:'E-Learning',
+   ben:'Consistent performance management, stronger succession planning and improved employee development.'},
+  {n:'07',name:'E-Learning',
    pain:'Training records and compliance/recertification training are managed outside core systems via Acorn, making them hard to track and report on.',
    scope:'Provides an LMS course catalogue, compliance and recertification training, and a structured training record for every employee, replacing and decommissioning Acorn.',
    ben:'One source of truth for training compliance, easier recertification tracking, and reporting that ties training directly to the workforce.'},
-  {n:'02',name:'Company Inductions',
+  {n:'08',name:'Company Inductions',
    pain:'Site and company inductions are tracked manually across spreadsheets and paper sign-offs, making it hard to confirm who is actually cleared to be on site.',
    scope:'Digitises company and site induction sign-off with a structured, auditable record for every worker, linked to their employee profile.',
    ben:'A defensible, always-current induction record, faster site access for compliant workers, and one less manual check for site teams.'},
-  {n:'03',name:'Course Requests',
+  {n:'09',name:'Course Requests',
    pain:'Course enrolments and completions sit in disconnected systems and spreadsheets, with no easy way to see who has done what.',
    scope:'A structured course catalogue with enrolment, progress tracking and completion records, tied directly to each employee\u2019s training history.',
    ben:'Clear visibility of course completion across the workforce, easier planning of upcoming training, and one record instead of many.'}
@@ -1353,36 +1351,6 @@ var FEATURE_MODS=[
    pain:'Customer invoices are raised and tracked outside Pronto in spreadsheets and email, with no clear link back to the claim or milestone they were billed against.',
    scope:'Generates and tracks customer invoices directly from progress claims and milestones already in Atlas, posting into Pronto with a clear audit trail.',
    ben:'Faster invoicing, fewer billing errors, and a clean link from every invoice back to the claim it was raised against.'}
- ]},
- {name:'Admin',fn:'System Administration',desc:'One control room for the entire Atlas ecosystem — access, settings and oversight.',feats:[
-  {n:'01',name:'Master Admin Control',
-   pain:'Overall system configuration and cross-module settings sit with whoever last changed them, with no single place to see or control how Atlas is configured.',
-   scope:'A top-level control panel for core Atlas settings — company structure, lookups and system-wide configuration — that every other module reads from.',
-   ben:'One source of truth for how Atlas is configured, with fewer conflicting settings between modules.'},
-  {n:'02',name:'Finance Admin Control',
-   pain:'Finance-specific settings — cost codes, GL mappings, approval limits — are configured directly in Pronto by a small group, with no visibility for the wider team.',
-   scope:'Gives Finance administrators a dedicated screen to manage cost codes, GL mappings and approval thresholds that flow through to every Finance feature.',
-   ben:'Finance configuration changes are visible and auditable, and no longer require a Pronto specialist to make.'},
-  {n:'03',name:'Project Admin Control',
-   pain:'Project-level setup — templates, stages, default team structures — is recreated manually for every new project, with no consistent starting point.',
-   scope:'Lets Project administrators manage project templates, stage gates and default structures that new projects inherit automatically.',
-   ben:'Faster, more consistent project setup, and less rework fixing inconsistent starting configurations.'},
-  {n:'04',name:'Learn Admin Control',
-   pain:'Course assignments, competency requirements and training pathways are managed ad hoc, with no central owner keeping them current.',
-   scope:'A dedicated admin screen for managing courses, competency requirements and training pathways that feed the Learn module.',
-   ben:'Training content stays current and consistently assigned, without relying on one person’s memory.'},
-  {n:'05',name:'User Access & Permissions',
-   pain:'Granting or revoking system access happens through scattered requests to whoever administers each system, and access levels are granted individually per person rather than by role, so both provisioning and permissions drift out of sync with what someone should actually have.',
-   scope:'A single screen to provision, modify and revoke user access across every Atlas module, built on role-based permission sets that control what each user can see and do — assigned once per role rather than per person.',
-   ben:'Faster onboarding and offboarding, a clear, current record of who can access what, and consistent, easy-to-audit permissions that scale as the workforce changes.'},
-  {n:'06',name:'Atlas Alerts',
-   pain:'Automated emails and alerts are hardcoded per feature, so changing wording, recipients or triggers means a development request.',
-   scope:'A configurable notification centre for managing alert templates, triggers and recipient rules across all Atlas modules — alerts surface both in Atlas itself and as an email notification.',
-   ben:'Business users can adjust notifications themselves, without waiting on development changes, and nothing gets missed whether someone is in Atlas or checking email.'},
-  {n:'07',name:'Audit Log',
-   pain:'There’s no consolidated record of who changed what and when across Atlas, making it hard to investigate errors or unauthorised changes.',
-   scope:'A system-wide audit trail capturing every material change across Atlas modules, searchable by user, date and record.',
-   ben:'Full traceability for compliance and troubleshooting, without digging through individual module logs.'}
  ]}
 ];
 /* ---------- Slide 4: Feature ecosystem (SIGNATURE 2) — script logic;
@@ -1515,7 +1483,7 @@ function renderRoot(){
     ln._btn=b; ln._ang=rad;
     linksSvg.appendChild(ln);
   });
-  clearDetail('The ecosystem','Seven modules, one platform',
+  clearDetail('The ecosystem','Five modules, one platform',
     '<div class="dSec"><p>Select a module to see the features that belong to it.</p></div>','');
   rdHint.style.display='none';
   if(wasDrilled){setTimeout(function(){if(myGen===genID)relinkEco();},720);}
@@ -3445,7 +3413,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-21T01:25:48Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-21T01:44:01Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
