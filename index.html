@@ -666,6 +666,30 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s8 .cap{text-align:center;margin-top:2vh;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;}
 
 /* ============================================================
+   Merged "Approach" slide (#s6): process steps + consultation
+   rounds compressed onto one screen.
+   ============================================================ */
+#s6 .head{margin-bottom:1.2vh;}
+#s6 .stations{padding:60px 0 0;}
+#s6 .station{padding:1.4vh 1vw 1.3vh;flex:0 1 19.5vw;}
+#s6 .station h3{font-size:clamp(13px,1.15vw,18px);margin:.5vh 0 .3vh;}
+#s6 .station p{font-size:clamp(10px,.82vw,12.5px);line-height:1.35;margin-top:.5vh;}
+#s6 .station .ring{width:34px;height:34px;margin:.8vh auto 0;}
+#s6 .station .ring i{width:26px;height:26px;font-size:12px;}
+#s6 .shelf{min-height:auto;margin-top:.7vh;}
+.consultBlock{margin-top:1.5vh;}
+.consultLead{text-align:center;font-size:clamp(11px,.95vw,15px);font-weight:700;color:var(--title);margin-bottom:.4vh;}
+#s6 .roundsWrap{width:min(1200px,90vw);}
+#s6 .roundsTrack{top:30px;}
+#s6 .rounds{padding:48px 0 0;gap:1vw;}
+#s6 .round{padding:1.3vh 1vw 1.2vh;min-width:0;}
+#s6 .round .rNum{top:-16px;width:32px;height:32px;font-size:13px;}
+#s6 .round h3{font-size:clamp(12px,1.05vw,16px);margin:.4vh 0 .3vh;}
+#s6 .round .rOwn{font-size:clamp(9px,.72vw,11px);}
+#s6 .round p{font-size:clamp(10px,.8vw,12.5px);line-height:1.35;margin-top:.5vh;}
+#s6 .cap{margin-top:1vh;font-size:clamp(10px,.85vw,13px);}
+
+/* ============================================================
    SLIDE 7: Proof (design to ~90%, prototype, walkthrough link)
    ============================================================ */
 #s7{background:transparent;}
@@ -864,6 +888,80 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   <div class="prep rv d6">Prepared by <b>Nicholas Shepherd</b></div>
 </section>
 
+<!-- Slide: How we build (Process + Consultation, merged) — after the title -->
+<section class="slide" id="s6" data-label="Approach" data-act="1">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>How We Build Each Feature</span>
+      <h2 style="margin-top:1.4vh;">Four steps — with three rounds of consultation built in.</h2>
+    </div>
+    <div class="lineWrap rv d1">
+      <div class="lineTrack" aria-hidden="true"></div>
+      <div class="stations" id="stations">
+        <div class="station">
+          <div class="sNum">1</div>
+          <h3>Design</h3>
+          <div class="own">Product Manager &amp; Developer</div>
+          <p>A detailed high-level design of the feature.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+        <div class="station">
+          <div class="sNum">2</div>
+          <h3>Consult</h3>
+          <div class="own">SMEs &amp; key stakeholders</div>
+          <p>The business reviews the design; feedback is folded in.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+        <div class="station">
+          <div class="sNum">3</div>
+          <h3>Build &amp; Test</h3>
+          <div class="own">Product Manager &amp; Developer</div>
+          <p>Developed and tested against the agreed design.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+        <div class="station">
+          <div class="sNum">4</div>
+          <h3>Release</h3>
+          <div class="own">Product Manager</div>
+          <p>Shipped into production.</p>
+          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
+      </div>
+      <div class="modToken" id="modToken" aria-hidden="true">
+        <span class="tkn" id="tokenName">Plant Allocation &amp; Scheduling</span>
+      </div>
+    </div>
+    <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
+    <div class="consultBlock rv d3">
+      <div class="consultLead">Step 2 runs three rounds of consultation before any module reaches development:</div>
+      <div class="roundsWrap">
+        <div class="roundsTrack" aria-hidden="true"></div>
+        <div class="rounds">
+          <div class="round">
+            <div class="rNum">1</div>
+            <h3>End User / Site Feedback Workshop</h3>
+            <div class="rOwn">Random selection of module users</div>
+            <p>Frontline and site staff who’ll actually use the module review it directly and give feedback before the design is locked in.</p>
+          </div>
+          <div class="round">
+            <div class="rNum">2</div>
+            <h3>SME Architecture Workshop</h3>
+            <div class="rOwn">MPR, Kosti, Greg — at least one person per stream (EGM nominated)</div>
+            <p>Subject-matter experts examine the architecture and design in depth, making sure the build reflects real operational needs across every stream.</p>
+          </div>
+          <div class="round">
+            <div class="rNum">3</div>
+            <h3>Executive Briefing</h3>
+            <div class="rOwn">Optional attendance</div>
+            <p>A quick 30-minute show-and-tell for executives — the final gate before development starts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap rv d4">"The same four steps, feature after feature." &nbsp;·&nbsp; Group membership indicative only — to be confirmed with Jacob.</div>
+  </div>
+</section>
+
 <!-- Slide 4b: The Atlas app modules (guidelines style) -->
 <section class="slide" id="s4b" data-label="Modules" data-act="1">
   <div class="inner">
@@ -914,7 +1012,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 <!-- ════════════ ACT 3 ════════════ -->
 
 <!-- Slide 3: Cost flow + the Atlas concept (SIGNATURE / HERO) -->
-<section class="slide" id="s3" data-label="Cost flow" data-act="2">
+<section class="slide" id="s3" data-label="Cost flow" data-act="2" data-skip style="display:none">
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The Atlas Vision</span>
@@ -1053,87 +1151,6 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 <!-- ════════════ ACT 4 ════════════ -->
 
 <!-- Slide 6: Delivery process, production line -->
-<section class="slide" id="s6" data-label="Process" data-act="4">
-  <div class="inner">
-    <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>How We Build Each Feature</span>
-      <h2 style="margin-top:1.4vh;">Four steps. Repeated for every feature.</h2>
-    </div>
-    <div class="lineWrap rv d1">
-      <div class="lineTrack" aria-hidden="true"></div>
-      <div class="stations" id="stations">
-        <div class="station">
-          <div class="sNum">1</div>
-          <h3>Design</h3>
-          <div class="own">Product Manager &amp; Developer</div>
-          <p>A detailed high-level design of the feature.</p>
-          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
-        </div>
-        <div class="station">
-          <div class="sNum">2</div>
-          <h3>Consult</h3>
-          <div class="own">SMEs &amp; key stakeholders</div>
-          <p>The business reviews the design; feedback is folded in.</p>
-          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
-        </div>
-        <div class="station">
-          <div class="sNum">3</div>
-          <h3>Build &amp; Test</h3>
-          <div class="own">Product Manager &amp; Developer</div>
-          <p>Developed and tested against the agreed design.</p>
-          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
-        </div>
-        <div class="station">
-          <div class="sNum">4</div>
-          <h3>Release</h3>
-          <div class="own">Product Manager</div>
-          <p>Shipped into production.</p>
-          <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
-        </div>
-      </div>
-      <div class="modToken" id="modToken" aria-hidden="true">
-        <span class="tkn" id="tokenName">Plant Allocation &amp; Scheduling</span>
-      </div>
-    </div>
-    <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
-    <div class="cap rv d3">"The same four steps, feature after feature."</div>
-  </div>
-</section>
-
-<!-- Slide 8: Business consultation structure -->
-<section class="slide" id="s8" data-label="Consultation" data-act="4">
-  <div class="inner">
-    <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>The Consultation</span>
-      <h2 style="margin-top:1.4vh;">Three rounds of consultation, before any module reaches development.</h2>
-    </div>
-    <div class="roundsWrap rv d1">
-      <div class="roundsTrack" aria-hidden="true"></div>
-      <div class="rounds">
-        <div class="round">
-          <div class="rNum">1</div>
-          <h3>End User / Site Feedback Workshop</h3>
-          <div class="rOwn">Random selection of module users</div>
-          <p>Frontline and site staff who’ll actually use the module review it directly and give feedback before the design is locked in.</p>
-        </div>
-        <div class="round">
-          <div class="rNum">2</div>
-          <h3>SME Architecture Workshop</h3>
-          <div class="rOwn">MPR, Kosti, Greg — at least one person per stream (EGM nominated)</div>
-          <p>Subject-matter experts examine the architecture and design in depth, making sure the build reflects real operational needs across every stream.</p>
-        </div>
-        <div class="round">
-          <div class="rNum">3</div>
-          <h3>Executive Briefing</h3>
-          <div class="rOwn">Optional attendance</div>
-          <p>A quick 30-minute show-and-tell for executives — the final gate before development starts.</p>
-        </div>
-      </div>
-    </div>
-    <div class="cap rv d3">Group membership is indicative only — to be confirmed with Jacob.</div>
-  </div>
-</section>
-
 <!-- ════════════ ACT 5 ════════════ -->
 
 <!-- Slide 7: Proof + walkthrough link -->
@@ -1176,7 +1193,9 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 (function(){
 "use strict";
 var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+// Slides marked data-skip are kept in the DOM (so their JS/ids stay valid)
+// but excluded from navigation and the progress bar.
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide:not([data-skip])'));
 var cur = 0;
 
 
@@ -3426,7 +3445,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-21T01:09:04Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-21T01:25:48Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
