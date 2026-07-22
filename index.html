@@ -676,10 +676,10 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s6 .lineTrack{top:15px;}
 #s6 .modToken{top:15px;}
 #s6 .stations{padding:64px 0 0;gap:.55vw;}
-#s6 .station{padding:1.1vh .65vw 1.1vh;flex:0 1 13vw;min-width:140px;}
+#s6 .station{padding:1.1vh .65vw 4.6vh;flex:0 1 13vw;min-width:140px;}
 #s6 .station h3{font-size:clamp(11px,.92vw,15px);margin:.5vh 0 .3vh;line-height:1.15;}
 #s6 .station p{font-size:clamp(8.5px,.7vw,11px);line-height:1.32;margin-top:.4vh;}
-#s6 .station .ring{width:28px;height:28px;margin:.7vh auto 0;}
+#s6 .station .ring{width:28px;height:28px;margin:0;position:absolute;left:50%;bottom:1.1vh;transform:translateX(-50%);}
 #s6 .station .ring i{width:21px;height:21px;font-size:11px;}
 #s6 .shelf{display:none;}                     /* a "Delivered" shelf doesn't fit a cycle */
 /* per-step consultation-group badges (top-right of a station) */
@@ -971,7 +971,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
           <div class="round">
             <div class="rNum cg-p">P</div>
             <h3>Primary Group</h3>
-            <div class="rOwn">SME · Product Owner · Stakeholder</div>
+            <div class="rOwn">Subject matter experts from each stream</div>
             <p>Early refinement of the feature’s functional requirements, within the bounds of its scope.</p>
           </div>
           <div class="round">
@@ -3444,7 +3444,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-22T23:42:17Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-22T23:49:06Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
