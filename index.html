@@ -671,7 +671,11 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
    ============================================================ */
 :root{--cg-p:#0582CA;--cg-u:#00908E;--cg-e:#7A5FB8;}
 #s6 .head{margin-bottom:1vh;}
-#s6 .stations{padding:52px 0 0;gap:.55vw;}
+/* Raise the token track above the step-number badges so the flying feature
+   name doesn't collide with the numbers. */
+#s6 .lineTrack{top:15px;}
+#s6 .modToken{top:15px;}
+#s6 .stations{padding:64px 0 0;gap:.55vw;}
 #s6 .station{padding:1.1vh .65vw 1.1vh;flex:0 1 13vw;min-width:140px;}
 #s6 .station h3{font-size:clamp(11px,.92vw,15px);margin:.5vh 0 .3vh;line-height:1.15;}
 #s6 .station p{font-size:clamp(8.5px,.7vw,11px);line-height:1.32;margin-top:.4vh;}
@@ -3440,7 +3444,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-22T05:21:46Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-22T23:42:17Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
