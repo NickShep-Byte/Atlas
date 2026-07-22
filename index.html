@@ -1163,9 +1163,9 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The When</span>
-      <h2 style="margin-top:1.4vh;">At least one new module, roughly every quarter.</h2>
+      <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2028, modules delivered as time progresses">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2028, releases delivered as time progresses">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -1175,7 +1175,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <path class="spineFill" id="spineFill" d="M40 260 H1360"/>
       <!-- ticks + playhead injected by JS -->
     </svg>
-    <div class="cap rv d3">"Indicative cadence: at least one module per quarter. Sequencing and dates to be confirmed against delivery capacity."</div>
+    <div class="cap rv d3">"Indicative cadence: at least one release per quarter. Sequencing and dates to be confirmed against delivery capacity. Lower-impact features and updates may be released outside of the major drops."</div>
   </div>
 </section>
 
@@ -3444,7 +3444,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-22T23:49:06Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-22T23:54:47Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
