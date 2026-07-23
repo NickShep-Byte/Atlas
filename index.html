@@ -1165,7 +1165,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q1 2029, releases delivered as time progresses">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2027, releases delivered as time progresses">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -1832,19 +1832,31 @@ var APPMODS=[
 // mapping each of its nodes to the matching Atlas feature. Quarters stay
 // fixed (Q3 2026 → Q4 2028); the first delivery keeps the milestone
 // marker. Shared by slide 5 (cadence) and slide 6 (process).
-var CAD=[
- ["Q3 2026","General Ledger Journaling & Monthly Project Report",true],
- ["Q4 2026","Plant Allocation & Scheduling"],
- ["Q1 2027","Procurement Controls"],
- ["Q2 2027","Progress Claims (Upstream)"],
- ["Q3 2027","Revenue Management"],
- ["Q4 2027","Vendor Claim Validation"],
- ["Q1 2028","Cashflow Forecast"],
- ["Q2 2028","Cost to Complete Forecast"],
- ["Q3 2028","Daily Diary"],
- ["Q4 2028","Cost Coding Control"],
- ["Q1 2029","Resource Management & Planning"]
+// Individual feature releases, in delivery order — one data row each. The
+// timeline pulls them dynamically into batches of CAD_BATCH per quarter,
+// starting Q3 2026; change the list or the batch size and the timeline,
+// spacing, quarter labels and token animation all re-derive.
+var CAD_BATCH=2;
+var CAD_FEATURES=[
+ "General Ledger Journaling",
+ "Monthly Project Report",
+ "Plant Allocation & Scheduling",
+ "Procurement Controls",
+ "Progress Claims (Upstream)",
+ "Revenue Management",
+ "Vendor Claim Validation",
+ "Cashflow Forecast",
+ "Cost to Complete Forecast",
+ "Daily Diary",
+ "Cost Coding Control",
+ "Resource Management & Planning"
 ];
+// Quarter label for batch index i, counting from Q3 2026.
+function cadQuarter(i){var a=2026*4+2+i;return 'Q'+(a%4+1)+' '+Math.floor(a/4);}
+var CAD=[];
+for(var _ci=0;_ci<CAD_FEATURES.length;_ci+=CAD_BATCH){
+  CAD.push([cadQuarter(CAD.length),CAD_FEATURES.slice(_ci,_ci+CAD_BATCH),_ci===0]);
+}
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
 var X0=70, X1=1290, MIDY=260;
@@ -1874,14 +1886,10 @@ CAD.forEach(function(c,i){
   }
   var baseY = up? MIDY-70 : MIDY+82;
   g.appendChild(txt(c[0], up? baseY-38 : baseY+2 ,'q'));
-  var words=c[1];
-  if(words.length>22){
-    var br=words.lastIndexOf(' ',Math.ceil(words.length/2)+3);
-    g.appendChild(txt(words.slice(0,br), up? baseY-18: baseY+22,'mn'));
-    g.appendChild(txt(words.slice(br+1), up? baseY-1 : baseY+39,'mn2'));
-  }else{
-    g.appendChild(txt(words, up? baseY-10: baseY+28,'mn'));
-  }
+  // One line per batched feature (two per quarter).
+  c[1].forEach(function(f,fi){
+    g.appendChild(txt(f, (up? baseY-18 : baseY+22) + fi*17, fi===0?'mn':'mn2'));
+  });
   tl.appendChild(g);
   tickGroups.push(g);
 });
@@ -1949,8 +1957,8 @@ function clearShelfChips(){
 }
 function runModule(){
   if(!line.running)return;
-  var ci=line.modIdx%CAD.length;
-  var m={name:CAD[ci][1]};
+  var ci=line.modIdx%CAD_FEATURES.length;
+  var m={name:CAD_FEATURES[ci]};
   var centers=stationCenters();
   // reset stations
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
@@ -2012,9 +2020,9 @@ function lineStart(){
   if(RM){
     stationEls.forEach(function(st){st.classList.add('done');st.style.setProperty('--pr',100);});
     clearShelfChips();
-    CAD.slice(0,3).forEach(function(c){
+    CAD_FEATURES.slice(0,3).forEach(function(f){
       var chip=document.createElement('span');
-      chip.className='dchip';chip.textContent=c[1];
+      chip.className='dchip';chip.textContent=f;
       shelf.appendChild(chip);
     });
     return;
@@ -3449,7 +3457,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-23T00:38:49Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-23T01:04:13Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
