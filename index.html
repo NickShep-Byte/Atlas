@@ -1329,7 +1329,11 @@ var FEATURE_MODS=[
   {n:'08',name:'Cost to Complete Forecast',
    pain:'Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.',
    scope:'Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.',
-   ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'}
+   ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'},
+  {n:'09',name:'Monthly Project Report',
+   pain:'MPRs are generated manually — slow, time-consuming and out of sync with the EoM timelines.',
+   scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
+   ben:'Major reduction in project-reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'}
  ]},
  {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
   {n:'01',name:'Resource Requests',
@@ -1799,7 +1803,7 @@ window.addEventListener('resize',relinkEcoDebounced);
 var APPMODS=[
  {name:'People',fn:'People, Payroll & Learning',desc:'Timesheets, payroll, HR and return to work, plus learning, inductions and competencies — every person, every record, one home.',feats:['Employee Profile & Core HR','Onboarding','Timesheets','Leave Management','End-to-End Payroll','Performance & Talent','E-Learning','Company Inductions','Course Requests']},
  {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Tender/ Project Histories','Pipeline Tracking','Opportunity Tracking','Risk Identification','Unified Status']},
- {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast']},
+ {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast','Monthly Project Report']},
  {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Resource Requests','Skills Matrix','Plant Allocation & Scheduling','Resource Management & Planning','Mobilisation']},
  {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']}
 ];
@@ -3445,7 +3449,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-23T00:29:03Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-23T00:35:11Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
