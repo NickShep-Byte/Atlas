@@ -1859,7 +1859,7 @@ for(var _ci=0;_ci<CAD_FEATURES.length;_ci+=CAD_BATCH){
 }
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
-var X0=70, X1=1290, MIDY=260;
+var X0=155, X1=1290, MIDY=260;   // wider left margin = visible lead-in before the Q3 drop
 var tickGroups=[];
 CAD.forEach(function(c,i){
   var x=X0+i*(X1-X0)/(CAD.length-1), up=(i%2===0);
@@ -1914,14 +1914,16 @@ function cadenceFrame(ts){
   ph.setAttribute('transform','translate('+x+',0)');
   ph.style.opacity = p<1 ? 1 : 0;
   spineFill.setAttribute('stroke-dashoffset',spineLen*(1-p));
-  var lbl='';
   tickGroups.forEach(function(g,i){
-    var tx=+g.dataset.x;
-    var hit = x>=tx-2;
-    g.classList.toggle('delivered',hit);
-    if(hit)lbl=CAD[i][0];
+    g.classList.toggle('delivered', x>=(+g.dataset.x)-2);
   });
-  phLabel.textContent = p<1 ? (lbl||'2026') : '';
+  // Marker shows the drop it's leading IN to: starts on Q3 2026, then flips to
+  // the next quarter the moment it reaches each drop (Q3 drop -> Q4, etc.).
+  var lbl=CAD[CAD.length-1][0];
+  for(var li=0;li<tickGroups.length;li++){
+    if(x < (+tickGroups[li].dataset.x)-2){ lbl=CAD[li][0]; break; }
+  }
+  phLabel.textContent = p<1 ? lbl : '';
   cadence.raf=requestAnimationFrame(cadenceFrame);
 }
 function cadenceStart(){
@@ -3457,7 +3459,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-23T01:27:17Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-23T01:33:45Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
