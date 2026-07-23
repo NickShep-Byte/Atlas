@@ -1165,7 +1165,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2028, releases delivered as time progresses">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q1 2029, releases delivered as time progresses">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -1829,23 +1829,24 @@ var APPMODS=[
 // fixed (Q3 2026 → Q4 2028); the first delivery keeps the milestone
 // marker. Shared by slide 5 (cadence) and slide 6 (process).
 var CAD=[
- ["Q3 2026","Plant Allocation & Scheduling",true],
- ["Q4 2026","Procurement Controls"],
- ["Q1 2027","Progress Claims (Upstream)"],
- ["Q2 2027","Revenue Management"],
- ["Q3 2027","Vendor Claim Validation"],
- ["Q4 2027","Cashflow Forecast"],
- ["Q1 2028","Cost to Complete Forecast"],
- ["Q2 2028","Daily Diary"],
- ["Q3 2028","Cost Coding Control"],
- ["Q4 2028","Resource Management & Planning"]
+ ["Q3 2026","Monthly Reporting & Journaling",true],
+ ["Q4 2026","Plant Allocation & Scheduling"],
+ ["Q1 2027","Procurement Controls"],
+ ["Q2 2027","Progress Claims (Upstream)"],
+ ["Q3 2027","Revenue Management"],
+ ["Q4 2027","Vendor Claim Validation"],
+ ["Q1 2028","Cashflow Forecast"],
+ ["Q2 2028","Cost to Complete Forecast"],
+ ["Q3 2028","Daily Diary"],
+ ["Q4 2028","Cost Coding Control"],
+ ["Q1 2029","Resource Management & Planning"]
 ];
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
 var X0=70, X1=1290, MIDY=260;
 var tickGroups=[];
 CAD.forEach(function(c,i){
-  var x=X0+i*(X1-X0)/9, up=(i%2===0);
+  var x=X0+i*(X1-X0)/(CAD.length-1), up=(i%2===0);
   var g=document.createElementNS(NS,'g');
   g.setAttribute('class','tick');
   g.dataset.x=x;
@@ -3444,7 +3445,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-22T23:54:47Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-23T00:09:38Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
