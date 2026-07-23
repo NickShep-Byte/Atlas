@@ -565,6 +565,19 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .playhead line{stroke:var(--acc2);stroke-width:1.5;opacity:.8;}
 #s5 .playhead circle{fill:var(--acc2);}
 #s5 .playhead text{font-family:var(--font);font-size:13px;font-weight:800;fill:var(--title);letter-spacing:.06em;}
+/* Atlas People rollout track (second bar, above the release timeline) */
+#s5 .pplBar text{font-family:var(--font-util);}
+#s5 .pseg{stroke:rgba(var(--srf-rgb),.55);stroke-width:1;}
+#s5 .pseg.s1a{fill:rgba(var(--teal-rgb),.30);}
+#s5 .pseg.s1b{fill:rgba(var(--teal-rgb),.45);}
+#s5 .pseg.s1c{fill:rgba(var(--teal-rgb),.62);}
+#s5 .pseg.s2{fill:rgba(var(--sec-rgb),.34);}
+#s5 .psegLbl{font-size:12px;font-weight:700;fill:var(--title);}
+#s5 .pstage{font-size:12px;font-weight:800;fill:var(--soft);letter-spacing:.03em;}
+#s5 .ptitle{font-size:13.5px;font-weight:800;fill:var(--teal);letter-spacing:.02em;}
+#s5 .pnote{font-size:10px;font-weight:600;fill:var(--soft);font-style:italic;}
+#s5 .pgolive{font-size:11px;font-weight:800;fill:var(--acc2);letter-spacing:.04em;}
+#s5 .pgoLine{stroke:var(--acc2);stroke-width:2;}
 #s5 .cap{text-align:center;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;margin-top:.5vh;}
 
 /* ============================================================
@@ -1165,7 +1178,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1400 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2027, releases delivered as time progresses">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1560 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2027, releases delivered as time progresses, with the Atlas People rollout shown above">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -1893,6 +1906,33 @@ CAD.forEach(function(c,i){
   tl.appendChild(g);
   tickGroups.push(g);
 });
+/* ---- Atlas People rollout: a second, rough track above the release bar,
+   sharing the same month axis. Starts at Q4 2026 (once devs are onboard). ---- */
+(function(){
+  var PMONTH=(X1-X0)/(CAD.length-1)/3;      // px per month, matched to the release axis
+  var pStart=X0+(X1-X0)/(CAD.length-1);      // Q4 2026 (2nd quarter)
+  var BY=96,BH=22;
+  var pg=document.createElementNS(NS,'g');pg.setAttribute('class','pplBar');
+  function prect(x,w,cls){var r=document.createElementNS(NS,'rect');r.setAttribute('x',x);r.setAttribute('y',BY-BH/2);r.setAttribute('width',w);r.setAttribute('height',BH);r.setAttribute('rx',4);r.setAttribute('class',cls);pg.appendChild(r);}
+  function ptxt(x,y,cls,anchor,s){var t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor',anchor);t.setAttribute('class',cls);t.textContent=s;pg.appendChild(t);}
+  var x=pStart;
+  [['Core HR',4,'s1a'],['LMS',2,'s1b'],['Time & Pay',6,'s1c']].forEach(function(s){
+    var w=s[1]*PMONTH;prect(x,w,'pseg '+s[2]);ptxt(x+w/2,BY+4.5,'psegLbl','middle',s[0]+' ('+s[1]+')');x+=w;
+  });
+  var s1End=x, perfW=3*PMONTH;
+  prect(s1End,perfW,'pseg s2');ptxt(s1End+perfW/2,BY+4.5,'psegLbl','middle','Performance (3)');
+  // stage labels above
+  ptxt((pStart+s1End)/2,BY-BH/2-9,'pstage','middle','Stage 1  ·  12 months');
+  ptxt(s1End+perfW/2,BY-BH/2-9,'pstage','middle','Stage 2  ·  3 months');
+  // GO-LIVE divider + label at the end of Stage 1
+  var gl=document.createElementNS(NS,'line');gl.setAttribute('x1',s1End);gl.setAttribute('x2',s1End);gl.setAttribute('y1',BY-BH/2-4);gl.setAttribute('y2',BY+BH/2+4);gl.setAttribute('class','pgoLine');pg.appendChild(gl);
+  ptxt(s1End,BY+BH/2+18,'pgolive','middle','Stage 1 GO-LIVE');
+  // title + rough-flow note (left) and start note
+  ptxt(40,BY-BH/2-9,'ptitle','start','Atlas · People');
+  ptxt(40,BY+4.5,'pnote','start','Very rough — ( ) = months');
+  ptxt(pStart,BY+BH/2+18,'pnote','middle','Starts once devs onboard (Q4)');
+  tl.appendChild(pg);
+})();
 var spineFill=document.getElementById('spineFill');
 var spineLen=1360-40;
 spineFill.setAttribute('stroke-dasharray',spineLen);
@@ -3459,7 +3499,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-23T02:34:31Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-23T04:06:50Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
