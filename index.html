@@ -567,14 +567,23 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .playhead text{font-family:var(--font);font-size:13px;font-weight:800;fill:var(--title);letter-spacing:.06em;}
 /* Atlas People rollout track — same spine/dot/label style as the release timeline */
 #s5 .pplBar text{font-family:var(--font-util);}
-#s5 .pspine{stroke:rgba(var(--acc2-rgb),.28);stroke-width:2.5;fill:none;stroke-linecap:round;}
-#s5 .pdot{fill:var(--well);stroke:rgba(var(--acc2-rgb),.45);stroke-width:2;}
-#s5 .pdot.golive{fill:var(--sec);stroke:var(--acc2);}
+#s5 .pspine{stroke:rgba(var(--acc2-rgb),.22);stroke-width:3;fill:none;stroke-linecap:round;}
+#s5 .pspineFill{stroke:url(#spineGrad);stroke-width:3;fill:none;stroke-linecap:round;}
+#s5 .pdot{fill:var(--well);stroke:rgba(var(--acc2-rgb),.45);stroke-width:2;transition:all .45s var(--ease);}
+#s5 .pdot.start{fill:var(--acc2);stroke:var(--acc2);}
+#s5 .pdot.delivered{fill:var(--sec);stroke:var(--acc2);}
 #s5 .pq{font-size:11.5px;font-weight:800;fill:var(--soft);letter-spacing:.04em;}
 #s5 .pmn{font-size:12.5px;font-weight:700;fill:var(--title);}
-#s5 .ptitle{font-size:13px;font-weight:800;fill:var(--acc2);letter-spacing:.02em;}
 #s5 .pnote{font-size:10px;font-weight:600;fill:var(--soft);font-style:italic;}
 #s5 .pgolive{font-size:11px;font-weight:800;fill:var(--acc2);letter-spacing:.04em;}
+#s5 .pplayhead line{stroke:var(--acc2);stroke-width:1.5;opacity:.8;}
+#s5 .pplayhead circle{fill:var(--acc2);}
+/* left-column module lockups (Atlas | Module), mirroring the modules slide */
+#s5 .modCol text{font-family:var(--font);}
+#s5 .mlk{font-size:15px;font-weight:800;}
+#s5 .mlk .mlA{fill:var(--title);}
+#s5 .mlk .mlSep{fill:var(--teal);font-weight:500;}
+#s5 .mlk .mlName{fill:var(--sec);}
 #s5 .cap{text-align:center;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;margin-top:.5vh;}
 
 /* ============================================================
@@ -1175,14 +1184,14 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1560 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2027, releases delivered as time progresses, with the Atlas People rollout shown above">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2027, releases delivered as time progresses, with the Atlas People rollout shown above">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
         </linearGradient>
       </defs>
-      <path class="spine" d="M40 260 H1360"/>
-      <path class="spineFill" id="spineFill" d="M40 260 H1360"/>
+      <path class="spine" d="M220 260 H1540"/>
+      <path class="spineFill" id="spineFill" d="M220 260 H1540"/>
       <!-- ticks + playhead injected by JS -->
     </svg>
     <div class="cap rv d3">"Indicative cadence: at least one release per quarter. Sequencing and dates to be confirmed against delivery capacity. Lower-impact features and updates may be released outside of the major drops."</div>
@@ -1869,8 +1878,18 @@ for(var _ci=0;_ci<CAD_FEATURES.length;_ci+=CAD_BATCH){
 }
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
-var X0=155, X1=1290, MIDY=260;   // wider left margin = visible lead-in before the Q3 drop
+var X0=335, X1=1470, MIDY=260;   // left margin holds module labels; lead-in before the Q3 drop
+var SPINE0=220, SPINE1=1540;     // spine/playhead sweep extent
 var tickGroups=[];
+var pplFill,pplHead,pplDots=[],pplStart,pplEnd;   // People track animation refs
+// "Atlas | Module" lockup as SVG text (mirrors the modules slide styling).
+function atlasLockup(x,y,mod,anchor){
+  var t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',y);
+  t.setAttribute('text-anchor',anchor||'start');t.setAttribute('class','mlk');
+  function span(cls,s){var sp=document.createElementNS(NS,'tspan');sp.setAttribute('class',cls);sp.textContent=s;t.appendChild(sp);}
+  span('mlA','Atlas');span('mlSep','  |  ');span('mlName',mod);
+  return t;
+}
 CAD.forEach(function(c,i){
   var x=X0+i*(X1-X0)/(CAD.length-1), up=(i%2===0);
   var g=document.createElementNS(NS,'g');
@@ -1903,41 +1922,50 @@ CAD.forEach(function(c,i){
   tl.appendChild(g);
   tickGroups.push(g);
 });
-/* ---- Atlas People rollout: a second track above the release timeline, in the
-   SAME spine-and-dots style. Shares the month axis; starts Q4 2026 (devs onboard). ---- */
+/* ---- Atlas People rollout: its OWN track above the release timeline, in the
+   same spine-and-dots style with its own playhead + delivering dots. Shares the
+   month axis; starts at the Q3 line (= start of Q4, when devs onboard). Phase
+   labels sit at the END of each period. ---- */
 (function(){
-  var PMONTH=(X1-X0)/(CAD.length-1)/3;        // px per month, matched to the release axis
-  var pStart=X0+(X1-X0)/(CAD.length-1);        // Q4 2026 (2nd quarter)
-  var PSY=112;                                 // People spine y
+  var PMONTH=(X1-X0)/(CAD.length-1)/3;         // px per month, matched to the release axis
+  var PSY=110, pStart=X0;                       // start of Q4 == the Q3 line
   var pg=document.createElementNS(NS,'g');pg.setAttribute('class','pplBar');
   function ptxt(x,y,cls,anchor,s){var t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor',anchor);t.setAttribute('class',cls);t.textContent=s;pg.appendChild(t);}
-  function pdot(x,cls,r){var c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class',cls);pg.appendChild(c);}
-  // phase boundaries along the shared month axis
-  var bounds=[pStart],xx=pStart;
-  [['Core HR',4],['LMS',2],['Time & Pay',6]].forEach(function(p){xx+=p[1]*PMONTH;bounds.push(xx);});
-  var goX=xx, perfEnd=goX+3*PMONTH;
-  // spine (same look as the release spine)
+  function pdot(x,cls,r){var c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class',cls);c.dataset.x=x;pg.appendChild(c);return c;}
+  // phase END positions (labels at the end of each period)
+  var xx=pStart,ends=[];
+  [['Core HR',4],['LMS',2],['Time & Pay',6],['Performance',3]].forEach(function(p){xx+=p[1]*PMONTH;ends.push({name:p[0]+' ('+p[1]+')',x:xx});});
+  var goX=ends[2].x,perfEnd=ends[3].x;
+  pplStart=pStart;pplEnd=perfEnd;
+  // spine + animated gradient fill
   var sp=document.createElementNS(NS,'line');sp.setAttribute('x1',pStart);sp.setAttribute('x2',perfEnd);sp.setAttribute('y1',PSY);sp.setAttribute('y2',PSY);sp.setAttribute('class','pspine');pg.appendChild(sp);
-  // hollow boundary dots + emphasised GO-LIVE dot (like a delivered milestone)
-  bounds.forEach(function(bx){pdot(bx,'pdot',7);});
-  pdot(perfEnd,'pdot',7);
-  pdot(goX,'pdot golive',9);
-  // phase labels (name + months) centred in each segment, above the spine
-  [['Core HR (4)',(bounds[0]+bounds[1])/2],['LMS (2)',(bounds[1]+bounds[2])/2],
-   ['Time & Pay (6)',(bounds[2]+bounds[3])/2],['Performance (3)',(goX+perfEnd)/2]]
-    .forEach(function(s){ptxt(s[1],PSY-13,'pmn','middle',s[0]);});
-  // stage labels above (same feel as the quarter labels)
-  ptxt((pStart+goX)/2,PSY-32,'pq','middle','Stage 1 · 12 months');
-  ptxt((goX+perfEnd)/2,PSY-32,'pq','middle','Stage 2 · 3 months');
-  // GO-LIVE + title + rough-flow / start notes
-  ptxt(goX,PSY+22,'pgolive','middle','Stage 1 GO-LIVE');
-  ptxt(40,PSY-32,'ptitle','start','Atlas · People');
-  ptxt(40,PSY-13,'pnote','start','Very rough — ( ) = months');
-  ptxt(pStart,PSY+22,'pnote','middle','Starts once devs onboard (Q4)');
+  pplFill=document.createElementNS(NS,'path');pplFill.setAttribute('class','pspineFill');pplFill.setAttribute('d','M'+pStart+' '+PSY+' H'+perfEnd);
+  var pflen=perfEnd-pStart;pplFill.setAttribute('stroke-dasharray',pflen);pplFill.setAttribute('stroke-dashoffset',pflen);pg.appendChild(pplFill);
+  // start dot (devs onboard) + phase-end delivering dots (Time & Pay end = GO-LIVE)
+  pdot(pStart,'pdot start',6);
+  ends.forEach(function(e,i){
+    var isGo=(i===2),d=pdot(e.x,isGo?'pdot golive':'pdot',isGo?9:7);
+    pplDots.push(d);ptxt(e.x,PSY-14,'pmn','middle',e.name);
+  });
+  // stage labels above; GO-LIVE + start note below the spine
+  ptxt((pStart+goX)/2,PSY-33,'pq','middle','Stage 1 · 12 months');
+  ptxt((goX+perfEnd)/2,PSY-33,'pq','middle','Stage 2 · 3 months');
+  ptxt(goX,PSY+21,'pgolive','middle','Stage 1 GO-LIVE');
+  ptxt(pStart,PSY+21,'pnote','middle','Devs onboard (start Q4)');
+  // People's own playhead marker
+  pplHead=document.createElementNS(NS,'g');pplHead.setAttribute('class','pplayhead');
+  pplHead.innerHTML='<line x1="0" x2="0" y1="'+(PSY-16)+'" y2="'+(PSY+16)+'"/><circle cx="0" cy="'+PSY+'" r="5"/>';
+  pplHead.style.opacity=0;pg.appendChild(pplHead);
   tl.appendChild(pg);
+  // left-column module lockups: People by its track; Projects/Operations/Finance
+  // stacked and centred on the release spine.
+  var lg=document.createElementNS(NS,'g');lg.setAttribute('class','modCol');
+  lg.appendChild(atlasLockup(24,PSY+5,'People'));
+  ['Projects','Operations','Finance'].forEach(function(m,i){lg.appendChild(atlasLockup(24,MIDY-26+i*26,m));});
+  tl.appendChild(lg);
 })();
 var spineFill=document.getElementById('spineFill');
-var spineLen=1360-40;
+var spineLen=SPINE1-SPINE0;
 spineFill.setAttribute('stroke-dasharray',spineLen);
 spineFill.setAttribute('stroke-dashoffset',spineLen);
 var ph=document.createElementNS(NS,'g');
@@ -1953,13 +1981,21 @@ function cadenceFrame(ts){
   if(!cadence.running)return;
   var t=(ts-cadence.t0)%(SWEEP+HOLD);
   var p=Math.min(1,t/SWEEP);
-  var x=40+(1360-40)*p;
+  var x=SPINE0+(SPINE1-SPINE0)*p;
   ph.setAttribute('transform','translate('+x+',0)');
   ph.style.opacity = p<1 ? 1 : 0;
   spineFill.setAttribute('stroke-dashoffset',spineLen*(1-p));
   tickGroups.forEach(function(g,i){
     g.classList.toggle('delivered', x>=(+g.dataset.x)-2);
   });
+  // People track: own fill, playhead and delivering dots on the same progress
+  if(pplFill){
+    var pflen=pplEnd-pplStart,pxx=Math.max(pplStart,Math.min(pplEnd,x));
+    pplFill.setAttribute('stroke-dashoffset',pflen*(1-(pxx-pplStart)/pflen));
+    pplHead.setAttribute('transform','translate('+pxx+',0)');
+    pplHead.style.opacity=(x>=pplStart&&x<pplEnd&&p<1)?1:0;
+    pplDots.forEach(function(d){d.classList.toggle('delivered', x>=(+d.dataset.x)-2);});
+  }
   // Marker shows the drop it's leading IN to: starts on Q3 2026, then flips to
   // the next quarter the moment it reaches each drop (Q3 drop -> Q4, etc.).
   var lbl=CAD[CAD.length-1][0];
@@ -1973,6 +2009,7 @@ function cadenceStart(){
   if(RM){
     tickGroups.forEach(function(g){g.classList.add('delivered');});
     spineFill.setAttribute('stroke-dashoffset',0);
+    if(pplFill){pplFill.setAttribute('stroke-dashoffset',0);pplDots.forEach(function(d){d.classList.add('delivered');});}
     return;
   }
   cadence.running=true;cadence.t0=performance.now();
@@ -3502,7 +3539,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-27T03:15:14Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-27T03:32:19Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
