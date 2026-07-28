@@ -565,7 +565,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .tick.delivered circle{fill:var(--sec);stroke:var(--acc2);}
 #s5 .tick.delivered text{fill:var(--title);}
 #s5 .tick.delivered .q{fill:var(--acc2);}
-#s5 .tick.delivered .ck{opacity:1;}
+#s5 .tick.delivered .ck{opacity:1;fill:#fff;}   /* keep the tick white (labels darken, tick doesn't) */
 #s5 .playhead line{stroke:var(--acc2);stroke-width:1.5;opacity:.8;}
 #s5 .playhead circle{fill:var(--acc2);}
 #s5 .playhead text{font-family:var(--font);font-size:13px;font-weight:800;fill:var(--title);letter-spacing:.06em;}
@@ -576,10 +576,10 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .pdot{fill:var(--well);stroke:rgba(var(--acc2-rgb),.45);stroke-width:2;transition:all .45s var(--ease);}
 #s5 .pdot.start{fill:var(--acc2);stroke:var(--acc2);}
 #s5 .ptick.delivered .pdot{fill:var(--sec);stroke:var(--acc2);}
-#s5 .pck{font-size:11px;font-weight:800;fill:#fff;opacity:0;transition:opacity .35s ease;}
+#s5 .pck{font-size:13px;font-weight:800;fill:#fff;opacity:0;transition:opacity .35s ease;}
 #s5 .ptick.delivered .pck{opacity:1;}
-#s5 .pq{font-size:11.5px;font-weight:800;fill:var(--soft);letter-spacing:.04em;}
-#s5 .pmn{font-size:12.5px;font-weight:700;fill:var(--title);}
+#s5 .pplBar .pq{font-size:12.5px;font-weight:700;fill:var(--soft);letter-spacing:.08em;}
+#s5 .pplBar .pmn{font-size:13.5px;font-weight:700;fill:var(--title);font-family:var(--font);}
 #s5 .pnote{font-size:10px;font-weight:600;fill:var(--soft);font-style:italic;}
 #s5 .pgolive{font-size:11px;font-weight:800;fill:var(--acc2);letter-spacing:.04em;}
 #s5 .pplayhead line{stroke:var(--acc2);stroke-width:1.5;opacity:.8;}
@@ -1955,7 +1955,7 @@ CAD.forEach(function(c,i){
   // start dot (devs onboard) + phase-end delivering dots (Time & Pay end = GO-LIVE)
   pdot(pStart,'pdot start',6);
   ends.forEach(function(e,i){
-    var isGo=(i===2),r=isGo?9:7;
+    var isGo=(i===2),r=isGo?11:9;
     // each delivery point is a group (dot + tick) so the check shows on land
     var gt=document.createElementNS(NS,'g');gt.setAttribute('class','ptick'+(isGo?' golive':''));gt.dataset.x=e.x;
     var c=document.createElementNS(NS,'circle');c.setAttribute('cx',e.x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class','pdot');gt.appendChild(c);
@@ -3584,7 +3584,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-28T01:59:33Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-28T02:58:57Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
