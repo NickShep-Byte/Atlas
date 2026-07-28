@@ -575,7 +575,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .pspineFill{stroke:url(#spineGrad);stroke-width:3;fill:none;stroke-linecap:round;}
 #s5 .pdot{fill:var(--well);stroke:rgba(var(--acc2-rgb),.45);stroke-width:2;transition:all .45s var(--ease);}
 #s5 .pdot.start{fill:var(--acc2);stroke:var(--acc2);}
-#s5 .pdot.delivered{fill:var(--sec);stroke:var(--acc2);}
+#s5 .ptick.delivered .pdot{fill:var(--sec);stroke:var(--acc2);}
+#s5 .pck{font-size:11px;font-weight:800;fill:#fff;opacity:0;transition:opacity .35s ease;}
+#s5 .ptick.delivered .pck{opacity:1;}
 #s5 .pq{font-size:11.5px;font-weight:800;fill:var(--soft);letter-spacing:.04em;}
 #s5 .pmn{font-size:12.5px;font-weight:700;fill:var(--title);}
 #s5 .pnote{font-size:10px;font-weight:600;fill:var(--soft);font-style:italic;}
@@ -1953,8 +1955,13 @@ CAD.forEach(function(c,i){
   // start dot (devs onboard) + phase-end delivering dots (Time & Pay end = GO-LIVE)
   pdot(pStart,'pdot start',6);
   ends.forEach(function(e,i){
-    var isGo=(i===2),d=pdot(e.x,isGo?'pdot golive':'pdot',isGo?9:7);
-    pplDots.push(d);ptxt(e.x,PSY-14,'pmn','middle',e.name);
+    var isGo=(i===2),r=isGo?9:7;
+    // each delivery point is a group (dot + tick) so the check shows on land
+    var gt=document.createElementNS(NS,'g');gt.setAttribute('class','ptick'+(isGo?' golive':''));gt.dataset.x=e.x;
+    var c=document.createElementNS(NS,'circle');c.setAttribute('cx',e.x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class','pdot');gt.appendChild(c);
+    var ck=document.createElementNS(NS,'text');ck.setAttribute('x',e.x);ck.setAttribute('y',PSY+4.5);ck.setAttribute('text-anchor','middle');ck.setAttribute('class','pck');ck.textContent='✓';gt.appendChild(ck);
+    pg.appendChild(gt);pplDots.push(gt);
+    ptxt(e.x,PSY-14,'pmn','middle',e.name);
   });
   // stage labels above; GO-LIVE + start note below the spine
   ptxt((pStart+goX)/2,PSY-33,'pq','middle','Stage 1 · 12 months');
@@ -3266,7 +3273,21 @@ function transPlay(){
 function transPause(){trans.paused=true;trans.mode='manual';transSetPlayPauseUI(true);}
 function transManualNext(){
   transPause();
-  if(trans.animating||trans.step>=TRANS_STEPS)return;
+  if(trans.step>=TRANS_STEPS)return;
+  if(trans.animating){
+    // Skip the in-flight wave: clear its timers, snap straight to that step's
+    // end state and advance — so clicking Next repeatedly steps quickly.
+    transStepTimers();
+    trans.animating=false;
+    trans.step++;
+    transCanvasEl.classList.add('instant');
+    transApplyStep(trans.step);
+    void transCanvasEl.offsetWidth;
+    transCanvasEl.classList.remove('instant');
+    transUpdateStepUI();
+    if(trans.step>=TRANS_STEPS)transSettle();
+    return;
+  }
   transAnimateWave(trans.step,function(){
     trans.step++;transUpdateStepUI();
     if(trans.step>=TRANS_STEPS)transSettle();
@@ -3563,7 +3584,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-28T01:08:12Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-28T01:59:33Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
