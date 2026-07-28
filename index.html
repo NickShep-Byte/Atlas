@@ -552,7 +552,11 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .head{margin-bottom:1.2vh;}
 #s5 .tl{width:100%;height:52vh;}
 #s5 .spine{stroke:rgba(var(--acc2-rgb),.22);stroke-width:3;fill:none;stroke-linecap:round;}
-#s5 .spineFill{stroke:url(#spineGrad);stroke-width:3;fill:none;stroke-linecap:round;}
+/* progress fill: striped while in-progress, solid once a section's tick lands */
+#s5 .fillStripe{stroke:url(#stripes);stroke-width:4.5;fill:none;}
+#s5 .fillSolid{stroke:var(--sec);stroke-width:4.5;fill:none;}
+#s5 .stripeA{fill:rgba(var(--acc2-rgb),.14);}
+#s5 .stripeB{fill:rgba(var(--sec-rgb),.72);}
 #s5 .tick circle{fill:var(--well);stroke:rgba(var(--acc2-rgb),.45);stroke-width:2;transition:all .45s var(--ease);}
 #s5 .tick text{font-family:var(--font);fill:var(--soft);transition:fill .45s ease;}
 #s5 .tick .q{font-size:12.5px;font-weight:700;letter-spacing:.08em;}
@@ -1189,9 +1193,13 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
         </linearGradient>
+        <pattern id="stripes" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)">
+          <rect class="stripeA" width="9" height="9"/><rect class="stripeB" width="4.5" height="9"/>
+        </pattern>
       </defs>
       <path class="spine" d="M220 260 H1540"/>
-      <path class="spineFill" id="spineFill" d="M220 260 H1540"/>
+      <path class="fillStripe" id="relStripe" d="M220 260 H1540"/>
+      <path class="fillSolid" id="relSolid" d="M220 260 H1540"/>
       <!-- ticks + playhead injected by JS -->
     </svg>
     <div class="cap rv d3">"Indicative cadence: at least one release per quarter. Sequencing and dates to be confirmed against delivery capacity. Lower-impact features and updates may be released outside of the major drops."</div>
@@ -1881,7 +1889,7 @@ var NS='http://www.w3.org/2000/svg';
 var X0=335, X1=1470, MIDY=260;   // left margin holds module labels; lead-in before the Q3 drop
 var SPINE0=220, SPINE1=1540;     // spine/playhead sweep extent
 var tickGroups=[];
-var pplFill,pplHead,pplDots=[],pplStart,pplEnd;   // People track animation refs
+var pplStripe,pplSolid,pplHead,pplDots=[],pplStart,pplEnd,pplGo;   // People track animation refs
 // "Atlas | Module" lockup as SVG text (mirrors the modules slide styling).
 function atlasLockup(x,y,mod,anchor){
   var t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',y);
@@ -1936,11 +1944,12 @@ CAD.forEach(function(c,i){
   var xx=pStart,ends=[];
   [['Core HR',4],['LMS',2],['Time & Pay',6],['Performance',3]].forEach(function(p){xx+=p[1]*PMONTH;ends.push({name:p[0]+' ('+p[1]+')',x:xx});});
   var goX=ends[2].x,perfEnd=ends[3].x;
-  pplStart=pStart;pplEnd=perfEnd;
-  // spine + animated gradient fill
+  pplStart=pStart;pplEnd=perfEnd;pplGo=goX;
+  // spine + striped/solid fill layers (Stage 1 stays striped until GO-LIVE)
   var sp=document.createElementNS(NS,'line');sp.setAttribute('x1',pStart);sp.setAttribute('x2',perfEnd);sp.setAttribute('y1',PSY);sp.setAttribute('y2',PSY);sp.setAttribute('class','pspine');pg.appendChild(sp);
-  pplFill=document.createElementNS(NS,'path');pplFill.setAttribute('class','pspineFill');pplFill.setAttribute('d','M'+pStart+' '+PSY+' H'+perfEnd);
-  var pflen=perfEnd-pStart;pplFill.setAttribute('stroke-dasharray',pflen);pplFill.setAttribute('stroke-dashoffset',pflen);pg.appendChild(pplFill);
+  var pflen=perfEnd-pStart;
+  pplStripe=document.createElementNS(NS,'path');pplStripe.setAttribute('class','fillStripe');pplStripe.setAttribute('d','M'+pStart+' '+PSY+' H'+perfEnd);pplStripe.setAttribute('stroke-dasharray',pflen);pplStripe.setAttribute('stroke-dashoffset',pflen);pg.appendChild(pplStripe);
+  pplSolid=document.createElementNS(NS,'path');pplSolid.setAttribute('class','fillSolid');pplSolid.setAttribute('d','M'+pStart+' '+PSY+' H'+perfEnd);pplSolid.setAttribute('stroke-dasharray',pflen);pplSolid.setAttribute('stroke-dashoffset',pflen);pg.appendChild(pplSolid);
   // start dot (devs onboard) + phase-end delivering dots (Time & Pay end = GO-LIVE)
   pdot(pStart,'pdot start',6);
   ends.forEach(function(e,i){
@@ -1964,10 +1973,14 @@ CAD.forEach(function(c,i){
   ['Projects','Operations','Finance'].forEach(function(m,i){lg.appendChild(atlasLockup(24,MIDY-26+i*26,m));});
   tl.appendChild(lg);
 })();
-var spineFill=document.getElementById('spineFill');
+var relStripe=document.getElementById('relStripe');
+var relSolid=document.getElementById('relSolid');
+var stripePat=document.getElementById('stripes'), stripeOff=0;
 var spineLen=SPINE1-SPINE0;
-spineFill.setAttribute('stroke-dasharray',spineLen);
-spineFill.setAttribute('stroke-dashoffset',spineLen);
+[relStripe,relSolid].forEach(function(p){p.setAttribute('stroke-dasharray',spineLen);p.setAttribute('stroke-dashoffset',spineLen);});
+var relBoundaries=tickGroups.map(function(g){return +g.dataset.x;});   // section-end (tick) x's
+// Reveal a horizontal fill path from x0 up to rx (dash grows left->right).
+function revealFill(p,x0,x1,rx){var L=x1-x0,f=Math.max(0,Math.min(1,(rx-x0)/L));p.setAttribute('stroke-dashoffset',L*(1-f));}
 var ph=document.createElementNS(NS,'g');
 ph.setAttribute('class','playhead');
 ph.innerHTML='<line x1="0" x2="0" y1="'+(MIDY-30)+'" y2="'+(MIDY+30)+'"/>'+
@@ -1984,14 +1997,25 @@ function cadenceFrame(ts){
   var x=SPINE0+(SPINE1-SPINE0)*p;
   ph.setAttribute('transform','translate('+x+',0)');
   ph.style.opacity = p<1 ? 1 : 0;
-  spineFill.setAttribute('stroke-dashoffset',spineLen*(1-p));
+  // barber-pole stripe motion (shared pattern)
+  stripeOff=(stripeOff+0.35)%9;
+  stripePat.setAttribute('patternTransform','rotate(45) translate('+stripeOff+' 0)');
+  // release: striped fill follows the ball; a section turns solid at its tick
+  var relSolidTo=SPINE0;
+  relBoundaries.forEach(function(bx){if(x>=bx-2)relSolidTo=bx;});
+  revealFill(relStripe,SPINE0,SPINE1,x);
+  revealFill(relSolid,SPINE0,SPINE1,relSolidTo);
   tickGroups.forEach(function(g,i){
     g.classList.toggle('delivered', x>=(+g.dataset.x)-2);
   });
-  // People track: own fill, playhead and delivering dots on the same progress
-  if(pplFill){
-    var pflen=pplEnd-pplStart,pxx=Math.max(pplStart,Math.min(pplEnd,x));
-    pplFill.setAttribute('stroke-dashoffset',pflen*(1-(pxx-pplStart)/pflen));
+  // People track: striped until GO-LIVE (whole Stage 1), then solid; own ball + dots
+  if(pplStripe){
+    var pSolidTo=pplStart;
+    if(x>=pplGo-2)pSolidTo=pplGo;
+    if(x>=pplEnd-2)pSolidTo=pplEnd;
+    revealFill(pplStripe,pplStart,pplEnd,Math.min(x,pplEnd));
+    revealFill(pplSolid,pplStart,pplEnd,pSolidTo);
+    var pxx=Math.max(pplStart,Math.min(pplEnd,x));
     pplHead.setAttribute('transform','translate('+pxx+',0)');
     pplHead.style.opacity=(x>=pplStart&&x<pplEnd&&p<1)?1:0;
     pplDots.forEach(function(d){d.classList.toggle('delivered', x>=(+d.dataset.x)-2);});
@@ -2008,8 +2032,8 @@ function cadenceFrame(ts){
 function cadenceStart(){
   if(RM){
     tickGroups.forEach(function(g){g.classList.add('delivered');});
-    spineFill.setAttribute('stroke-dashoffset',0);
-    if(pplFill){pplFill.setAttribute('stroke-dashoffset',0);pplDots.forEach(function(d){d.classList.add('delivered');});}
+    revealFill(relSolid,SPINE0,SPINE1,SPINE1);revealFill(relStripe,SPINE0,SPINE1,SPINE0);
+    if(pplSolid){revealFill(pplSolid,pplStart,pplEnd,pplEnd);revealFill(pplStripe,pplStart,pplEnd,pplStart);pplDots.forEach(function(d){d.classList.add('delivered');});}
     return;
   }
   cadence.running=true;cadence.t0=performance.now();
@@ -3539,7 +3563,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-27T03:32:19Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-28T01:08:12Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
