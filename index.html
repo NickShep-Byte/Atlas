@@ -1362,29 +1362,25 @@ var FEATURE_MODS=[
   {n:'09',name:'Monthly Project Report',
    pain:'MPRs are generated manually — slow, time-consuming and out of sync with the EoM timelines.',
    scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
-   ben:'Major reduction in project-reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'}
- ]},
- {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
-  {n:'01',name:'Resource Requests',
+   ben:'Major reduction in project-reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'},
+  {n:'10',name:'Resource Requests',
    pain:"Requesting extra plant or people happens over email and phone calls, with no record of what's been asked for, approved, or already committed to another project.",
    scope:'A structured request-and-approval workflow for additional plant or labour, checked against live Plant Allocation & Scheduling and Resource Management & Planning data before it’s approved.',
-   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'},
-  {n:'02',name:'Skills Matrix',
+   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'}
+ ]},
+ {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
+  {n:'01',name:'Skills Matrix',
    pain:'Who can actually do what — tickets, licences, competencies — lives in scattered spreadsheets and is rarely up to date, making resourcing a guessing game.',
    scope:'A live skills and competency matrix per worker, drawing on licences and training records, so resourcing decisions are made against real, current capability.',
    ben:'Faster, safer resourcing decisions, clear visibility of skills gaps across the workforce, and one place to check who is qualified for a task.'},
-  {n:'03',name:'Plant Allocation & Scheduling',
+  {n:'02',name:'Plant Allocation & Scheduling',
    pain:'Macro-enabled workbooks are slow to load, slow to generate journals, and have very limited access and visibility. Most streams complete the scheduling elsewhere then copy it into the trackers, as the workbooks aren\u2019t user friendly enough.',
    scope:'Replaces the macro workbooks that allocate plant to projects. Built for Operations Managers, used for both scheduling and costing of plant, and as the source of truth for all plant-related data.',
    ben:'Retires fragile macros, speeds up plant-cost processing, feeds Cost Coding Control, and is the critical enabler of an accurate Daily Diary. Integrated with the same system that holds upcoming jobs, so plant is allocated against what’s actually coming up, not just what’s already on foot.'},
-  {n:'04',name:'Resource Management & Planning',
+  {n:'03',name:'Resource Management & Planning',
    pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
    scope:'Expands Plant Allocation & Scheduling for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
-   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
-  {n:'05',name:'Mobilisation',
-   pain:'Getting plant and people onto site — inductions, licences, transport, accommodation — is coordinated informally, so mobilisation delays are common and hard to see coming.',
-   scope:'Tracks each mobilisation step from resource allocation through to on-site readiness, drawing on the same scheduling, licence and skills data already in Atlas.',
-   ben:'Fewer mobilisation delays, early visibility of what’s blocking a start date, and a single record of readiness for every project.'}
+   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'}
  ]},
  {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
   {n:'01',name:'General Ledger Journaling',
@@ -1832,8 +1828,8 @@ window.addEventListener('resize',relinkEcoDebounced);
 var APPMODS=[
  {name:'People',fn:'People, Payroll & Learning',desc:'Timesheets, payroll, HR and return to work, plus learning, inductions and competencies — every person, every record, one home.',feats:['Employee Profile & Core HR','Onboarding','Timesheets','Leave Management','End-to-End Payroll','Performance & Talent','E-Learning','Company Inductions','Course Requests']},
  {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Tender/ Project Histories','Pipeline Tracking','Opportunity Tracking','Risk Identification','Unified Status']},
- {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast','Monthly Project Report']},
- {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Resource Requests','Skills Matrix','Plant Allocation & Scheduling','Resource Management & Planning','Mobilisation']},
+ {name:'Projects',fn:'Project Delivery',desc:'Daily diaries, costs, claims and variations — the project captured as it happens.',feats:['Cost Coding Control','Revenue Management','Procurement Controls','Progress Claims (Upstream)','Vendor Claim Validation','Productivity Analysis','Daily Diary','Cost to Complete Forecast','Monthly Project Report','Resource Requests']},
+ {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:['Skills Matrix','Plant Allocation & Scheduling','Resource Management & Planning']},
  {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']}
 ];
 (function(){
@@ -3584,7 +3580,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-28T02:58:57Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-28T05:57:21Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
