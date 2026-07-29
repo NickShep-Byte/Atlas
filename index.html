@@ -1229,9 +1229,9 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
           <rect class="stripeA" width="9" height="9"/><rect class="stripeB" width="4.5" height="9"/>
         </pattern>
       </defs>
-      <path class="spine" d="M220 260 H1540"/>
-      <path class="fillStripe" id="relStripe" d="M220 260 H1540"/>
-      <path class="fillSolid" id="relSolid" d="M220 260 H1540"/>
+      <path class="spine" d="M220 340 H1540"/>
+      <path class="fillStripe" id="relStripe" d="M220 340 H1540"/>
+      <path class="fillSolid" id="relSolid" d="M220 340 H1540"/>
       <!-- ticks + playhead injected by JS -->
     </svg>
     <div class="cap rv d3">Sequencing and dates to be confirmed against detailed scope and delivery capacity</div>
@@ -1950,7 +1950,7 @@ for(var _ci=0;_ci<CAD_FEATURES.length;_ci+=CAD_BATCH){
 }
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
-var X0=335, X1=1470, MIDY=300;   // left margin holds module labels; lead-in before the Q3 drop. MIDY sits low to open up spacing to the People track (PSY=110) above
+var X0=335, X1=1470, MIDY=340;   // left margin holds module labels; lead-in before the Q3 drop. MIDY sits low to open up spacing to the People track (PSY=110) above
 var SPINE0=220, SPINE1=1540;     // spine/playhead sweep extent
 var tickGroups=[];
 var pplStripe,pplSolid,pplHead,pplDots=[],pplStart,pplEnd,pplGo;   // People track animation refs
@@ -2018,16 +2018,22 @@ CAD.forEach(function(c,i){
   pdot(pStart,'pdot start',6);
   ends.forEach(function(e,i){
     var isGo=(i===2),r=isGo?11:9;
+    // connector stem from the dot up to its label, matching the release ticks below
+    var stem=document.createElementNS(NS,'line');
+    stem.setAttribute('x1',e.x);stem.setAttribute('x2',e.x);
+    stem.setAttribute('y1',PSY);stem.setAttribute('y2',PSY-30);
+    stem.setAttribute('stroke','rgba(var(--acc2-rgb),.4)');stem.setAttribute('stroke-width','1.5');
+    pg.appendChild(stem);
     // each delivery point is a group (dot + tick) so the check shows on land
     var gt=document.createElementNS(NS,'g');gt.setAttribute('class','ptick'+(isGo?' golive':''));gt.dataset.x=e.x;
     var c=document.createElementNS(NS,'circle');c.setAttribute('cx',e.x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class','pdot');gt.appendChild(c);
     var ck=document.createElementNS(NS,'text');ck.setAttribute('x',e.x);ck.setAttribute('y',PSY+4.5);ck.setAttribute('text-anchor','middle');ck.setAttribute('class','pck');ck.textContent='✓';gt.appendChild(ck);
     pg.appendChild(gt);pplDots.push(gt);
-    ptxt(e.x,PSY-14,'pmn','middle',e.name);
+    ptxt(e.x,PSY-40,'pmn','middle',e.name);
   });
-  // stage labels above; GO-LIVE + start note below the spine
-  ptxt((pStart+goX)/2,PSY-33,'pq','middle','Stage 1 · 12 months');
-  ptxt((goX+perfEnd)/2,PSY-33,'pq','middle','Stage 2 · 3 months');
+  // stage labels above the milestone names; GO-LIVE + start note below the spine
+  ptxt((pStart+goX)/2,PSY-58,'pq','middle','Stage 1 · 12 months');
+  ptxt((goX+perfEnd)/2,PSY-58,'pq','middle','Stage 2 · 3 months');
   ptxt(goX,PSY+21,'pgolive','middle','Stage 1 GO-LIVE');
   ptxt(pStart,PSY+21,'pnote','middle','Devs onboard (start Q4)');
   // People's own playhead marker
@@ -2044,6 +2050,11 @@ CAD.forEach(function(c,i){
 })();
 var relStripe=document.getElementById('relStripe');
 var relSolid=document.getElementById('relSolid');
+// Lock the release spine + fill paths to MIDY so they can never drift from
+// the ticks (they're authored at a fixed y in the static markup).
+(function(){var d='M'+SPINE0+' '+MIDY+' H'+SPINE1;
+  var sp=tl.querySelector('.spine');if(sp)sp.setAttribute('d',d);
+  relStripe.setAttribute('d',d);relSolid.setAttribute('d',d);})();
 var stripePat=document.getElementById('stripes'), stripeOff=0;
 var spineLen=SPINE1-SPINE0;
 [relStripe,relSolid].forEach(function(p){p.setAttribute('stroke-dasharray',spineLen);p.setAttribute('stroke-dashoffset',spineLen);});
@@ -2689,6 +2700,24 @@ var transLabelBoxes=[];
 // reads along them); a vertical-only route gets the text set just
 // beside its longest drop.
 function transPlaceLabel(el,pts,key){
+  // "Cost Actuals" shares the Pronto<->Project Forecasting corridor with
+  // "CTC Forecast (monthly)". The generic longest-segment placement drops it
+  // onto an unrelated line (label avoidance only dodges other labels, not
+  // lines), so pin it just above the CTC label — which is placed first — so
+  // the two stack cleanly. Relative to CTC's live box, so it holds in both
+  // the today and with-Atlas layouts.
+  if(key==='pronto|forecasting'){
+    var ctc=transLabelRegistry['forecasting|pronto'];
+    if(ctc){var cb;try{cb=ctc.getBBox();}catch(e){cb=null;}
+      if(cb&&cb.width){
+        el.setAttribute('text-anchor','middle');
+        el.setAttribute('x',cb.x+cb.width/2);el.setAttribute('y',cb.y-6);
+        var b2;try{b2=el.getBBox();}catch(e){b2=null;}
+        if(b2&&b2.width)transLabelBoxes.push({x:b2.x,y:b2.y,w:b2.width,h:b2.height});
+        return;
+      }
+    }
+  }
   var best=null,bestScore=0;
   for(var i=0;i<pts.length-1;i++){
     var dx=Math.abs(pts[i+1].x-pts[i].x),dy=Math.abs(pts[i+1].y-pts[i].y);
@@ -3677,7 +3706,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T07:25:06Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T08:22:22Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
