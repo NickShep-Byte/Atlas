@@ -563,6 +563,22 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .modFeats span{font-size:clamp(13px,1.1vw,17px);font-weight:600;padding:.45em 1em;border-radius:8px;
   background:rgba(var(--acc2-rgb),.12);border:1px solid rgba(var(--acc2-rgb),.4);color:var(--txt);}
 
+/* ---- Intro animation: the legacy systems (HRIS / TMA / PMT) start large and
+   centred, morph into their Atlas modules (People / Tenders / P·O·F) and shift
+   up into the module chip buttons on slide enter. ---- */
+#s4b .modIntro{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden;
+  transition:opacity .5s ease;}
+#s4b .mi{position:absolute;transform:translate(-50%,-50%);transform-origin:center center;
+  white-space:nowrap;text-align:center;font-family:var(--font);font-weight:800;line-height:1;
+  letter-spacing:-.01em;font-size:clamp(34px,4.6vw,66px);
+  transition:transform .9s var(--ease),opacity .5s ease;}
+#s4b .mi .lg,#s4b .mi .md{display:block;transition:opacity .45s ease;}
+#s4b .mi .md{position:absolute;inset:0;opacity:0;color:var(--sec);}
+#s4b .mi .lg{color:var(--title);}
+#s4b .mi.morph .lg{opacity:0;}
+#s4b .mi.morph .md{opacity:1;}
+#s4b .mi.sub{color:var(--sec);}
+#s4b.introRunning #modChips,#s4b.introRunning .modShow{opacity:0;}
 
 </style>
 
@@ -1924,6 +1940,71 @@ var APPMODS=[
     chips.appendChild(b);btns.push(b);
   });
   show(0);
+
+  // ---- Intro animation: legacy systems morph into the module chips on enter.
+  // HRIS -> People, TMA -> Tenders, PMT -> Projects/Operations/Finance (splits
+  // into three). Tokens start large and centred, cross-fade to their module
+  // name, then fly up and shrink onto the real chip buttons (which fade in as
+  // the tokens land). ----
+  var section=document.getElementById('s4b');
+  var LEG=[
+    {legacy:'HRIS',mod:'People',   chips:[0]},
+    {legacy:'TMA', mod:'Tenders',  chips:[1]},
+    {legacy:'PMT', mod:'P / O / F',chips:[2,3,4],split:['Projects','Operations','Finance']}
+  ];
+  var introTimers=[],overlay=null;
+  function iT(fn,ms){introTimers.push(setTimeout(fn,ms));}
+  function introClear(){
+    introTimers.forEach(clearTimeout);introTimers=[];
+    if(overlay&&overlay.parentNode)overlay.parentNode.removeChild(overlay);
+    overlay=null;section.classList.remove('introRunning');
+  }
+  function introRun(){
+    introClear();
+    if(RM)return;                       // reduced motion: leave the chips as-is
+    section.classList.add('introRunning');
+    requestAnimationFrame(function(){requestAnimationFrame(introBuild);});
+  }
+  function introBuild(){
+    if(!section.classList.contains('active'))return;
+    overlay=document.createElement('div');overlay.className='modIntro';
+    section.appendChild(overlay);
+    var o=overlay.getBoundingClientRect();
+    var cx=o.width/2, cy=o.height/2;
+    function centre(el){var r=el.getBoundingClientRect();return{x:r.left-o.left+r.width/2,y:r.top-o.top+r.height/2};}
+    function fly(el,chipIdx){
+      var b=btns[chipIdx].getBoundingClientRect();
+      var tx=b.left-o.left+b.width/2, ty=b.top-o.top+b.height/2;
+      var c=centre(el);
+      var s=parseFloat(getComputedStyle(btns[chipIdx]).fontSize)/parseFloat(getComputedStyle(el).fontSize);
+      el.style.transform='translate(-50%,-50%) translate('+(tx-c.x)+'px,'+(ty-c.y)+'px) scale('+s+')';
+    }
+    var gap=Math.min(o.width*0.3,420);
+    var startX=[cx-gap,cx,cx+gap];
+    var tokens=LEG.map(function(L,i){
+      var d=document.createElement('div');d.className='mi';
+      d.innerHTML='<span class="lg">'+L.legacy+'</span><span class="md">'+L.mod+'</span>';
+      d.style.left=startX[i]+'px';d.style.top=cy+'px';
+      overlay.appendChild(d);return d;
+    });
+    iT(function(){tokens.forEach(function(t){t.classList.add('morph');});},750);   // morph text
+    iT(function(){                                                                  // split + fly
+      fly(tokens[0],LEG[0].chips[0]);
+      fly(tokens[1],LEG[1].chips[0]);
+      var cc=centre(tokens[2]);tokens[2].style.opacity='0';
+      LEG[2].split.forEach(function(nm,k){
+        var st=document.createElement('div');st.className='mi sub';st.textContent=nm;
+        st.style.left=cc.x+'px';st.style.top=cc.y+'px';overlay.appendChild(st);
+        st.getBoundingClientRect();                    // reflow so the fly transitions
+        iT(function(){fly(st,LEG[2].chips[k]);},20);
+      });
+    },1650);
+    iT(function(){section.classList.remove('introRunning');},2450);   // reveal real chips + card
+    iT(function(){if(overlay)overlay.style.opacity='0';},2550);       // fade the tokens out
+    iT(function(){introClear();},3150);
+  }
+  onSlideEnter('s4b',introRun);
+  onSlideLeave('s4b',introClear);
 })();
 
 })();
@@ -3712,7 +3793,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T09:15:16Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T22:51:38Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
