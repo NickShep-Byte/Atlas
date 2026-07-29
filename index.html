@@ -2710,8 +2710,12 @@ function transPlaceLabel(el,pts,key){
     var ctc=transLabelRegistry['forecasting|pronto'];
     if(ctc){var cb;try{cb=ctc.getBBox();}catch(e){cb=null;}
       if(cb&&cb.width){
+        // Sits above CTC on the same corridor: top-LEFT while Project
+        // Forecasting is still a today tool, top-RIGHT once it has merged
+        // into Atlas (the corridor flips direction between the two layouts).
+        var toRight=(transState.forecasting==='atlas');
         el.setAttribute('text-anchor','middle');
-        el.setAttribute('x',cb.x+cb.width/2);el.setAttribute('y',cb.y-6);
+        el.setAttribute('x',cb.x+cb.width/2+(toRight?40:-40));el.setAttribute('y',cb.y-6);
         var b2;try{b2=el.getBBox();}catch(e){b2=null;}
         if(b2&&b2.width)transLabelBoxes.push({x:b2.x,y:b2.y,w:b2.width,h:b2.height});
         return;
@@ -2737,6 +2741,8 @@ function transPlaceLabel(el,pts,key){
     // the LEFT quarter of that rail so it stays clear of the forecasting
     // arrows that cross the rail's centre.
     if(key==='variationreg|procreg')ox=best.lo+(best.hi-best.lo)*0.22;
+    // Shuffle CTC Forecast down slightly so the Cost Actuals label clears above it.
+    if(key==='forecasting|pronto')oy+=12;
   }else{
     el.setAttribute('text-anchor','start');
     ox=best.x+8;oy=best.y+3;
@@ -3706,7 +3712,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T08:22:22Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T09:15:16Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
