@@ -1236,7 +1236,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q3 2026 to Q4 2027, releases delivered as time progresses, with the Atlas People rollout shown above">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q4 2026 to Q1 2028, releases delivered as time progresses, with the Atlas People rollout shown above">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -2015,16 +2015,16 @@ var APPMODS=[
 (function(){
 // Delivery sequence follows the Transition slide's absorption order,
 // mapping each of its nodes to the matching Atlas feature. Quarters stay
-// fixed (Q3 2026 → Q4 2028); the first delivery keeps the milestone
+// fixed (Q4 2026 → Q1 2028); the first delivery keeps the milestone
 // marker. Shared by slide 5 (cadence) and slide 6 (process).
 // Individual feature releases, in delivery order — one data row each. The
 // timeline pulls them dynamically into batches of CAD_BATCH per quarter,
-// starting Q3 2026; change the list or the batch size and the timeline,
+// starting Q4 2026; change the list or the batch size and the timeline,
 // spacing, quarter labels and token animation all re-derive.
 var CAD_BATCH=2;
 /* CAD_FEATURES is defined once in the SHARED DATA region above. */
-// Quarter label for batch index i, counting from Q3 2026.
-function cadQuarter(i){var a=2026*4+2+i;return 'Q'+(a%4+1)+' '+Math.floor(a/4);}
+// Quarter label for batch index i, counting from Q4 2026 (all releases start Q4).
+function cadQuarter(i){var a=2026*4+3+i;return 'Q'+(a%4+1)+' '+Math.floor(a/4);}
 var CAD=[];
 for(var _ci=0;_ci<CAD_FEATURES.length;_ci+=CAD_BATCH){
   CAD.push([cadQuarter(CAD.length),CAD_FEATURES.slice(_ci,_ci+CAD_BATCH),_ci===0]);
@@ -2077,11 +2077,11 @@ CAD.forEach(function(c,i){
 });
 /* ---- Atlas People rollout: its OWN track above the release timeline, in the
    same spine-and-dots style with its own playhead + delivering dots. Shares the
-   month axis; starts at the Q3 line (= start of Q4, when devs onboard). Phase
+   month axis; starts at the first release line (Q4 2026, when devs onboard). Phase
    labels sit at the END of each period. ---- */
 (function(){
   var PMONTH=(X1-X0)/(CAD.length-1)/3;         // px per month, matched to the release axis
-  var PSY=110, pStart=X0;                       // start of Q4 == the Q3 line
+  var PSY=110, pStart=X0;                       // start of Q4 == the first release line
   var pg=document.createElementNS(NS,'g');pg.setAttribute('class','pplBar');
   function ptxt(x,y,cls,anchor,s){var t=document.createElementNS(NS,'text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('text-anchor',anchor);t.setAttribute('class',cls);t.textContent=s;pg.appendChild(t);}
   function pdot(x,cls,r){var c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class',cls);c.dataset.x=x;pg.appendChild(c);return c;}
@@ -2181,8 +2181,8 @@ function cadenceFrame(ts){
     pplHead.style.opacity=(x>=pplStart&&x<pplEnd&&p<1)?1:0;
     pplDots.forEach(function(d){d.classList.toggle('delivered', x>=(+d.dataset.x)-2);});
   }
-  // Marker shows the drop it's leading IN to: starts on Q3 2026, then flips to
-  // the next quarter the moment it reaches each drop (Q3 drop -> Q4, etc.).
+  // Marker shows the drop it's leading IN to: starts on Q4 2026, then flips to
+  // the next quarter the moment it reaches each drop (Q4 drop -> Q1, etc.).
   var lbl=CAD[CAD.length-1][0];
   for(var li=0;li<tickGroups.length;li++){
     if(x < (+tickGroups[li].dataset.x)-2){ lbl=CAD[li][0]; break; }
@@ -3793,7 +3793,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T22:51:38Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T22:56:51Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
