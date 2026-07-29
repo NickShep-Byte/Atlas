@@ -549,7 +549,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   /* fixed height so switching modules never resizes the box; sized to hold the
      header + up to three wrapped rows of feature chips */
   height:clamp(360px,50vh,560px);box-sizing:border-box;overflow:hidden;
-  background:var(--well);border:1px solid rgba(var(--brd-rgb),.35);border-radius:18px;}
+  /* no full outline — just a single teal accent line across the top */
+  background:var(--well);border:none;border-top:2px solid var(--teal);border-radius:0;}
 .modFn{font-family:var(--font-util);font-size:clamp(10px,1.1vw,14px);letter-spacing:.16em;
   color:var(--soft);margin-bottom:2vh;}
 .modLock{display:flex;align-items:center;gap:clamp(8px,1.4vw,20px);
@@ -3669,7 +3670,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T07:07:45Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T07:12:44Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
