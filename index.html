@@ -141,6 +141,9 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .frag{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease);}
 .frag.shown{opacity:1;transform:none;}
 
+</style>
+
+<style> /* SHEET #s1 — Cold open */
 /* ============================================================
    SLIDE 1: Cold open
    ============================================================ */
@@ -172,6 +175,9 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 #s1.entered .halo{opacity:1;}
 
 
+</style>
+
+<style> /* SHEET #s3 — Cost flow */
 /* ============================================================
    SLIDE 3: Cost flow + concept (SIGNATURE / HERO)
    ============================================================ */
@@ -257,6 +263,9 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   color:var(--acc2);}
 [data-theme="light"] .atlasL .atlasFill{fill:rgba(var(--sec-rgb),.07);}
 
+</style>
+
+<style> /* SHEET #s9 — Today -> Atlas transition */
 /* ============================================================
    SLIDE: Today vs With Atlas transition (one-by-one absorption)
    ============================================================ */
@@ -417,6 +426,9 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .vflow .vrail.greyRail{background:rgba(var(--soft-rgb),.32);width:1px;}
 .vflow .vlbl.greyLbl{color:var(--grey);}
 
+</style>
+
+<style> /* SHEET #s4 — Feature ecosystem */
 /* ============================================================
    SLIDE 4: Feature ecosystem (SIGNATURE 2)
    ============================================================ */
@@ -521,6 +533,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .dSec p{font-size:clamp(12.5px,1.25vw,19px);color:var(--txt);line-height:1.5;}
 .detail .hint{margin-top:2vh;font-size:clamp(11px,1vw,16px);color:var(--blue-grey);}
 
+</style>
+
+<style> /* SHEET #s4b — App modules */
 /* --- Slide 4b: Atlas app modules (guidelines style) --- */
 #s4b .inner{display:flex;flex-direction:column;}
 .modSelect{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(6px,.8vw,12px);margin:2.5vh 0 0;width:min(1080px,90vw);align-self:center;}
@@ -546,6 +561,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   background:rgba(var(--acc2-rgb),.12);border:1px solid rgba(var(--acc2-rgb),.4);color:var(--txt);}
 
 
+</style>
+
+<style> /* SHEET #s5 — Release cadence */
 /* ============================================================
    SLIDE 5: Release cadence (looping delivery animation)
    ============================================================ */
@@ -592,6 +610,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .mlk .mlName{fill:var(--sec);}
 #s5 .cap{text-align:center;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;margin-top:.5vh;}
 
+</style>
+
+<style> /* SHEET #s6 — Approach (process + consultation) */
 /* ============================================================
    SLIDE 6: Delivery process (production line, staged loop)
    ============================================================ */
@@ -728,6 +749,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s6 .round p{font-size:clamp(10px,.8vw,12.5px);line-height:1.35;margin-top:.5vh;}
 #s6 .cap{margin-top:1.1vh;font-size:clamp(9.5px,.82vw,12.5px);}
 
+</style>
+
+<style> /* SHEET #s7 — Proof */
 /* ============================================================
    SLIDE 7: Proof (design to ~90%, prototype, walkthrough link)
    ============================================================ */
@@ -748,6 +772,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .theme p{font-size:clamp(11px,.95vw,14.5px);color:var(--blue-grey);margin-top:.6vh;font-weight:600;letter-spacing:.08em;}
 #s7 .go{margin-top:6.5vh;}
 
+</style>
+
+<style> /* SHARED — chrome + responsive/theme layers */
 /* ============================================================
    Chrome
    ============================================================ */
@@ -1258,8 +1285,45 @@ var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var slides = Array.prototype.slice.call(document.querySelectorAll('.slide:not([data-skip])'));
 var cur = 0;
 
+/* ============================================================
+   SHARED DATA — consumed by more than one sheet
+   ------------------------------------------------------------
+   CAD_FEATURES drives BOTH the release cadence timeline (#s5) and
+   the delivery-process production line (#s6). It lives here, outside
+   either sheet, so a single edit keeps the two in sync.
+   ============================================================ */
+var CAD_FEATURES=[
+ "General Ledger Journaling",
+ "Monthly Project Report",
+ "Cost Coding Control",
+ "Plant Allocation & Scheduling",
+ "Revenue Management",
+ "Progress Claims (Upstream)",
+ "Procurement Controls",
+ "Vendor Claim Validation",
+ "Cost to Complete Forecast",
+ "Cashflow Forecast",
+ "Daily Diary",
+ "Resource Management & Planning"
+];
+
+/* ============================================================
+   SHARED — slide lifecycle registry
+   ------------------------------------------------------------
+   Each sheet registers its own enter/leave behaviour instead of the
+   navigation engine hard-coding slide ids. Keeps the engine generic
+   and every sheet self-contained.
+   ============================================================ */
+var slideHooks={enter:{},leave:{}};
+function onSlideEnter(id,fn){slideHooks.enter[id]=fn;}
+function onSlideLeave(id,fn){slideHooks.leave[id]=fn;}
 
 
+
+/* ============================================================
+   SHEET #s4 — Feature ecosystem (self-contained)
+   ============================================================ */
+(function(){
 /* Build ecosystem ring (slide 4) — primary orbiters are the 7 Atlas
    modules. A module chip row selects one: the core relabels to
    "Atlas / ModuleName" and the ring rebuilds to show that module's
@@ -1824,7 +1888,14 @@ function relinkEcoDebounced(){
 }
 window.addEventListener('resize',relinkEcoDebounced);
 
-/* ---------- Slide 4b: Atlas app modules selector ---------- */
+onSlideEnter('s4', function(){ requestAnimationFrame(function(){ requestAnimationFrame(relinkEco); }); });
+})();
+
+/* ============================================================
+   SHEET #s4b — App modules selector (self-contained)
+   ============================================================ */
+
+(function(){
 var APPMODS=[
  {name:'People',fn:'People, Payroll & Learning',desc:'Timesheets, payroll, HR and return to work, plus learning, inductions and competencies — every person, every record, one home.',feats:['Employee Profile & Core HR','Onboarding','Timesheets','Leave Management','End-to-End Payroll','Performance & Talent','E-Learning','Company Inductions','Course Requests']},
  {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won.',feats:['Tender/ Project Histories','Pipeline Tracking','Opportunity Tracking','Risk Identification','Unified Status']},
@@ -1852,7 +1923,12 @@ var APPMODS=[
   show(0);
 })();
 
-/* ---------- Slide 5: Release cadence (looping delivery animation) ---------- */
+})();
+/* ============================================================
+   SHEET #s5 — Release cadence (self-contained)
+   ============================================================ */
+
+(function(){
 // Delivery sequence follows the Transition slide's absorption order,
 // mapping each of its nodes to the matching Atlas feature. Quarters stay
 // fixed (Q3 2026 → Q4 2028); the first delivery keeps the milestone
@@ -1862,20 +1938,7 @@ var APPMODS=[
 // starting Q3 2026; change the list or the batch size and the timeline,
 // spacing, quarter labels and token animation all re-derive.
 var CAD_BATCH=2;
-var CAD_FEATURES=[
- "General Ledger Journaling",
- "Monthly Project Report",
- "Cost Coding Control",
- "Plant Allocation & Scheduling",
- "Revenue Management",
- "Progress Claims (Upstream)",
- "Procurement Controls",
- "Vendor Claim Validation",
- "Cost to Complete Forecast",
- "Cashflow Forecast",
- "Daily Diary",
- "Resource Management & Planning"
-];
+/* CAD_FEATURES is defined once in the SHARED DATA region above. */
 // Quarter label for batch index i, counting from Q3 2026.
 function cadQuarter(i){var a=2026*4+2+i;return 'Q'+(a%4+1)+' '+Math.floor(a/4);}
 var CAD=[];
@@ -2047,7 +2110,15 @@ function cadenceStop(){
   if(cadence.raf)cancelAnimationFrame(cadence.raf);
 }
 
-/* ---------- Slide 6: Delivery process, production line ---------- */
+onSlideEnter('s5', cadenceStart);
+onSlideLeave('s5', cadenceStop);
+})();
+
+/* ============================================================
+   SHEET #s6 — Approach: delivery process (self-contained)
+   ============================================================ */
+
+(function(){
 var line={timers:[],running:false,modIdx:0};
 var token=document.getElementById('modToken');
 var tokenName=document.getElementById('tokenName');
@@ -2148,7 +2219,15 @@ function lineStop(){
   clearShelfChips();
 }
 
-/* ---------- Slide 9: Today → Atlas absorption ---------- */
+onSlideEnter('s6', lineStart);
+onSlideLeave('s6', lineStop);
+})();
+
+/* ============================================================
+   SHEET #s9 — Today → Atlas transition (self-contained)
+   ============================================================ */
+
+(function(){
 // Single canvas. Starts laid out like the current-state process map
 // (today's tools converging on Pronto through controlled/uncontrolled
 // hand-offs). Each tool is absorbed one by one; once the canvas is
@@ -3346,6 +3425,13 @@ if(transPlayPauseEl){
 }
 transBuild();
 
+onSlideEnter('s9', transStart);
+onSlideLeave('s9', transStop);
+})();
+
+/* ============================================================
+   SHARED — deck engine: fragments, progress, navigation, init
+   ============================================================ */
 /* ---------- Fragments ---------- */
 function frags(slide){return Array.prototype.slice.call(slide.querySelectorAll('.frag'));}
 function nextFrag(slide){
@@ -3377,17 +3463,13 @@ slides.forEach(function(s,i){
 /* ---------- Navigation core ---------- */
 var counter=document.getElementById('counter');
 function onEnter(s){
-  if(s.id==='s3')requestAnimationFrame(function(){requestAnimationFrame(sizeAtlasL);});
-  if(s.id==='s4')requestAnimationFrame(function(){requestAnimationFrame(relinkEco);});
-  if(s.id==='s5')cadenceStart();
-  if(s.id==='s6')lineStart();
-  if(s.id==='s9')transStart();
+  var fn=slideHooks.enter[s.id];
+  if(fn)fn();
   if(RM)frags(s).forEach(function(f){f.classList.add('shown');});
 }
 function onLeave(s){
-  if(s.id==='s5')cadenceStop();
-  if(s.id==='s6')lineStop();
-  if(s.id==='s9')transStop();
+  var fn=slideHooks.leave[s.id];
+  if(fn)fn();
 }
 function goTo(i,skipFragReset){
   if(i<0||i>=slides.length||(i===cur&&slides[i].classList.contains('active')))return;
@@ -3446,9 +3528,11 @@ document.addEventListener('keydown',function(e){
   }
 });
 
-/* ---------- Slide 3: Cost flow diagram (Atlas L background sizing) ----------
-   Lives here (called from onEnter/resize below) rather than beside its
-   HTML further up, since it's driven entirely by navigation/resize events. */
+/* ============================================================
+   SHEET #s3 — Cost-flow diagram sizing (self-contained)
+   Driven entirely by navigation/resize events.
+   ============================================================ */
+(function(){
 function sizeAtlasL(){
   var stack=document.querySelector('.railStack');
   var L=document.querySelector('.atlasL');
@@ -3569,6 +3653,8 @@ function sizeAtlasL(){
   if(pro&&reg){var rx=(finR+atlasR)/2;var my=(C(pro,1,0).y+C(reg,.5,1).y)/2;flowRail([{x:rx,y:C(pro,1,0).y},{x:rx,y:C(reg,.5,1).y}],true,'Reconciled|data',{x:rx+9,y:my-6,anchor:'start'});}
 }
 window.addEventListener('resize',sizeAtlasL);
+onSlideEnter('s3', function(){ requestAnimationFrame(function(){ requestAnimationFrame(sizeAtlasL); }); });
+})();
 
 slides[0].classList.add('active');
 requestAnimationFrame(function(){requestAnimationFrame(function(){slides[0].classList.add('entered');});});
@@ -3580,7 +3666,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-28T05:57:21Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T00:28:16Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
