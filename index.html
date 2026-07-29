@@ -546,6 +546,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .modSelect button.on{background:var(--sec);border-color:transparent;color:#fff;}
 .modShow{display:flex;flex-direction:column;align-items:center;text-align:center;
   margin-top:4vh;padding:4vh 2vw;width:min(1080px,90vw);align-self:center;
+  /* fixed height so switching modules never resizes the box; sized to hold the
+     header + up to three wrapped rows of feature chips */
+  height:clamp(360px,50vh,560px);box-sizing:border-box;overflow:hidden;
   background:var(--well);border:1px solid rgba(var(--brd-rgb),.35);border-radius:18px;}
 .modFn{font-family:var(--font-util);font-size:clamp(10px,1.1vw,14px);letter-spacing:.16em;
   color:var(--soft);margin-bottom:2vh;}
@@ -1231,7 +1234,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <path class="fillSolid" id="relSolid" d="M220 260 H1540"/>
       <!-- ticks + playhead injected by JS -->
     </svg>
-    <div class="cap rv d3">"Indicative cadence: at least one release per quarter. Sequencing and dates to be confirmed against delivery capacity. Lower-impact features and updates may be released outside of the major drops."</div>
+    <div class="cap rv d3">Sequencing and dates to be confirmed against detailed scope and delivery capacity</div>
   </div>
 </section>
 
@@ -1947,7 +1950,7 @@ for(var _ci=0;_ci<CAD_FEATURES.length;_ci+=CAD_BATCH){
 }
 var tl=document.getElementById('tlSvg');
 var NS='http://www.w3.org/2000/svg';
-var X0=335, X1=1470, MIDY=260;   // left margin holds module labels; lead-in before the Q3 drop
+var X0=335, X1=1470, MIDY=300;   // left margin holds module labels; lead-in before the Q3 drop. MIDY sits low to open up spacing to the People track (PSY=110) above
 var SPINE0=220, SPINE1=1540;     // spine/playhead sweep extent
 var tickGroups=[];
 var pplStripe,pplSolid,pplHead,pplDots=[],pplStart,pplEnd,pplGo;   // People track animation refs
@@ -3666,7 +3669,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T00:33:21Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-29T07:07:45Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
