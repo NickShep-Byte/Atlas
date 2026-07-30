@@ -2185,7 +2185,7 @@ ph.innerHTML='<line x1="0" x2="0" y1="'+(MIDY-30)+'" y2="'+(MIDY+30)+'"/>'+
 tl.appendChild(ph);
 var phLabel=ph.querySelector('text');
 var cadence={raf:null,running:false,t0:0};
-var SWEEP=14000, HOLD=2200;
+var SWEEP=28000, HOLD=2200;   // playhead sweep duration (half speed)
 function cadenceFrame(ts){
   if(!cadence.running)return;
   var t=(ts-cadence.t0)%(SWEEP+HOLD);
@@ -2726,6 +2726,18 @@ function transComputePts(idA,idB){
     var x13cf=a.left+(a.right-a.left)/3;
     return [{x:x13cf,y:a.bottom},{x:x13cf,y:b.cy},{x:b.right,y:b.cy}];
   }
+  if(idA==='pronto'&&idB==='forecasting'){
+    // "Cost Actuals" — deliberately runs parallel to, and just ABOVE, the CTC
+    // Forecast line (which sits along Pronto's centre row) so the two read as a
+    // coordinated pair. Biased to the LEFT of the corridor while Forecasting is
+    // a today tool, and to the RIGHT once it has merged into Atlas.
+    var toR=(transState.forecasting==='atlas');
+    var corrY=a.cy-46;                 // parallel corridor, above the CTC line
+    var exitX=a.cx+22;                 // leave Pronto's top edge, right of centre
+    var fx=b.cx+(toR?24:-24);          // Forecasting-side riser: right once merged, else left
+    var enterY=(b.cy>corrY)?b.top:b.bottom;
+    return [{x:exitX,y:a.top},{x:exitX,y:corrY},{x:fx,y:corrY},{x:fx,y:enterY}];
+  }
   if(idA==='invoiceval'&&idB==='pronto'){
     // Appears the moment Invoice Validation lands (board p9). Enters
     // Pronto's top edge right of centre — the Allocated Cost drop from
@@ -2816,28 +2828,6 @@ var transLabelBoxes=[];
 // reads along them); a vertical-only route gets the text set just
 // beside its longest drop.
 function transPlaceLabel(el,pts,key){
-  // "Cost Actuals" shares the Pronto<->Project Forecasting corridor with
-  // "CTC Forecast (monthly)". The generic longest-segment placement drops it
-  // onto an unrelated line (label avoidance only dodges other labels, not
-  // lines), so pin it just above the CTC label — which is placed first — so
-  // the two stack cleanly. Relative to CTC's live box, so it holds in both
-  // the today and with-Atlas layouts.
-  if(key==='pronto|forecasting'){
-    var ctc=transLabelRegistry['forecasting|pronto'];
-    if(ctc){var cb;try{cb=ctc.getBBox();}catch(e){cb=null;}
-      if(cb&&cb.width){
-        // Sits above CTC on the same corridor: top-LEFT while Project
-        // Forecasting is still a today tool, top-RIGHT once it has merged
-        // into Atlas (the corridor flips direction between the two layouts).
-        var toRight=(transState.forecasting==='atlas');
-        el.setAttribute('text-anchor','middle');
-        el.setAttribute('x',cb.x+cb.width/2+(toRight?40:-40));el.setAttribute('y',cb.y-6);
-        var b2;try{b2=el.getBBox();}catch(e){b2=null;}
-        if(b2&&b2.width)transLabelBoxes.push({x:b2.x,y:b2.y,w:b2.width,h:b2.height});
-        return;
-      }
-    }
-  }
   var best=null,bestScore=0;
   for(var i=0;i<pts.length-1;i++){
     var dx=Math.abs(pts[i+1].x-pts[i].x),dy=Math.abs(pts[i+1].y-pts[i].y);
@@ -2857,8 +2847,6 @@ function transPlaceLabel(el,pts,key){
     // the LEFT quarter of that rail so it stays clear of the forecasting
     // arrows that cross the rail's centre.
     if(key==='variationreg|procreg')ox=best.lo+(best.hi-best.lo)*0.22;
-    // Shuffle CTC Forecast down slightly so the Cost Actuals label clears above it.
-    if(key==='forecasting|pronto')oy+=12;
   }else{
     el.setAttribute('text-anchor','start');
     ox=best.x+8;oy=best.y+3;
@@ -3828,7 +3816,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-29T23:32:15Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T00:00:39Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
