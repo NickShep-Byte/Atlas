@@ -832,6 +832,106 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 
 </style>
 
+<style> /* SHEETS #sPhil #sGoals #sCons #sUse #sNext #sQ — added sheets */
+/* shared card surface for the added sheets */
+#sPhil .philCard,#sCons .consCard,#sUse .useNode,#sUse .useCall,#sNext .nextCard,#sGoals .goalCol{
+  background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.28);border-radius:16px;}
+#sPhil .head h2,#sGoals .head h2,#sCons .head h2,#sUse .head h2,#sNext .head h2{font-size:clamp(24px,2.9vw,44px);}
+.mlogo{color:var(--acc2);display:inline-block;}
+.lg{display:block;width:100%;height:100%;}
+
+/* ---------- #sPhil : philosophy ---------- */
+#sPhil .philRow{display:flex;align-items:stretch;justify-content:center;gap:1vw;margin-top:4vh;}
+#sPhil .philCard{flex:1 1 0;max-width:26vw;padding:3vh 1.6vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.1vh;}
+#sPhil .philCard.hi{border-color:rgba(var(--teal-rgb),.55);}
+#sPhil .philIcon{width:clamp(46px,4vw,66px);height:clamp(46px,4vw,66px);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:clamp(20px,1.9vw,30px);
+  background:rgba(var(--acc2-rgb),.14);color:var(--acc2);border:1px solid rgba(var(--acc2-rgb),.4);}
+#sPhil .philCard.hi .philIcon{background:rgba(var(--teal-rgb),.16);color:var(--teal);border-color:rgba(var(--teal-rgb),.5);}
+#sPhil .philLead{font-family:var(--font-util);font-size:clamp(11px,1vw,14px);letter-spacing:.16em;text-transform:uppercase;color:var(--soft);}
+#sPhil .philVal{font-size:clamp(19px,2vw,32px);font-weight:800;line-height:1.12;color:var(--title);letter-spacing:-.01em;}
+#sPhil .philArrow{align-self:center;font-size:clamp(20px,2vw,30px);color:rgba(var(--brd-rgb),.5);}
+
+/* ---------- #sGoals : in / out / stays ---------- */
+#sGoals .goalsGrid{display:grid;grid-template-columns:1fr 1.35fr .82fr;gap:1.2vw;margin-top:2.4vh;align-items:stretch;}
+#sGoals .goalCol{padding:2vh 1.1vw;display:flex;flex-direction:column;}
+#sGoals .goalHd{margin-bottom:1.6vh;}
+#sGoals .goalTag{font-family:var(--font-util);font-size:clamp(12px,1.1vw,15px);font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;padding:.3em .8em;border-radius:999px;display:inline-block;}
+#sGoals .goalTag.in{color:var(--acc2);background:rgba(var(--acc2-rgb),.14);border:1px solid rgba(var(--acc2-rgb),.45);}
+#sGoals .goalTag.out{color:#E0736B;background:rgba(224,115,107,.13);border:1px solid rgba(224,115,107,.45);}
+#sGoals .goalTag.stay{color:var(--teal);background:rgba(var(--teal-rgb),.14);border:1px solid rgba(var(--teal-rgb),.5);}
+#sGoals .goalItems{display:flex;flex-direction:column;gap:1.15vh;}
+#sGoals .goalItems.pills{flex-direction:row;flex-wrap:wrap;gap:.7vh .5vw;align-content:flex-start;}
+#sGoals .app{display:flex;align-items:center;gap:.65vw;}
+#sGoals .app .mlogo,#sGoals .app .lgWrap{width:clamp(24px,2.2vw,32px);height:clamp(24px,2.2vw,32px);flex:0 0 auto;display:inline-flex;}
+#sGoals .appName{font-size:clamp(13px,1.2vw,18px);font-weight:600;color:var(--title);line-height:1.1;}
+#sGoals .appName b{color:var(--acc2);font-weight:800;}
+#sGoals .oldPill{font-size:clamp(10px,.86vw,13px);color:var(--soft);background:rgba(var(--srf-rgb),.05);
+  border:1px solid rgba(var(--brd-rgb),.28);border-radius:999px;padding:.34em .72em;line-height:1.15;
+  display:inline-flex;align-items:center;}
+#sGoals .oldPill.jot{gap:.35em;color:var(--txt);}
+#sGoals .oldPill .lg{width:15px;height:15px;}
+
+/* ---------- #sCons : consultation ---------- */
+#sCons .consGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3vw;margin-top:3vh;align-items:stretch;}
+#sCons .consCard{padding:3vh 1.5vw 2.4vh;display:flex;flex-direction:column;gap:1.2vh;}
+#sCons .consBadge{width:clamp(40px,3.4vw,54px);height:clamp(40px,3.4vw,54px);border-radius:50%;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(17px,1.6vw,24px);}
+#sCons .consCard h3{font-size:clamp(18px,1.7vw,26px);font-weight:800;color:var(--title);line-height:1.1;}
+#sCons .consRole{font-size:clamp(13px,1.15vw,17px);color:var(--txt);line-height:1.42;flex:1 1 auto;}
+#sCons .consQ{font-size:clamp(15px,1.4vw,21px);font-weight:700;font-style:italic;color:var(--teal);
+  padding-top:1.2vh;border-top:1px solid rgba(var(--brd-rgb),.25);}
+#sCons .cap{color:var(--blue-grey);font-style:italic;margin-top:2.2vh;font-size:clamp(11px,.95vw,15px);}
+
+/* ---------- #sUse : one philosophy, every use case ---------- */
+#sUse .useFlow{display:flex;align-items:stretch;justify-content:center;gap:.7vw;margin-top:3vh;flex-wrap:nowrap;}
+#sUse .useNode{flex:1 1 0;max-width:22vw;padding:2.4vh 1vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.9vh;}
+#sUse .useNode.atlas{border-color:rgba(var(--acc2-rgb),.5);}
+#sUse .useNode.goal{border-color:rgba(var(--teal-rgb),.55);}
+#sUse .useMark{width:clamp(34px,3.2vw,46px);height:clamp(34px,3.2vw,46px);display:inline-flex;}
+#sUse .useGlyph{width:clamp(34px,3.2vw,46px);height:clamp(34px,3.2vw,46px);border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:clamp(13px,1.2vw,17px);background:rgba(var(--srf-rgb),.06);border:1px solid rgba(var(--brd-rgb),.3);color:var(--soft);}
+#sUse .useNode.goal .useGlyph{font-size:clamp(22px,2vw,30px);color:var(--teal);border-color:rgba(var(--teal-rgb),.5);background:rgba(var(--teal-rgb),.12);}
+#sUse .useNode h3{font-size:clamp(16px,1.5vw,23px);font-weight:800;color:var(--title);}
+#sUse .useNode p{font-size:clamp(11px,1vw,15px);color:var(--soft);line-height:1.3;}
+#sUse .useArrow{align-self:center;font-size:clamp(18px,1.7vw,26px);color:rgba(var(--brd-rgb),.5);}
+#sUse .useCalls{display:grid;grid-template-columns:1fr 1fr;gap:1.3vw;margin-top:3vh;}
+#sUse .useCall{padding:2.2vh 1.5vw;}
+#sUse .useCall h4{font-size:clamp(15px,1.4vw,21px);font-weight:800;color:var(--acc2);margin-bottom:.8vh;}
+#sUse .useCall p{font-size:clamp(12px,1.1vw,16px);color:var(--txt);line-height:1.45;}
+
+/* ---------- #sNext : next steps ---------- */
+#sNext .nextRow{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4vw;margin-top:4vh;align-items:stretch;}
+#sNext .nextCard{padding:3vh 1.6vw;display:flex;flex-direction:column;gap:1.2vh;}
+#sNext .nextCard.hi{border-color:rgba(var(--teal-rgb),.55);}
+#sNext .nextNum{font-family:var(--font-util);font-size:clamp(38px,4.4vw,68px);font-weight:800;line-height:.9;color:rgba(var(--acc2-rgb),.55);}
+#sNext .nextCard.hi .nextNum{color:rgba(var(--teal-rgb),.7);}
+#sNext .nextCard h3{font-size:clamp(18px,1.8vw,27px);font-weight:800;color:var(--title);line-height:1.12;}
+#sNext .nextSub{display:block;font-size:clamp(12px,1.15vw,16px);font-weight:600;color:var(--acc2);margin-top:.4vh;}
+#sNext .nextCard.hi .nextSub{color:var(--teal);}
+#sNext .nextCard p{font-size:clamp(12px,1.1vw,16px);color:var(--txt);line-height:1.45;}
+
+/* ---------- #sQ : questions (mirrors the cold-open) ---------- */
+#sQ .inner{text-align:center;position:relative;z-index:1;}
+#sQ .atlasWatermark{position:absolute;left:50%;top:44.8%;transform:translate(-50%,-50%);
+  width:min(620px,52vw,72vh);height:min(620px,52vw,72vh);z-index:0;pointer-events:none;color:var(--sec);opacity:.07;}
+[data-theme="dark"] #sQ .atlasWatermark{color:var(--acc2);opacity:.10;}
+#sQ .wordmark{font-size:clamp(56px,10vw,150px);font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--navy);
+  opacity:0;transform:translateY(34px) scale(.97);filter:blur(10px);
+  transition:opacity 1.2s var(--ease),transform 1.2s var(--ease),filter 1.2s var(--ease);}
+#sQ.entered .wordmark{opacity:1;transform:none;filter:blur(0);}
+[data-theme="dark"] #sQ .wordmark{color:var(--title);}
+#sQ .line{font-size:clamp(19px,2vw,32px);color:var(--sec);font-weight:300;margin-top:calc(5vh - 3px);line-height:1.4;}
+#sQ .halo{display:none;}
+
+@media (max-width:900px){
+  #sPhil .philRow,#sUse .useFlow{flex-wrap:wrap;}
+  #sPhil .philArrow,#sUse .useArrow{display:none;}
+  #sGoals .goalsGrid,#sCons .consGrid,#sNext .nextRow,#sUse .useCalls{grid-template-columns:1fr;}
+}
+</style>
+
 <style> /* SHARED — chrome + responsive/theme layers */
 /* ============================================================
    Chrome
@@ -1002,6 +1102,8 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 <!-- ════════════ ACT 1 ════════════ -->
 
 <!-- Slide 1: Cold open -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="atlasMark" viewBox="0 0 100 100"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></symbol></svg>
+
 <section class="slide" id="s1" data-label="Title" data-act="1">
   <div class="halo"></div>
   <svg class="atlasWatermark" viewBox="0 0 100 100" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M51.8,85.05 L48.1,85.05 L45.0,84.75 L42.3,84.25 L38.7,83.25 L35.0,81.75 L32.0,80.15 L29.3,78.35 L26.7,76.25 L23.75,73.3 L22.25,71.5 L20.35,68.8 L18.25,65.0 L17.15,62.4 L16.25,59.7 L15.35,55.6 L14.95,51.8 L14.95,48.3 L15.15,45.9 L15.75,42.4 L16.75,38.8 L18.25,35.1 L19.45,32.8 L21.65,29.4 L23.75,26.8 L26.7,23.85 L28.5,22.35 L32.0,19.95 L35.0,18.35 L37.6,17.25 L40.3,16.35 L43.8,15.55 L48.1,15.05 L51.8,15.05 L54.9,15.35 L57.6,15.85 L61.2,16.85 L64.9,18.35 L67.9,19.95 L70.2,21.45 L73.2,23.85 L76.15,26.8 L77.65,28.6 L80.05,32.1 L81.65,35.1 L82.75,37.7 L83.65,40.4 L84.45,43.9 L84.95,48.2 L84.95,51.9 L84.75,54.2 L84.15,57.7 L83.15,61.3 L81.65,65.0 L80.05,68.0 L78.25,70.7 L76.15,73.3 L73.2,76.25 L71.4,77.75 L67.9,80.15 L64.9,81.75 L62.3,82.85 L59.6,83.75 L55.5,84.65 L51.8,85.05 Z M33.05,68.0 L36.9,67.85 L40.6,67.45 L46.8,66.25 L52.6,64.45 L59.3,61.55 L62.8,60.25 L69.3,58.45 L75.3,57.45 L78.9,57.15 L82.1,57.15 L82.25,57.0 L82.55,55.4 L82.95,51.7 L82.85,47.0 L82.25,43.3 L78.3,43.35 L74.3,43.75 L69.3,44.65 L66.9,45.25 L61.9,46.85 L53.9,50.25 L49.8,51.65 L46.0,52.65 L41.8,53.45 L34.7,54.15 L28.2,54.15 L22.6,53.75 L17.6,53.05 L17.05,53.1 L17.65,57.0 L18.85,61.2 L20.15,64.3 L21.9,67.45 L27.2,67.95 L33.05,68.0 Z M34.85,52.2 L37.7,52.05 L41.7,51.55 L47.8,50.25 L53.3,48.45 L58.5,46.15 L62.4,44.65 L68.7,42.85 L74.2,41.85 L78.3,41.45 L81.7,41.35 L81.75,41.1 L80.55,37.6 L78.65,33.7 L76.85,30.9 L74.5,28.05 L69.6,28.85 L65.7,29.85 L61.0,31.45 L53.0,34.85 L47.9,36.45 L43.4,37.45 L38.4,38.15 L33.7,38.45 L26.9,38.35 L22.0,37.95 L20.1,37.65 L19.35,37.7 L18.15,41.1 L17.45,44.1 L16.95,48.4 L16.95,51.0 L17.1,51.15 L26.1,52.15 L34.85,52.2 Z M51.75,83.0 L54.7,82.75 L56.9,82.35 L59.6,81.65 L61.9,80.85 L66.3,78.75 L69.1,76.95 L70.8,75.65 L72.3,74.35 L75.05,71.5 L78.05,67.4 L80.25,63.2 L81.05,61.2 L81.65,59.0 L78.9,59.05 L74.6,59.45 L70.9,60.05 L67.4,60.85 L61.7,62.65 L55.5,65.35 L51.8,66.75 L47.8,67.95 L43.8,68.85 L39.1,69.55 L35.4,69.85 L30.8,69.95 L23.35,69.6 L25.65,72.4 L29.1,75.65 L32.6,78.15 L35.9,79.95 L40.3,81.65 L44.0,82.55 L48.2,83.05 L51.75,83.0 Z M33.85,36.5 L40.1,36.05 L42.7,35.65 L47.3,34.65 L53.2,32.75 L58.4,30.45 L63.8,28.45 L68.1,27.25 L72.85,26.3 L70.3,24.05 L66.3,21.35 L62.4,19.45 L58.9,18.25 L55.9,17.55 L51.7,17.05 L48.2,17.05 L46.0,17.25 L41.0,18.25 L38.0,19.25 L34.7,20.75 L30.8,23.15 L28.5,24.95 L25.65,27.7 L23.95,29.7 L21.85,32.7 L20.25,35.6 L20.3,35.85 L26.7,36.45 L33.85,36.5 Z"/></svg>
@@ -1012,7 +1114,6 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   <div class="prep rv d6">Prepared by <b>Nicholas Shepherd</b></div>
 </section>
 
-<!-- Slide: How we build (Process + Consultation, merged) — after the title -->
 <section class="slide" id="s4b" data-label="Modules" data-act="1">
   <div class="inner">
     <div class="head rv">
@@ -1029,8 +1130,112 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   </div>
 </section>
 
-<!-- Slide 4b: The Atlas app modules (guidelines style) -->
-<section class="slide" id="s6" data-label="Approach" data-act="1">
+<section class="slide" id="s5" data-label="Cadence" data-act="2">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>The When</span>
+      <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
+    </div>
+    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, releases delivered as time progresses, with the Atlas People rollout shown above">
+      <defs>
+        <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
+        </linearGradient>
+        <pattern id="stripes" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)">
+          <rect class="stripeA" width="9" height="9"/><rect class="stripeB" width="4.5" height="9"/>
+        </pattern>
+      </defs>
+      <path class="spine" d="M220 340 H1540"/>
+      <path class="fillStripe" id="relStripe" d="M220 340 H1540"/>
+      <path class="fillSolid" id="relSolid" d="M220 340 H1540"/>
+      <!-- ticks + playhead injected by JS -->
+    </svg>
+    <div class="cap rv d3">Sequencing and dates to be confirmed against detailed scope and delivery capacity</div>
+  </div>
+</section>
+
+<section class="slide" id="sPhil" data-label="Philosophy" data-act="3">
+  <div class="inner">
+    <div class="head rv" style="text-align:center;">
+      <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>The Atlas Philosophy</span>
+      <h2 style="margin-top:1.2vh;">Three principles behind every decision.</h2>
+    </div>
+    <div class="philRow">
+      <div class="philCard rv d2">
+        <div class="philIcon">&#9881;</div>
+        <div class="philLead">Work should be</div>
+        <div class="philVal">Straightforward<br>&amp; Efficient</div>
+      </div>
+      <div class="philArrow rv d3" aria-hidden="true">&#8594;</div>
+      <div class="philCard rv d3">
+        <div class="philIcon">&#9707;</div>
+        <div class="philLead">Data should be</div>
+        <div class="philVal">Standardised, Structured<br>&amp; Visible</div>
+      </div>
+      <div class="philArrow rv d4" aria-hidden="true">&#8594;</div>
+      <div class="philCard hi rv d4">
+        <div class="philIcon">&#10003;</div>
+        <div class="philLead">Outputs should be</div>
+        <div class="philVal">Accurate, Reliable<br>&amp; Consistent</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sGoals" data-label="Goals" data-act="3">
+  <div class="inner">
+    <div class="head rv" style="text-align:center;">
+      <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>The Goal</span>
+      <h2 style="margin-top:1.2vh;">What comes in, what goes out, what stays.</h2>
+    </div>
+    <div class="goalsGrid">
+      <div class="goalCol gin rv d2">
+        <div class="goalHd"><span class="goalTag in">In</span></div>
+        <div class="goalItems"><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| People</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Tenders</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Projects</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Operations</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Finance</b></span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#D97757" stroke-width="2.1" stroke-linecap="round"><line x1="12" y1="12" x2="12" y2="2.6"/><line x1="12" y1="12" x2="12" y2="21.4"/><line x1="12" y1="12" x2="2.6" y2="12"/><line x1="12" y1="12" x2="21.4" y2="12"/><line x1="12" y1="12" x2="5.3" y2="5.3"/><line x1="12" y1="12" x2="18.7" y2="18.7"/><line x1="12" y1="12" x2="18.7" y2="5.3"/><line x1="12" y1="12" x2="5.3" y2="18.7"/><line x1="12" y1="12" x2="7.7" y2="3.4"/><line x1="12" y1="12" x2="16.3" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="7.7"/><line x1="12" y1="12" x2="3.4" y2="16.3"/><line x1="12" y1="12" x2="16.3" y2="3.4"/><line x1="12" y1="12" x2="7.7" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="16.3"/><line x1="12" y1="12" x2="3.4" y2="7.7"/></g></svg></span><span class="appName">Claude</span></div></div>
+      </div>
+      <div class="goalCol gout rv d3">
+        <div class="goalHd"><span class="goalTag out">Out</span></div>
+        <div class="goalItems pills"><span class="oldPill jot"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#FF6100"/><g fill="#fff"><rect x="7" y="7.2" width="10" height="2.1" rx="1.05"/><rect x="7" y="11" width="10" height="2.1" rx="1.05"/><rect x="7" y="14.8" width="6.4" height="2.1" rx="1.05"/></g></svg> Jotform</span><span class="oldPill">TMA</span><span class="oldPill">CAAPS</span><span class="oldPill">Procurement Register</span><span class="oldPill">F099 Requisition</span><span class="oldPill">Plant Trackers</span><span class="oldPill">Labour scheduling spreadsheets</span><span class="oldPill">Docket / Delivery Register</span><span class="oldPill">Daily Diary</span><span class="oldPill">Cost Tracker</span><span class="oldPill">Project Forecasting (PFC)</span><span class="oldPill">Stream / Company Forecasting</span><span class="oldPill">Monthly Reporting (MPR)</span><span class="oldPill">Variation Register</span><span class="oldPill">Progress Claims workbook</span><span class="oldPill">Skills / competency spreadsheets</span><span class="oldPill">Accruals spreadsheets</span><span class="oldPill">GL journal spreadsheets</span><span class="oldPill">Month-end (EoM) checklists</span><span class="oldPill">Countless Pronto exports</span></div>
+      </div>
+      <div class="goalCol gstay rv d4">
+        <div class="goalHd"><span class="goalTag stay">Stays</span></div>
+        <div class="goalItems"><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#C8102E"/><text x="12" y="16.7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-size="13" font-weight="800" fill="#fff">P</text></svg></span><span class="appName">Pronto Xi</span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#F26522"/><text x="12" y="16.7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-size="13" font-weight="800" fill="#fff">H</text></svg></span><span class="appName">HammerTech</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sCons" data-label="Consultation" data-act="4">
+  <div class="inner">
+    <div class="head rv" style="text-align:center;">
+      <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>Consultation</span>
+      <h2 style="margin-top:1.2vh;">Three groups shape every feature.</h2>
+    </div>
+    <div class="consGrid">
+      <div class="consCard rv d2">
+        <div class="consBadge cg-e">E</div>
+        <h3>Executives</h3>
+        <div class="consRole">Endorsement of feature prototypes prior to building.</div>
+        <div class="consQ">&ldquo;Are we ready to proceed?&rdquo;</div>
+      </div>
+      <div class="consCard rv d3">
+        <div class="consBadge cg-p">P</div>
+        <h3>Primary Consultation Group</h3>
+        <div class="consRole">Subject-matter experts who refine each feature&rsquo;s functional requirements, across the scope of every module.</div>
+        <div class="consQ">&ldquo;What do we need?&rdquo;</div>
+      </div>
+      <div class="consCard rv d4">
+        <div class="consBadge cg-u">U</div>
+        <h3>Users</h3>
+        <div class="consRole">The people using the feature hands-on &mdash; they speak to the pain points and how to make it work best for them.</div>
+        <div class="consQ">&ldquo;How do we get it?&rdquo;</div>
+      </div>
+    </div>
+    <div class="cap rv d5" style="text-align:center;">Each Project Lead maintains a consultation matrix mapping features to cohorts; the PM logs attendance. &nbsp;&middot;&nbsp; Membership indicative &mdash; to be confirmed with Jacob.</div>
+  </div>
+</section>
+
+<section class="slide" id="s6" data-label="Approach" data-act="4">
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The Atlas Development Cycle</span>
@@ -1091,41 +1296,10 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       </div>
     </div>
     <div class="shelf rv d2" id="shelf"><span class="sl">Delivered</span></div>
-    <div class="consultBlock rv d3">
-      <div class="consultLead">Consultation groups guide the design — who’s involved depends on the module and feature scope:</div>
-      <div class="roundsWrap">
-        <div class="rounds">
-          <div class="round">
-            <div class="rNum cg-p">P</div>
-            <h3>Primary Group</h3>
-            <div class="rOwn">Subject matter experts from each stream</div>
-            <p>Early refinement of the feature’s functional requirements, within the bounds of its scope.</p>
-          </div>
-          <div class="round">
-            <div class="rNum cg-u">U</div>
-            <h3>User Group</h3>
-            <div class="rOwn">Direct users of the feature — variable by feature</div>
-            <p>How requirements are best met in a practical, user-friendly way; feedback on the prototype before the design is locked.</p>
-          </div>
-          <div class="round">
-            <div class="rNum cg-e">E</div>
-            <h3>Executive Group</h3>
-            <div class="rOwn">Executive General Managers</div>
-            <p>Executive consultation for substantial features before development — pre-rollout brief and enforcement of use.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="cap rv d4">Each Project Lead maintains a consultation matrix mapping features to cohorts; the PM logs attendance. &nbsp;·&nbsp; Membership indicative — to be confirmed with Jacob.</div>
   </div>
 </section>
 
-<!-- Slide 2: The reality today -->
-<!-- ════════════ ACT 2 ════════════ -->
-
-<!-- Slide 4: Feature ecosystem (SIGNATURE 2) -->
-
-<section class="slide" id="s4" data-label="Features" data-act="3">
+<section class="slide" id="s4" data-label="Features" data-act="5">
 
   <div class="inner">
     <div class="wrap">
@@ -1150,9 +1324,64 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   </div>
 </section>
 
-<!-- ════════════ ACT 3 ════════════ -->
+<section class="slide" id="sUse" data-label="Every use case" data-act="5">
+  <div class="inner">
+    <div class="head rv" style="text-align:center;">
+      <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>Beyond the application</span>
+      <h2 style="margin-top:1.2vh;">One philosophy. Every use case.</h2>
+    </div>
+    <div class="useFlow">
+      <div class="useNode rv d2"><div class="useGlyph wdo">W&middot;D&middot;O</div><h3>The Philosophy</h3><p>Work &middot; Data &middot; Outputs</p></div>
+      <div class="useArrow rv d2" aria-hidden="true">&#8594;</div>
+      <div class="useNode atlas rv d3"><svg class="mlogo useMark"><use href="#atlasMark"/></svg><h3>Atlas</h3><p>One structured platform</p></div>
+      <div class="useArrow rv d3" aria-hidden="true">&#8594;</div>
+      <div class="useNode rv d4"><span class="useMark claudeMark"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#D97757" stroke-width="2.1" stroke-linecap="round"><line x1="12" y1="12" x2="12" y2="2.6"/><line x1="12" y1="12" x2="12" y2="21.4"/><line x1="12" y1="12" x2="2.6" y2="12"/><line x1="12" y1="12" x2="21.4" y2="12"/><line x1="12" y1="12" x2="5.3" y2="5.3"/><line x1="12" y1="12" x2="18.7" y2="18.7"/><line x1="12" y1="12" x2="18.7" y2="5.3"/><line x1="12" y1="12" x2="5.3" y2="18.7"/><line x1="12" y1="12" x2="7.7" y2="3.4"/><line x1="12" y1="12" x2="16.3" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="7.7"/><line x1="12" y1="12" x2="3.4" y2="16.3"/><line x1="12" y1="12" x2="16.3" y2="3.4"/><line x1="12" y1="12" x2="7.7" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="16.3"/><line x1="12" y1="12" x2="3.4" y2="7.7"/></g></svg></span><h3>Claude</h3><p>Business logic &amp; context</p></div>
+      <div class="useArrow rv d4" aria-hidden="true">&#8594;</div>
+      <div class="useNode goal rv d5"><div class="useGlyph">&#8734;</div><h3>Every use case</h3><p>Beyond the application</p></div>
+    </div>
+    <div class="useCalls">
+      <div class="useCall rv d5"><h4>AI-ready by design</h4><p>Data built to the philosophy is standardised, structured and visible &mdash; ready for Claude to consume. Use cases beyond the application draw on Atlas from day one.</p></div>
+      <div class="useCall rv d6"><h4>Permissions pass through</h4><p>A user&rsquo;s Atlas access applies directly in Claude &mdash; the same data, business rules and context. Finely tuned, accurate results, every time.</p></div>
+    </div>
+  </div>
+</section>
 
-<!-- Slide 3: Cost flow + the Atlas concept (SIGNATURE / HERO) -->
+<section class="slide" id="s7" data-label="Proof" data-act="6">
+  <div class="inner">
+    <span class="eyebrow rv"><span class="dot"></span>Proof</span>
+    <h2 class="rv d2">Prototype every module before we build it.</h2>
+    <div class="themes">
+      <div class="theme rv d3"><div class="glyph">↑</div><h3>Business buy-in</h3><p>Up</p></div>
+      <div class="theme rv d4"><div class="glyph">↓</div><h3>Development rework</h3><p>Down</p></div>
+      <div class="theme rv d5"><div class="glyph">✓</div><h3>Digital tools</h3><p>Delivered with certainty</p></div>
+    </div>
+    <div class="go rv d6"><a class="cta" href="./index.html">Open the MPR design walkthrough →</a></div>
+  </div>
+</section>
+
+<section class="slide" id="sNext" data-label="Next steps" data-act="6">
+  <div class="inner">
+    <div class="head rv" style="text-align:center;">
+      <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>Next steps</span>
+      <h2 style="margin-top:1.2vh;">From here, three moves.</h2>
+    </div>
+    <div class="nextRow">
+      <div class="nextCard rv d2"><div class="nextNum">01</div><h3>Product Roadmap</h3><p>Confirm the sequence of features and functions across both delivery streams.</p></div>
+      <div class="nextCard rv d3"><div class="nextNum">02</div><h3>Program</h3><p>Build the delivery program from the Dev Team&rsquo;s high-level estimates.</p></div>
+      <div class="nextCard hi rv d4"><div class="nextNum">03</div><h3>Release 1, Phase 1<span class="nextSub">Monthly Project Report</span></h3><p>Deliver the first feature through the full development cycle and into the business.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sQ" data-label="Questions" data-act="6">
+  <div class="halo"></div>
+  <svg class="atlasWatermark" viewBox="0 0 100 100" aria-hidden="true"><use href="#atlasMark"/></svg>
+  <div class="inner">
+    <div class="wordmark">Questions?</div>
+    <div class="line rv d4">One platform. Every direction.</div>
+  </div>
+</section>
+
 <section class="slide" id="s3" data-label="Cost flow" data-act="2" data-skip style="display:none">
   <div class="inner">
     <div class="head rv">
@@ -1227,8 +1456,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   </div>
 </section>
 
-<!-- Slide: Today vs With Atlas transition -->
-<section class="slide" id="s9" data-label="Transition" data-act="2">
+<section class="slide" id="s9" data-label="Transition" data-act="2" data-skip style="display:none">
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The Shift</span>
@@ -1267,51 +1495,6 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
     </div>
   </div>
 </section>
-
-<!-- Slide 5: Release cadence (looping delivery animation) -->
-<section class="slide" id="s5" data-label="Cadence" data-act="3">
-  <div class="inner">
-    <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>The When</span>
-      <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
-    </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, releases delivered as time progresses, with the Atlas People rollout shown above">
-      <defs>
-        <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
-        </linearGradient>
-        <pattern id="stripes" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)">
-          <rect class="stripeA" width="9" height="9"/><rect class="stripeB" width="4.5" height="9"/>
-        </pattern>
-      </defs>
-      <path class="spine" d="M220 340 H1540"/>
-      <path class="fillStripe" id="relStripe" d="M220 340 H1540"/>
-      <path class="fillSolid" id="relSolid" d="M220 340 H1540"/>
-      <!-- ticks + playhead injected by JS -->
-    </svg>
-    <div class="cap rv d3">Sequencing and dates to be confirmed against detailed scope and delivery capacity</div>
-  </div>
-</section>
-
-<!-- ════════════ ACT 4 ════════════ -->
-
-<!-- Slide 6: Delivery process, production line -->
-<!-- ════════════ ACT 5 ════════════ -->
-
-<!-- Slide 7: Proof + walkthrough link -->
-<section class="slide" id="s7" data-label="Proof" data-act="5">
-  <div class="inner">
-    <span class="eyebrow rv"><span class="dot"></span>Proof</span>
-    <h2 class="rv d2">Prototype every module before we build it.</h2>
-    <div class="themes">
-      <div class="theme rv d3"><div class="glyph">↑</div><h3>Business buy-in</h3><p>Up</p></div>
-      <div class="theme rv d4"><div class="glyph">↓</div><h3>Development rework</h3><p>Down</p></div>
-      <div class="theme rv d5"><div class="glyph">✓</div><h3>Digital tools</h3><p>Delivered with certainty</p></div>
-    </div>
-    <div class="go rv d6"><a class="cta" href="./index.html">Open the MPR design walkthrough →</a></div>
-  </div>
-</section>
-
 </div><!-- /stage -->
 
 <!-- Chrome -->
@@ -3873,7 +4056,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T05:14:57Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T08:10:45Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
