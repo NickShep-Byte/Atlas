@@ -2723,20 +2723,22 @@ function transComputePts(idA,idB){
     // Pre-settle: a single bend, exiting at 1/3 along Project
     // Forecasting's bottom edge (the roll-up to Company takes 2/3),
     // straight down then along Pronto's row into Pronto's right edge.
-    var x13cf=a.left+(a.right-a.left)/3;
-    return [{x:x13cf,y:a.bottom},{x:x13cf,y:b.cy},{x:b.right,y:b.cy}];
+    // Today: CTC drops down below Pronto's centre so Cost Actuals can sit above
+    // it (between it and the CAAPS line).
+    var x13cf=a.left+(a.right-a.left)/3, ctcY=b.cy+23;
+    return [{x:x13cf,y:a.bottom},{x:x13cf,y:ctcY},{x:b.right,y:ctcY}];
   }
   if(idA==='pronto'&&idB==='forecasting'){
-    // "Cost Actuals" — deliberately runs parallel to, and just ABOVE, the CTC
-    // Forecast line (which sits along Pronto's centre row) so the two read as a
-    // coordinated pair. Biased to the LEFT of the corridor while Forecasting is
-    // a today tool, and to the RIGHT once it has merged into Atlas.
-    var toR=(transState.forecasting==='atlas');
-    var corrY=a.cy-46;                 // parallel corridor, above the CTC line
-    var exitX=a.cx+22;                 // leave Pronto's top edge, right of centre
-    var fx=b.cx+(toR?24:-24);          // Forecasting-side riser: right once merged, else left
-    var enterY=(b.cy>corrY)?b.top:b.bottom;
-    return [{x:exitX,y:a.top},{x:exitX,y:corrY},{x:fx,y:corrY},{x:fx,y:enterY}];
+    // "Cost Actuals". Today: comes out of Pronto's right edge just above centre,
+    // sitting between the CAAPS line (above) and the CTC line (pushed down,
+    // below), then runs to Forecasting. Once Forecasting merges into Atlas, run
+    // parallel just above the CTC line, biased to the right.
+    if(transState.forecasting==='atlas'){
+      var corrY=a.cy-46,fxA=b.cx+24,eYA=(b.cy>corrY)?b.top:b.bottom;
+      return [{x:a.cx+22,y:a.top},{x:a.cx+22,y:corrY},{x:fxA,y:corrY},{x:fxA,y:eYA}];
+    }
+    var y=a.cy-1, fxT=b.cx-24, eYt=(b.cy>y)?b.top:b.bottom;
+    return [{x:a.right,y:y},{x:fxT,y:y},{x:fxT,y:eYt}];
   }
   if(idA==='invoiceval'&&idB==='pronto'){
     // Appears the moment Invoice Validation lands (board p9). Enters
@@ -2749,7 +2751,7 @@ function transComputePts(idA,idB){
     // Today-only, and CAAPS sits above-right of Pronto. Single elbow
     // into Pronto's RIGHT edge: straight down from CAAPS's bottom, then
     // straight into the right edge.
-    var entryYcp=b.cy-8;
+    var entryYcp=b.cy-25;   // enter high on Pronto's right edge, leaving room for Cost Actuals + CTC below
     return [{x:a.cx,y:a.bottom},{x:a.cx,y:entryYcp},{x:b.right,y:entryYcp}];
   }
   if(idA==='invoiceval'&&idB==='caaps'){
@@ -2847,6 +2849,8 @@ function transPlaceLabel(el,pts,key){
     // the LEFT quarter of that rail so it stays clear of the forecasting
     // arrows that cross the rail's centre.
     if(key==='variationreg|procreg')ox=best.lo+(best.hi-best.lo)*0.22;
+    // CTC Forecast label sits BELOW its line (Cost Actuals owns the space above).
+    if(key==='forecasting|pronto')oy=best.y+15;
   }else{
     el.setAttribute('text-anchor','start');
     ox=best.x+8;oy=best.y+3;
@@ -3816,7 +3820,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T00:00:39Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T00:04:17Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
