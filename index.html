@@ -650,6 +650,10 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .ptick.delivered .pdot{fill:var(--sec);stroke:var(--acc2);}
 #s5 .pck{font-size:13px;font-weight:800;fill:#fff;opacity:0;transition:opacity .35s ease;}
 #s5 .ptick.delivered .pck{opacity:1;}
+/* Only the GO-LIVE milestone is picked out in white; the other People ticks
+   keep the release (Projects) delivered style above (blue fill + white check). */
+#s5 .ptick.golive.delivered .pdot{fill:#fff;stroke:var(--sec);stroke-width:2.5;}
+#s5 .ptick.golive.delivered .pck{fill:var(--sec);}
 #s5 .pplBar .pq{font-size:12.5px;font-weight:700;fill:var(--soft);letter-spacing:.08em;}
 #s5 .pplBar .pmn{font-size:13.5px;font-weight:700;fill:var(--title);font-family:var(--font);}
 #s5 .pnote{font-size:10px;font-weight:600;fill:var(--soft);font-style:italic;}
@@ -1271,7 +1275,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, Q4 2026 to Q1 2028, releases delivered as time progresses, with the Atlas People rollout shown above">
+    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, releases delivered as time progresses, with the Atlas People rollout shown above">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -2139,11 +2143,8 @@ CAD.forEach(function(c,i){
     t.textContent=content;return t;
   }
   var baseY = up? MIDY-70 : MIDY+82;
-  g.appendChild(txt(c[0], up? baseY-38 : baseY+2 ,'q'));
-  // One line per batched feature (two per quarter).
-  c[1].forEach(function(f,fi){
-    g.appendChild(txt(f, (up? baseY-18 : baseY+22) + fi*17, fi===0?'mn':'mn2'));
-  });
+  // Each drop is simply "Release N" — no feature names or quarter labels.
+  g.appendChild(txt('Release '+(i+1), up? baseY-14 : baseY+16 ,'q'));
   tl.appendChild(g);
   tickGroups.push(g);
 });
@@ -2255,9 +2256,9 @@ function cadenceFrame(ts){
   }
   // Marker shows the drop it's leading IN to: starts on Q4 2026, then flips to
   // the next quarter the moment it reaches each drop (Q4 drop -> Q1, etc.).
-  var lbl=CAD[CAD.length-1][0];
+  var lbl='Release '+CAD.length;
   for(var li=0;li<tickGroups.length;li++){
-    if(x < (+tickGroups[li].dataset.x)-2){ lbl=CAD[li][0]; break; }
+    if(x < (+tickGroups[li].dataset.x)-2){ lbl='Release '+(li+1); break; }
   }
   phLabel.textContent = p<1 ? lbl : '';
   cadence.raf=requestAnimationFrame(cadenceFrame);
@@ -3872,7 +3873,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T05:06:07Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T05:14:57Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
