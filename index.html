@@ -2042,21 +2042,37 @@ var APPMODS=[
     var mod=buildRow('mod',MODS,false,true);
 
     STEPS=[
-      function(){atlas.style.opacity='1';},                                  // 1. Atlas in
-      function(){mod.style.display='';mod.getBoundingClientRect();     // 2. convert (flex 3->5)
-        acr.style.opacity='0';mod.style.opacity='1';},
+      function(){atlas.style.opacity='1';},                                  // 1. Atlas fades in
+      function(){                                                            // 2. acronyms slide into module names
+        var acrItems=[].slice.call(acr.querySelectorAll('.miItem'));
+        var src=[0,1,2,2,2].map(function(k){return centre(acrItems[k]);});   // People<-HRIS, Tenders<-TMA, P/O/F<-PMT
+        mod.style.display='';mod.getBoundingClientRect();
+        var modItems=[].slice.call(mod.querySelectorAll('.miItem'));
+        var modC=modItems.map(centre);                                       // natural (target) slot positions
+        var pipes=[].slice.call(mod.querySelectorAll('.miPipe'));
+        modItems.forEach(function(it,i){it.style.transition='none';          // start each name AT its source acronym
+          it.style.transform='translate('+(src[i].x-modC[i].x)+'px,'+(src[i].y-modC[i].y)+'px)';});
+        pipes.forEach(function(pp){pp.style.opacity='0';});
+        mod.getBoundingClientRect();                                         // commit the source positions
+        mod.style.opacity='1';acr.style.opacity='0';                        // reveal names, fade acronyms
+        requestAnimationFrame(function(){
+          modItems.forEach(function(it){it.style.transition='';});   // frame B: restore the .9s transition
+          requestAnimationFrame(function(){                          // frame C: now change transform -> animates
+            // (transitioning transform to 'none'/'' does not animate in Chrome,
+            // so the slide targets an explicit translate(0)).
+            modItems.forEach(function(it){it.style.transform='translate(0px,0px)';});
+            pipes.forEach(function(pp){pp.style.opacity='1';});
+          });
+        });
+      },
       function(){                                                            // 3. shift onto chips + h2
         var items=[].slice.call(mod.querySelectorAll('.miItem'));
-        var cs=items.map(centre);
-        items.forEach(function(it,i){it.style.transition='none';it.style.position='absolute';
-          it.style.left=cs[i].x+'px';it.style.top=cs[i].y+'px';it.style.margin='0';
-          it.style.transform='translate(-50%,-50%)';});
-        mod.getBoundingClientRect();                                         // reflow with no transition
-        items.forEach(function(it,i){it.style.transition='';flyChip(it,i);});
+        items.forEach(function(it,i){var c=centre(it),cc=chipCentre(i),s=fontOf(btns[i])/fontOf(it);
+          it.style.transform='translate('+(cc.x-c.x)+'px,'+(cc.y-c.y)+'px) scale('+s+')';});  // fly in place
         [].slice.call(mod.querySelectorAll('.miPipe')).forEach(function(pp){pp.style.opacity='0';});
         var row=chipRow();flyTo(atlas,row.cx,row.top-42,Math.max(0.28,42/fontOf(atlas)));
         section.classList.remove('introRunning');                           // chips + card fade in
-        iT(function(){section.classList.remove('introH2');mod.style.opacity='0';},1000); // h2 in (1s later)
+        iT(function(){section.classList.remove('introH2');mod.style.opacity='0';},1000); // h2 in; flown labels out
       }
     ];
     runSteps();   // in case a fragment was revealed before this build finished
@@ -3843,7 +3859,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T00:25:04Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T00:41:45Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
