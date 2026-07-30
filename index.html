@@ -591,6 +591,18 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 /* h2 stays hidden until the intro sequence finishes, then fades in */
 #s4b .head h2{transition:opacity .6s ease;}
 #s4b.introH2 .head h2{opacity:0;}
+/* intro name row — a centred flex row that flexes from three acronyms to the
+   five module names, then whose items fly up onto the chips */
+#s4b .miRow{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:row;flex-wrap:nowrap;
+  align-items:flex-start;justify-content:center;gap:.42em;white-space:nowrap;
+  font-family:var(--font);font-weight:800;line-height:1.05;letter-spacing:-.01em;
+  font-size:clamp(22px,2.7vw,44px);transition:opacity .55s ease;}
+#s4b .miRow .miItem{position:relative;text-align:center;color:var(--title);
+  transform-origin:center center;transition:transform .9s var(--ease),opacity .5s ease;}
+#s4b .miRow.mod .miItem{color:var(--sec);}
+#s4b .miRow .miPipe{color:var(--teal);font-weight:500;transition:opacity .4s ease;}
+#s4b .miRow .isub{position:absolute;top:118%;left:50%;transform:translateX(-50%);
+  white-space:nowrap;font-size:.34em;font-weight:600;color:var(--soft);letter-spacing:0;}
 #s4b.introRunning #modChips,#s4b.introRunning .modShow{opacity:0;}
 
 </style>
@@ -1954,35 +1966,38 @@ var APPMODS=[
   });
   show(0);
 
-  // ---- Intro animation (click-gated). On enter, the legacy systems
-  // (HRIS / TMA / PMT) appear large and centred with their full names as
-  // subtitles. The first forward advance reveals a hidden fragment (the deck's
-  // own gate) which plays the sequence, ~1s between steps:
-  //   1. "Atlas" fades in large.
-  //   2. the labels morph into the "Atlas | Module" lockup (PMT splits three ways).
-  //   3. they shift + shrink up onto the chips; a large "Atlas" is retained above.
-  //   4. the h2 (hidden until now) fades in.
+  // ---- Intro animation (nav-driven). On enter the legacy systems show as a
+  // large centred row "HRIS | TMA | PMT" with full-name subtitles (h2 + chips
+  // hidden). Each forward advance drives one step:
+  //   1. "Atlas" fades in large above the row.
+  //   2. the row converts to the module names "People | Tenders | Projects |
+  //      Operations | Finance" (the layout flexes from three items to five).
+  //   3. the names shift + shrink up onto the chip buttons (a large "Atlas" is
+  //      retained above them) and the h2 fades in.
   var section=document.getElementById('s4b');
-  var LEG=[
-    {legacy:'HRIS',mod:'People',   full:'Human Resource Information System',chips:[0]},
-    {legacy:'TMA', mod:'Tenders',  full:'Tender Management Application',    chips:[1]},
-    {legacy:'PMT', mod:'P / O / F',full:'Project Management Tools',         chips:[2,3,4],split:['Projects','Operations','Finance']}
-  ];
-  var introTimers=[],overlay=null,doPlay=null,played=false;
+  var ACR=[{a:'HRIS',full:'Human Resource Information System'},
+           {a:'TMA', full:'Tender Management Application'},
+           {a:'PMT', full:'Project Management Tools'}];
+  var MODS=['People','Tenders','Projects','Operations','Finance'];   // = chip order
+  var introTimers=[],overlay=null,STEPS=[],ran=0;
   function iT(fn,ms){introTimers.push(setTimeout(fn,ms));}
   function introClear(){
     introTimers.forEach(clearTimeout);introTimers=[];
     if(overlay&&overlay.parentNode)overlay.parentNode.removeChild(overlay);
-    overlay=null;doPlay=null;played=false;
+    overlay=null;STEPS=[];ran=0;
     section.classList.remove('introRunning','introH2');
   }
-  // Hidden fragment: the deck's nextFrag() reveals it on the first forward
-  // advance (blocking navigation) — that reveal is our "after user click" cue.
-  var trigger=document.createElement('span');
-  trigger.className='frag';trigger.style.cssText='position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
-  section.querySelector('.inner').appendChild(trigger);
-  function maybePlay(){if(trigger.classList.contains('shown')&&doPlay&&!played){played=true;doPlay();}}
-  new MutationObserver(maybePlay).observe(trigger,{attributes:true,attributeFilter:['class']});
+  // Three hidden fragments: each forward advance reveals the next (blocking
+  // navigation) and drives one step; a 4th advance leaves the slide.
+  var inner=section.querySelector('.inner'),frags=[];
+  for(var _fi=0;_fi<3;_fi++){var _f=document.createElement('span');_f.className='frag';
+    _f.style.cssText='position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
+    inner.appendChild(_f);frags.push(_f);}
+  function runSteps(){
+    var shown=frags.filter(function(f){return f.classList.contains('shown');}).length;
+    while(ran<shown&&ran<STEPS.length){STEPS[ran]();ran++;}
+  }
+  frags.forEach(function(f){new MutationObserver(runSteps).observe(f,{attributes:true,attributeFilter:['class']});});
 
   function introRun(){
     introClear();
@@ -1998,45 +2013,48 @@ var APPMODS=[
     function fontOf(el){return parseFloat(getComputedStyle(el).fontSize);}
     function flyTo(el,tx,ty,scale){var c=centre(el);
       el.style.transform='translate(-50%,-50%) translate('+(tx-c.x)+'px,'+(ty-c.y)+'px) scale('+scale+')';}
-    function chipCentre(i){var b=btns[i].getBoundingClientRect();return{x:b.left-o.left+b.width/2,y:b.top-o.top+b.height/2};}
-    function flyToChip(el,i){var cc=chipCentre(i);flyTo(el,cc.x,cc.y,fontOf(btns[i])/fontOf(el));}
+    function chipCentre(i){var q=btns[i].getBoundingClientRect();return{x:q.left-o.left+q.width/2,y:q.top-o.top+q.height/2};}
+    function flyChip(el,i){var cc=chipCentre(i);flyTo(el,cc.x,cc.y,fontOf(btns[i])/fontOf(el));}
     function chipRow(){var l=1e9,r=-1e9,t=1e9;btns.forEach(function(b){var q=b.getBoundingClientRect();l=Math.min(l,q.left);r=Math.max(r,q.right);t=Math.min(t,q.top);});
       return{cx:(l+r)/2-o.left,top:t-o.top};}
 
     var atlas=document.createElement('div');atlas.className='miAtlas';atlas.textContent='Atlas';
-    atlas.style.left=cx+'px';atlas.style.top=(cy-140)+'px';overlay.appendChild(atlas);
-    var gap=Math.min(o.width*0.3,420),startX=[cx-gap,cx,cx+gap];
-    var tokens=LEG.map(function(L,i){
-      var d=document.createElement('div');d.className='mi';
-      d.innerHTML='<span class="lg">'+L.legacy+'</span>'
-        +'<span class="md"><span class="sep">|</span> '+L.mod+'</span>'
-        +'<span class="miSub">'+L.full+'</span>';
-      d.style.left=startX[i]+'px';d.style.top=cy+'px';overlay.appendChild(d);return d;
-    });
+    atlas.style.left=cx+'px';atlas.style.top=(cy-150)+'px';overlay.appendChild(atlas);
 
-    doPlay=function(){
-      atlas.style.opacity='1';                                            // 1. Atlas fades in
-      iT(function(){tokens.forEach(function(t){t.classList.add('morph');});},1600); // 2. morph to lockup
-      iT(function(){                                                      // 3. shift/shrink to chips
-        flyToChip(tokens[0],0);flyToChip(tokens[1],1);
-        var cc=centre(tokens[2]);tokens[2].style.opacity='0';             //    PMT dissolves...
-        LEG[2].split.forEach(function(nm,k){                             //    ...into three modules
-          var st=document.createElement('div');st.className='mi sub';
-          st.innerHTML='<span class="sep">|</span> '+nm;
-          st.style.left=cc.x+'px';st.style.top=cc.y+'px';st.style.opacity='0';
-          overlay.appendChild(st);st.getBoundingClientRect();
-          iT(function(){st.style.opacity='1';flyToChip(st,LEG[2].chips[k]);},20);
-        });
-        var row=chipRow();
-        flyTo(atlas,row.cx,row.top-42,Math.max(0.28,42/fontOf(atlas)));   //    retain Atlas above chips
-        section.classList.remove('introRunning');                        //    chips + card fade in
-      },3300);
-      iT(function(){                                                      // 4. h2 fades in; drop tokens
-        section.classList.remove('introH2');
-        overlay.querySelectorAll('.mi').forEach(function(t){t.style.opacity='0';});
-      },4200);
-    };
-    maybePlay();   // in case the trigger fired before this build finished
+    function buildRow(cls,items,withSub,hide){
+      var row=document.createElement('div');row.className='miRow '+cls;
+      if(hide){row.style.opacity='0';row.style.display='none';}   // fully hidden until the convert step
+      row.style.left=cx+'px';row.style.top=cy+'px';
+      items.forEach(function(it,i){
+        if(i){var pp=document.createElement('span');pp.className='miPipe';pp.textContent='|';row.appendChild(pp);}
+        var s=document.createElement('span');s.className='miItem';
+        s.innerHTML=withSub?(it.a+'<span class="isub">'+it.full+'</span>'):it;
+        row.appendChild(s);
+      });
+      overlay.appendChild(row);return row;
+    }
+    var acr=buildRow('acr',ACR,true,false);
+    var mod=buildRow('mod',MODS,false,true);
+
+    STEPS=[
+      function(){atlas.style.opacity='1';},                                  // 1. Atlas in
+      function(){mod.style.display='';mod.getBoundingClientRect();     // 2. convert (flex 3->5)
+        acr.style.opacity='0';mod.style.opacity='1';},
+      function(){                                                            // 3. shift onto chips + h2
+        var items=[].slice.call(mod.querySelectorAll('.miItem'));
+        var cs=items.map(centre);
+        items.forEach(function(it,i){it.style.transition='none';it.style.position='absolute';
+          it.style.left=cs[i].x+'px';it.style.top=cs[i].y+'px';it.style.margin='0';
+          it.style.transform='translate(-50%,-50%)';});
+        mod.getBoundingClientRect();                                         // reflow with no transition
+        items.forEach(function(it,i){it.style.transition='';flyChip(it,i);});
+        [].slice.call(mod.querySelectorAll('.miPipe')).forEach(function(pp){pp.style.opacity='0';});
+        var row=chipRow();flyTo(atlas,row.cx,row.top-42,Math.max(0.28,42/fontOf(atlas)));
+        section.classList.remove('introRunning');                           // chips + card fade in
+        iT(function(){section.classList.remove('introH2');mod.style.opacity='0';},1000); // h2 in (1s later)
+      }
+    ];
+    runSteps();   // in case a fragment was revealed before this build finished
   }
   onSlideEnter('s4b',introRun);
   onSlideLeave('s4b',introClear);
@@ -3820,7 +3838,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T00:04:17Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T00:20:41Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
