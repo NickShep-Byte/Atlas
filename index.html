@@ -568,6 +568,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
    up into the module chip buttons on slide enter. ---- */
 #s4b .modIntro{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden;
   transition:opacity .5s ease;}
+#s4b .modIntro.instant *{transition:none!important;}   /* commit initial state without animating */
 #s4b .mi{position:absolute;transform:translate(-50%,-50%);transform-origin:center center;
   white-space:nowrap;text-align:center;font-family:var(--font);font-weight:800;line-height:1;
   letter-spacing:-.01em;font-size:clamp(34px,4.6vw,66px);
@@ -591,6 +592,10 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 /* h2 stays hidden until the intro sequence finishes, then fades in */
 #s4b .head h2{transition:opacity .6s ease;}
 #s4b.introH2 .head h2{opacity:0;}
+/* feature chips stay hidden through the intro (and briefly after, while the
+   flown module names fade off the buttons), then fade in */
+#s4b .modFeats{transition:opacity .5s ease;}
+#s4b.introHoldFeats .modFeats{opacity:0;}
 /* intro name row — a centred flex row that flexes from three acronyms to the
    five module names, then whose items fly up onto the chips */
 #s4b .miRow{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:row;flex-wrap:nowrap;
@@ -1363,9 +1368,14 @@ var CAD_FEATURES=[
    navigation engine hard-coding slide ids. Keeps the engine generic
    and every sheet self-contained.
    ============================================================ */
-var slideHooks={enter:{},leave:{}};
+var slideHooks={enter:{},leave:{},next:{},prev:{}};
 function onSlideEnter(id,fn){slideHooks.enter[id]=fn;}
 function onSlideLeave(id,fn){slideHooks.leave[id]=fn;}
+// A slide can claim the forward/back arrows to drive its own internal steps.
+// The handler returns true if it consumed the input (nav is blocked); false
+// lets navigation proceed (e.g. once the slide's own steps are exhausted).
+function onSlideNext(id,fn){slideHooks.next[id]=fn;}
+function onSlidePrev(id,fn){slideHooks.prev[id]=fn;}
 
 
 
@@ -1971,43 +1981,31 @@ var APPMODS=[
   });
   show(0);
 
-  // ---- Intro animation (nav-driven). On enter the legacy systems show as a
-  // large centred row "HRIS | TMA | PMT" with full-name subtitles (h2 + chips
-  // hidden). Each forward advance drives one step:
-  //   1. "Atlas" fades in large above the row.
-  //   2. the row converts to the module names "People | Tenders | Projects |
-  //      Operations | Finance" (the layout flexes from three items to five).
-  //   3. the names shift + shrink up onto the chip buttons (a large "Atlas" is
-  //      retained above them) and the h2 fades in.
+  // ---- Intro animation (nav-driven, reversible). On enter the legacy systems
+  // show as a large centred row "HRIS | TMA | PMT" with full-name subtitles
+  // (h2, chips and the card's feature chips hidden). Left/right step forward /
+  // back through:
+  //   step 1: "Atlas" fades in large above the row.
+  //   step 2: the acronyms slide into the module names "People | Tenders |
+  //           Projects | Operations | Finance" (layout flexes 3 -> 5).
+  //   step 3: the names shift + shrink onto the chip buttons and fade out as the
+  //           buttons appear; a large "Atlas" is retained above; the h2 fades in.
   var section=document.getElementById('s4b');
   var ACR=[{a:'HRIS',full:'Human Resource Information System'},
            {a:'TMA', full:'Tender Management Application'},
            {a:'PMT', full:'Project Management Tools'}];
   var MODS=['People','Tenders','Projects','Operations','Finance'];   // = chip order
-  var introTimers=[],overlay=null,STEPS=[],ran=0;
-  function iT(fn,ms){introTimers.push(setTimeout(fn,ms));}
+  var overlay=null,step=0,featsTimer=null,apply=null;
   function introClear(){
-    introTimers.forEach(clearTimeout);introTimers=[];
+    if(featsTimer){clearTimeout(featsTimer);featsTimer=null;}
     if(overlay&&overlay.parentNode)overlay.parentNode.removeChild(overlay);
-    overlay=null;STEPS=[];ran=0;
-    section.classList.remove('introRunning','introH2');
+    overlay=null;apply=null;step=0;
+    section.classList.remove('introRunning','introH2','introHoldFeats');
   }
-  // Three hidden fragments: each forward advance reveals the next (blocking
-  // navigation) and drives one step; a 4th advance leaves the slide.
-  var inner=section.querySelector('.inner'),frags=[];
-  for(var _fi=0;_fi<3;_fi++){var _f=document.createElement('span');_f.className='frag';
-    _f.style.cssText='position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
-    inner.appendChild(_f);frags.push(_f);}
-  function runSteps(){
-    var shown=frags.filter(function(f){return f.classList.contains('shown');}).length;
-    while(ran<shown&&ran<STEPS.length){STEPS[ran]();ran++;}
-  }
-  frags.forEach(function(f){new MutationObserver(runSteps).observe(f,{attributes:true,attributeFilter:['class']});});
-
   function introRun(){
     introClear();
     if(RM)return;                         // reduced motion: leave chips + h2 as-is
-    section.classList.add('introRunning','introH2');
+    section.classList.add('introRunning','introH2','introHoldFeats');
     requestAnimationFrame(function(){requestAnimationFrame(introBuild);});
   }
   function introBuild(){
@@ -2016,19 +2014,14 @@ var APPMODS=[
     var o=overlay.getBoundingClientRect(),cx=o.width/2,cy=o.height/2;
     function centre(el){var r=el.getBoundingClientRect();return{x:r.left-o.left+r.width/2,y:r.top-o.top+r.height/2};}
     function fontOf(el){return parseFloat(getComputedStyle(el).fontSize);}
-    function flyTo(el,tx,ty,scale){var c=centre(el);
-      el.style.transform='translate(-50%,-50%) translate('+(tx-c.x)+'px,'+(ty-c.y)+'px) scale('+scale+')';}
     function chipCentre(i){var q=btns[i].getBoundingClientRect();return{x:q.left-o.left+q.width/2,y:q.top-o.top+q.height/2};}
-    function flyChip(el,i){var cc=chipCentre(i);flyTo(el,cc.x,cc.y,fontOf(btns[i])/fontOf(el));}
-    function chipRow(){var l=1e9,r=-1e9,t=1e9;btns.forEach(function(b){var q=b.getBoundingClientRect();l=Math.min(l,q.left);r=Math.max(r,q.right);t=Math.min(t,q.top);});
-      return{cx:(l+r)/2-o.left,top:t-o.top};}
+    function chipRow(){var l=1e9,r=-1e9,t=1e9;btns.forEach(function(b){var q=b.getBoundingClientRect();l=Math.min(l,q.left);r=Math.max(r,q.right);t=Math.min(t,q.top);});return{cx:(l+r)/2-o.left,top:t-o.top};}
 
     var atlas=document.createElement('div');atlas.className='miAtlas';atlas.textContent='Atlas';
     atlas.style.left=cx+'px';atlas.style.top=(cy-150)+'px';overlay.appendChild(atlas);
 
-    function buildRow(cls,items,withSub,hide){
+    function buildRow(cls,items,withSub){
       var row=document.createElement('div');row.className='miRow '+cls;
-      if(hide){row.style.opacity='0';row.style.display='none';}   // fully hidden until the convert step
       row.style.left=cx+'px';row.style.top=cy+'px';
       items.forEach(function(it,i){
         if(i){var pp=document.createElement('span');pp.className='miPipe';pp.textContent='|';row.appendChild(pp);}
@@ -2038,47 +2031,52 @@ var APPMODS=[
       });
       overlay.appendChild(row);return row;
     }
-    var acr=buildRow('acr',ACR,true,false);
-    var mod=buildRow('mod',MODS,false,true);
+    var acr=buildRow('acr',ACR,true);
+    var mod=buildRow('mod',MODS,false);
 
-    STEPS=[
-      function(){atlas.style.opacity='1';},                                  // 1. Atlas fades in
-      function(){                                                            // 2. acronyms slide into module names
-        var acrItems=[].slice.call(acr.querySelectorAll('.miItem'));
-        var src=[0,1,2,2,2].map(function(k){return centre(acrItems[k]);});   // People<-HRIS, Tenders<-TMA, P/O/F<-PMT
-        mod.style.display='';mod.getBoundingClientRect();
-        var modItems=[].slice.call(mod.querySelectorAll('.miItem'));
-        var modC=modItems.map(centre);                                       // natural (target) slot positions
-        var pipes=[].slice.call(mod.querySelectorAll('.miPipe'));
-        modItems.forEach(function(it,i){it.style.transition='none';          // start each name AT its source acronym
-          it.style.transform='translate('+(src[i].x-modC[i].x)+'px,'+(src[i].y-modC[i].y)+'px)';});
-        pipes.forEach(function(pp){pp.style.opacity='0';});
-        mod.getBoundingClientRect();                                         // commit the source positions
-        mod.style.opacity='1';acr.style.opacity='0';                        // reveal names, fade acronyms
-        requestAnimationFrame(function(){
-          modItems.forEach(function(it){it.style.transition='';});   // frame B: restore the .9s transition
-          requestAnimationFrame(function(){                          // frame C: now change transform -> animates
-            // (transitioning transform to 'none'/'' does not animate in Chrome,
-            // so the slide targets an explicit translate(0)).
-            modItems.forEach(function(it){it.style.transform='translate(0px,0px)';});
-            pipes.forEach(function(pp){pp.style.opacity='1';});
-          });
-        });
-      },
-      function(){                                                            // 3. shift onto chips + h2
-        var items=[].slice.call(mod.querySelectorAll('.miItem'));
-        items.forEach(function(it,i){var c=centre(it),cc=chipCentre(i),s=fontOf(btns[i])/fontOf(it);
-          it.style.transform='translate('+(cc.x-c.x)+'px,'+(cc.y-c.y)+'px) scale('+s+')';});  // fly in place
-        [].slice.call(mod.querySelectorAll('.miPipe')).forEach(function(pp){pp.style.opacity='0';});
-        var row=chipRow();flyTo(atlas,row.cx,row.top-42,Math.max(0.28,42/fontOf(atlas)));
-        section.classList.remove('introRunning');                           // chips + card fade in
-        iT(function(){section.classList.remove('introH2');mod.style.opacity='0';},1000); // h2 in; flown labels out
-      }
-    ];
-    runSteps();   // in case a fragment was revealed before this build finished
+    // Measure once (both rows are laid out and centred the same, mod behind acr).
+    var acrItems=[].slice.call(acr.querySelectorAll('.miItem'));
+    var modItems=[].slice.call(mod.querySelectorAll('.miItem'));
+    var pipes=[].slice.call(mod.querySelectorAll('.miPipe'));
+    var srcC=[0,1,2,2,2].map(function(k){return centre(acrItems[k]);}); // People<-HRIS, Tenders<-TMA, P/O/F<-PMT
+    var modC=modItems.map(centre);
+    var mFont=fontOf(modItems[0]);
+    var srcTf=modItems.map(function(it,i){return 'translate('+(srcC[i].x-modC[i].x)+'px,'+(srcC[i].y-modC[i].y)+'px)';});
+    var chipTf=modItems.map(function(it,i){var cc=chipCentre(i);return 'translate('+(cc.x-modC[i].x)+'px,'+(cc.y-modC[i].y)+'px) scale('+(fontOf(btns[i])/mFont)+')';});
+    var aC=centre(atlas),row=chipRow(),aFont=fontOf(atlas);
+    var parkTf='translate(-50%,-50%) translate('+(row.cx-aC.x)+'px,'+((row.top-42)-aC.y)+'px) scale('+Math.max(0.28,42/aFont)+')';
+    var centerTf='translate(-50%,-50%)';
+
+    apply=function(n){
+      atlas.style.opacity=n>=1?'1':'0';
+      atlas.style.transform=n>=3?parkTf:centerTf;
+      acr.style.opacity=n>=2?'0':'1';
+      mod.style.visibility=n>=2?'visible':'hidden';   // hard-hide pre-convert (dodges Chrome's stray fade-in on a fresh node)
+      mod.style.opacity=n>=2?'1':'0';
+      modItems.forEach(function(it,i){it.style.opacity=n>=3?'0':'1';
+        it.style.transform=n>=3?chipTf[i]:(n>=2?'translate(0px,0px)':srcTf[i]);});
+      pipes.forEach(function(pp){pp.style.opacity=n===2?'1':'0';});
+      section.classList.toggle('introRunning',n<3);   // chips + card hidden until landed
+      section.classList.toggle('introH2',n<3);        // h2 hidden until landed
+      // feature chips stay hidden until the flown names have faded off the buttons
+      if(featsTimer){clearTimeout(featsTimer);featsTimer=null;}
+      section.classList.add('introHoldFeats');
+      if(n>=3)featsTimer=setTimeout(function(){section.classList.remove('introHoldFeats');},650);
+    };
+
+    // Commit the initial (step 0) state without animating it in.
+    overlay.classList.add('instant');
+    apply(0);
+    void overlay.offsetWidth;
+    requestAnimationFrame(function(){overlay.classList.remove('instant');});
+    step=0;
   }
+  function introNext(){ if(!apply||step>=3)return false; step++;apply(step);return true; }
+  function introPrev(){ if(!apply||step<=0)return false; step--;apply(step);return true; }
   onSlideEnter('s4b',introRun);
   onSlideLeave('s4b',introClear);
+  onSlideNext('s4b',introNext);
+  onSlidePrev('s4b',introPrev);
 })();
 
 })();
@@ -3617,6 +3615,9 @@ transBuild();
 
 onSlideEnter('s9', transStart);
 onSlideLeave('s9', transStop);
+// Left/right drive the absorption steps; once past the ends, navigation resumes.
+onSlideNext('s9', function(){ if(trans.step>=TRANS_STEPS)return false; transManualNext(); return true; });
+onSlidePrev('s9', function(){ if(trans.step<=0)return false; transManualPrev(); return true; });
 })();
 
 /* ============================================================
@@ -3688,12 +3689,20 @@ function goTo(i,skipFragReset){
 }
 function fwd(){
   var s=slides[cur];
-  if(!RM && nextFrag(s))return;
+  if(!RM){
+    var h=slideHooks.next[s.id];
+    if(h&&h())return;                            // slide is driving its own steps
+    if(nextFrag(s))return;
+  }
   goTo(cur+1>=slides.length?0:cur+1);          // wrap: last → first
 }
 function back(){
   var s=slides[cur];
-  if(!RM && prevFrag(s))return;
+  if(!RM){
+    var h=slideHooks.prev[s.id];
+    if(h&&h())return;
+    if(prevFrag(s))return;
+  }
   goTo(cur-1<0?slides.length-1:cur-1);          // wrap: first → last
 }
 
@@ -3863,7 +3872,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T01:40:45Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-30T05:06:07Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
