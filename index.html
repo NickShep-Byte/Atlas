@@ -617,12 +617,13 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s4b #modGrid{transition:opacity .6s ease;}
 #s4b .modGrid{display:flex;flex-direction:column;gap:1.6vh;margin-top:2.6vh;}
 #s4b .modRow{display:flex;justify-content:center;gap:1.4vw;align-items:stretch;}
-#s4b .modCard{flex:0 1 30%;max-width:30%;background:rgba(var(--srf-rgb),.05);border:1px solid rgba(var(--brd-rgb),.28);border-radius:16px;padding:2.4vh 1.5vw;text-align:center;display:flex;flex-direction:column;gap:1vh;}
+#s4b .modCard{flex:0 1 31%;max-width:33%;padding:1vh .8vw;text-align:center;display:flex;flex-direction:column;gap:1.1vh;}
 #s4b .mcFn{font-family:var(--font-util);font-size:clamp(10px,.95vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--acc2);}
-#s4b .modCard .modLock{display:flex;justify-content:center;align-items:baseline;gap:.28em;font-weight:800;letter-spacing:-.01em;font-size:clamp(18px,2vw,30px);}
+#s4b .modCard .modLock{display:flex;flex-direction:column;align-items:center;gap:.1em;font-weight:800;letter-spacing:-.01em;line-height:1.02;}
+#s4b .modCard .mlTop{font-size:clamp(16px,1.7vw,24px);}
+#s4b .modCard .mlName{color:var(--acc2);font-size:clamp(36px,4vw,60px);}
 #s4b .modCard .mlA{color:var(--title);}
 #s4b .modCard .mlSep{color:var(--teal);font-weight:500;}
-#s4b .modCard .mlName{color:var(--acc2);}
 #s4b .mcDesc{font-size:clamp(12px,1.05vw,15.5px);color:var(--txt);line-height:1.42;}
 
 </style>
@@ -2192,8 +2193,7 @@ var APPMODS=[
   var rows=[el('modRow'),el('modRow')];
   APPMODS.forEach(function(m,i){
     var card=el('modCard');
-    card.innerHTML='<div class="mcFn">'+m.fn+'</div>'+
-      '<div class="modLock"><span class="mlA">Atlas</span><span class="mlSep">|</span><span class="mlName">'+m.name+'</span></div>'+
+    card.innerHTML='<div class="modLock"><span class="mlTop"><span class="mlA">Atlas</span> <span class="mlSep">|</span></span><span class="mlName">'+m.name+'</span></div>'+
       '<div class="mcDesc">'+m.desc+'</div>';
     rows[i<2?0:1].appendChild(card);
   });
@@ -2244,6 +2244,9 @@ var APPMODS=[
     var modC=modItems.map(centre);
     var srcTf=modItems.map(function(it,i){return 'translate('+(srcC[i].x-modC[i].x)+'px,'+(srcC[i].y-modC[i].y)+'px)';});
     var centerTf='translate(-50%,-50%)';
+    function fontOf(e){return parseFloat(getComputedStyle(e).fontSize);}
+    var gridNames=[].slice.call(document.querySelectorAll('#modGrid .mlName'));
+    var gridTf=modItems.map(function(it,i){var t=centre(gridNames[i]);return 'translate('+(t.x-modC[i].x)+'px,'+(t.y-modC[i].y)+'px) scale('+(fontOf(gridNames[i])/fontOf(modItems[i]))+')';});
     apply=function(n){
       atlas.style.opacity=(n>=1&&n<3)?'1':'0';
       atlas.style.transform=centerTf;
@@ -2252,7 +2255,7 @@ var APPMODS=[
       mod.style.opacity=(n>=2&&n<3)?'1':'0';
       modItems.forEach(function(it,i){
         it.style.opacity=n>=3?'0':'1';
-        it.style.transform=n>=3?'translate(0px,-46px)':(n>=2?'translate(0px,0px)':srcTf[i]);
+        it.style.transform=n>=3?gridTf[i]:(n>=2?'translate(0px,0px)':srcTf[i]);
       });
       pipes.forEach(function(pp){pp.style.opacity=n===2?'1':'0';});
       section.classList.toggle('introRunning',n<3);   // grid hidden until step 3
@@ -4060,7 +4063,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-31T05:21:29Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-31T05:45:20Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
