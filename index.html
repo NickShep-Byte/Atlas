@@ -834,7 +834,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 
 <style> /* SHEETS #sPhil #sGoals #sCons #sUse #sNext #sQ — added sheets */
 /* shared card surface for the added sheets */
-#sPhil .philCard,#sCons .consCard,#sUse .useNode,#sUse .useCall,#sNext .nextCard,#sGoals .goalCol{
+#sPhil .philCard,#sUse .useNode,#sUse .useCall,#sGoals .goalCol{
   background:rgba(var(--srf-rgb),.045);border:1px solid rgba(var(--brd-rgb),.28);border-radius:16px;}
 #sPhil .head h2,#sGoals .head h2,#sCons .head h2,#sUse .head h2,#sNext .head h2{font-size:clamp(24px,2.9vw,44px);}
 .mlogo{color:var(--acc2);display:inline-block;}
@@ -853,7 +853,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sPhil .philArrow{align-self:center;font-size:clamp(20px,2vw,30px);color:rgba(var(--brd-rgb),.5);}
 
 /* ---------- #sGoals : in / out / stays ---------- */
-#sGoals .goalsGrid{display:grid;grid-template-columns:1fr 1.35fr .82fr;gap:1.2vw;margin-top:2.4vh;align-items:stretch;}
+#sGoals .goalsGrid{display:grid;grid-template-columns:.95fr 1.3fr .95fr;gap:1.2vw;margin-top:2.4vh;align-items:stretch;}
 #sGoals .goalCol{padding:2vh 1.1vw;display:flex;flex-direction:column;}
 #sGoals .goalHd{margin-bottom:1.6vh;}
 #sGoals .goalTag{font-family:var(--font-util);font-size:clamp(12px,1.1vw,15px);font-weight:800;letter-spacing:.14em;
@@ -863,26 +863,27 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sGoals .goalTag.stay{color:var(--teal);background:rgba(var(--teal-rgb),.14);border:1px solid rgba(var(--teal-rgb),.5);}
 #sGoals .goalItems{display:flex;flex-direction:column;gap:1.15vh;}
 #sGoals .goalItems.pills{flex-direction:row;flex-wrap:wrap;gap:.7vh .5vw;align-content:flex-start;}
-#sGoals .app{display:flex;align-items:center;gap:.65vw;}
+#sGoals .app{display:flex;align-items:center;gap:.6vw;}
 #sGoals .app .mlogo,#sGoals .app .lgWrap{width:clamp(24px,2.2vw,32px);height:clamp(24px,2.2vw,32px);flex:0 0 auto;display:inline-flex;}
-#sGoals .appName{font-size:clamp(13px,1.2vw,18px);font-weight:600;color:var(--title);line-height:1.1;}
+#sGoals .mono{display:inline-flex;align-items:center;justify-content:center;min-width:clamp(24px,2.2vw,32px);height:clamp(24px,2.2vw,32px);
+  padding:0 .45em;border-radius:8px;background:rgba(var(--srf-rgb),.09);border:1px solid rgba(var(--brd-rgb),.4);
+  color:var(--soft);font-family:var(--font-util);font-weight:800;font-size:clamp(9px,.78vw,11.5px);letter-spacing:.04em;flex:0 0 auto;}
+#sGoals .appName{font-size:clamp(12.5px,1.15vw,17px);font-weight:600;color:var(--title);line-height:1.12;}
 #sGoals .appName b{color:var(--acc2);font-weight:800;}
+#sGoals .appName .arw{color:var(--soft);font-weight:400;margin:0 .1em;}
 #sGoals .oldPill{font-size:clamp(10px,.86vw,13px);color:var(--soft);background:rgba(var(--srf-rgb),.05);
-  border:1px solid rgba(var(--brd-rgb),.28);border-radius:999px;padding:.34em .72em;line-height:1.15;
-  display:inline-flex;align-items:center;}
-#sGoals .oldPill.jot{gap:.35em;color:var(--txt);}
-#sGoals .oldPill .lg{width:15px;height:15px;}
+  border:1px solid rgba(var(--brd-rgb),.28);border-radius:999px;padding:.34em .72em;line-height:1.15;display:inline-flex;align-items:center;}
 
-/* ---------- #sCons : consultation ---------- */
-#sCons .consGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3vw;margin-top:3vh;align-items:stretch;}
-#sCons .consCard{padding:3vh 1.5vw 2.4vh;display:flex;flex-direction:column;gap:1.2vh;}
-#sCons .consBadge{width:clamp(40px,3.4vw,54px);height:clamp(40px,3.4vw,54px);border-radius:50%;color:#fff;
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(17px,1.6vw,24px);}
-#sCons .consCard h3{font-size:clamp(18px,1.7vw,26px);font-weight:800;color:var(--title);line-height:1.1;}
-#sCons .consRole{font-size:clamp(13px,1.15vw,17px);color:var(--txt);line-height:1.42;flex:1 1 auto;}
-#sCons .consQ{font-size:clamp(15px,1.4vw,21px);font-weight:700;font-style:italic;color:var(--teal);
-  padding-top:1.2vh;border-top:1px solid rgba(var(--brd-rgb),.25);}
-#sCons .cap{color:var(--blue-grey);font-style:italic;margin-top:2.2vh;font-size:clamp(11px,.95vw,15px);}
+/* ---------- #sCons : consultation (vertical hierarchy) ---------- */
+#sCons .consList{display:flex;flex-direction:column;margin-top:2.4vh;}
+#sCons .consItem{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1.8vw;padding:2.5vh .4vw;}
+#sCons .consItem + .consItem{border-top:1px solid rgba(var(--brd-rgb),.22);}
+#sCons .consBadge{width:clamp(40px,3.2vw,54px);height:clamp(40px,3.2vw,54px);border-radius:50%;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(16px,1.5vw,24px);flex:0 0 auto;}
+#sCons .consMain h3{font-size:clamp(17px,1.6vw,26px);font-weight:800;color:var(--title);line-height:1.1;margin-bottom:.5vh;}
+#sCons .consRole{font-size:clamp(12px,1.12vw,16.5px);color:var(--txt);line-height:1.4;}
+#sCons .consQ{justify-self:end;text-align:right;font-size:clamp(15px,1.5vw,23px);font-weight:700;font-style:italic;color:var(--teal);max-width:20ch;}
+#sCons .cap{color:var(--blue-grey);font-style:italic;margin-top:2vh;font-size:clamp(11px,.95vw,15px);}
 
 /* ---------- #sUse : one philosophy, every use case ---------- */
 #sUse .useFlow{display:flex;align-items:stretch;justify-content:center;gap:.7vw;margin-top:3vh;flex-wrap:nowrap;}
@@ -901,16 +902,15 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sUse .useCall h4{font-size:clamp(15px,1.4vw,21px);font-weight:800;color:var(--acc2);margin-bottom:.8vh;}
 #sUse .useCall p{font-size:clamp(12px,1.1vw,16px);color:var(--txt);line-height:1.45;}
 
-/* ---------- #sNext : next steps ---------- */
-#sNext .nextRow{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4vw;margin-top:4vh;align-items:stretch;}
-#sNext .nextCard{padding:3vh 1.6vw;display:flex;flex-direction:column;gap:1.2vh;}
-#sNext .nextCard.hi{border-color:rgba(var(--teal-rgb),.55);}
-#sNext .nextNum{font-family:var(--font-util);font-size:clamp(38px,4.4vw,68px);font-weight:800;line-height:.9;color:rgba(var(--acc2-rgb),.55);}
-#sNext .nextCard.hi .nextNum{color:rgba(var(--teal-rgb),.7);}
-#sNext .nextCard h3{font-size:clamp(18px,1.8vw,27px);font-weight:800;color:var(--title);line-height:1.12;}
-#sNext .nextSub{display:block;font-size:clamp(12px,1.15vw,16px);font-weight:600;color:var(--acc2);margin-top:.4vh;}
-#sNext .nextCard.hi .nextSub{color:var(--teal);}
-#sNext .nextCard p{font-size:clamp(12px,1.1vw,16px);color:var(--txt);line-height:1.45;}
+/* ---------- #sNext : next steps (stacked numbered rows) ---------- */
+#sNext .nextList{display:flex;flex-direction:column;margin-top:3vh;}
+#sNext .nextItem{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2.2vw;align-items:baseline;padding:3vh .4vw;}
+#sNext .nextItem + .nextItem{border-top:1px solid rgba(var(--brd-rgb),.25);}
+#sNext .nextNum{font-family:var(--font-util);font-size:clamp(40px,4.6vw,74px);font-weight:800;line-height:.85;color:rgba(var(--acc2-rgb),.5);}
+#sNext .nextNum.hi{color:rgba(var(--teal-rgb),.72);}
+#sNext .nextBody h3{font-size:clamp(19px,1.9vw,29px);font-weight:800;color:var(--title);line-height:1.12;}
+#sNext .nextSub{font-weight:600;color:var(--acc2);font-size:.82em;}
+#sNext .nextBody p{font-size:clamp(13px,1.15vw,17px);color:var(--txt);line-height:1.45;margin-top:.7vh;max-width:70ch;}
 
 /* ---------- #sQ : questions (mirrors the cold-open) ---------- */
 #sQ .inner{text-align:center;position:relative;z-index:1;}
@@ -928,7 +928,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 @media (max-width:900px){
   #sPhil .philRow,#sUse .useFlow{flex-wrap:wrap;}
   #sPhil .philArrow,#sUse .useArrow{display:none;}
-  #sGoals .goalsGrid,#sCons .consGrid,#sNext .nextRow,#sUse .useCalls{grid-template-columns:1fr;}
+  #sGoals .goalsGrid,#sUse .useCalls{grid-template-columns:1fr;}
+  #sCons .consItem{grid-template-columns:auto 1fr;}
+  #sCons .consQ{grid-column:1 / -1;justify-self:start;text-align:left;}
 }
 </style>
 
@@ -1189,17 +1191,17 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <h2 style="margin-top:1.2vh;">What comes in, what goes out, what stays.</h2>
     </div>
     <div class="goalsGrid">
-      <div class="goalCol gin rv d2">
+      <div class="goalCol rv d2">
         <div class="goalHd"><span class="goalTag in">In</span></div>
-        <div class="goalItems"><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| People</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Tenders</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Projects</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Operations</b></span></div><div class="app atlas"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Finance</b></span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#D97757" stroke-width="2.1" stroke-linecap="round"><line x1="12" y1="12" x2="12" y2="2.6"/><line x1="12" y1="12" x2="12" y2="21.4"/><line x1="12" y1="12" x2="2.6" y2="12"/><line x1="12" y1="12" x2="21.4" y2="12"/><line x1="12" y1="12" x2="5.3" y2="5.3"/><line x1="12" y1="12" x2="18.7" y2="18.7"/><line x1="12" y1="12" x2="18.7" y2="5.3"/><line x1="12" y1="12" x2="5.3" y2="18.7"/><line x1="12" y1="12" x2="7.7" y2="3.4"/><line x1="12" y1="12" x2="16.3" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="7.7"/><line x1="12" y1="12" x2="3.4" y2="16.3"/><line x1="12" y1="12" x2="16.3" y2="3.4"/><line x1="12" y1="12" x2="7.7" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="16.3"/><line x1="12" y1="12" x2="3.4" y2="7.7"/></g></svg></span><span class="appName">Claude</span></div></div>
+        <div class="goalItems"><div class="app"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| People</b></span></div><div class="app"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Projects</b></span></div><div class="app"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Operations</b></span></div><div class="app"><svg class="mlogo"><use href="#atlasMark"/></svg><span class="appName">Atlas <b>| Finance</b></span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#F26522"/><text x="12" y="16.7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-size="13" font-weight="800" fill="#fff">H</text></svg></span><span class="appName">HammerTech</span></div></div>
       </div>
-      <div class="goalCol gout rv d3">
+      <div class="goalCol rv d3">
         <div class="goalHd"><span class="goalTag out">Out</span></div>
-        <div class="goalItems pills"><span class="oldPill jot"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#FF6100"/><g fill="#fff"><rect x="7" y="7.2" width="10" height="2.1" rx="1.05"/><rect x="7" y="11" width="10" height="2.1" rx="1.05"/><rect x="7" y="14.8" width="6.4" height="2.1" rx="1.05"/></g></svg> Jotform</span><span class="oldPill">TMA</span><span class="oldPill">CAAPS</span><span class="oldPill">Procurement Register</span><span class="oldPill">F099 Requisition</span><span class="oldPill">Plant Trackers</span><span class="oldPill">Labour scheduling spreadsheets</span><span class="oldPill">Docket / Delivery Register</span><span class="oldPill">Daily Diary</span><span class="oldPill">Cost Tracker</span><span class="oldPill">Project Forecasting (PFC)</span><span class="oldPill">Stream / Company Forecasting</span><span class="oldPill">Monthly Reporting (MPR)</span><span class="oldPill">Variation Register</span><span class="oldPill">Progress Claims workbook</span><span class="oldPill">Skills / competency spreadsheets</span><span class="oldPill">Accruals spreadsheets</span><span class="oldPill">GL journal spreadsheets</span><span class="oldPill">Month-end (EoM) checklists</span><span class="oldPill">Countless Pronto exports</span></div>
+        <div class="goalItems pills"><span class="oldPill">Procurement Register</span><span class="oldPill">F099 Requisition</span><span class="oldPill">Plant Trackers</span><span class="oldPill">Labour scheduling spreadsheets (blue-collar)</span><span class="oldPill">Docket / Delivery Register</span><span class="oldPill">Daily Diary</span><span class="oldPill">Cost Tracker</span><span class="oldPill">Project Forecasting (PFC)</span><span class="oldPill">Stream / Company Forecasting</span><span class="oldPill">Monthly Reporting (MPR)</span><span class="oldPill">Variation Register</span><span class="oldPill">Progress Claims workbook</span><span class="oldPill">Skills / competency spreadsheets</span><span class="oldPill">Accruals spreadsheets</span><span class="oldPill">GL journal spreadsheets</span><span class="oldPill">Month-end (EoM) checklist / trackers</span><span class="oldPill">Countless Pronto exports</span></div>
       </div>
-      <div class="goalCol gstay rv d4">
+      <div class="goalCol rv d4">
         <div class="goalHd"><span class="goalTag stay">Stays</span></div>
-        <div class="goalItems"><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#C8102E"/><text x="12" y="16.7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-size="13" font-weight="800" fill="#fff">P</text></svg></span><span class="appName">Pronto Xi</span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#F26522"/><text x="12" y="16.7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-size="13" font-weight="800" fill="#fff">H</text></svg></span><span class="appName">HammerTech</span></div></div>
+        <div class="goalItems"><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#C8102E"/><text x="12" y="16.7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-size="13" font-weight="800" fill="#fff">P</text></svg></span><span class="appName">Pronto Xi</span></div><div class="app"><span class="mono">TMA</span><span class="appName">TMA <span class="arw">&#8594;</span> Atlas <b>| Tenders</b></span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#D97757" stroke-width="2.1" stroke-linecap="round"><line x1="12" y1="12" x2="12" y2="2.6"/><line x1="12" y1="12" x2="12" y2="21.4"/><line x1="12" y1="12" x2="2.6" y2="12"/><line x1="12" y1="12" x2="21.4" y2="12"/><line x1="12" y1="12" x2="5.3" y2="5.3"/><line x1="12" y1="12" x2="18.7" y2="18.7"/><line x1="12" y1="12" x2="18.7" y2="5.3"/><line x1="12" y1="12" x2="5.3" y2="18.7"/><line x1="12" y1="12" x2="7.7" y2="3.4"/><line x1="12" y1="12" x2="16.3" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="7.7"/><line x1="12" y1="12" x2="3.4" y2="16.3"/><line x1="12" y1="12" x2="16.3" y2="3.4"/><line x1="12" y1="12" x2="7.7" y2="20.6"/><line x1="12" y1="12" x2="20.6" y2="16.3"/><line x1="12" y1="12" x2="3.4" y2="7.7"/></g></svg></span><span class="appName">Claude</span></div><div class="app"><span class="mono">CA</span><span class="appName">CAAPS</span></div><div class="app"><span class="lgWrap"><svg class="lg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#FF6100"/><g fill="#fff"><rect x="7" y="7.2" width="10" height="2.1" rx="1.05"/><rect x="7" y="11" width="10" height="2.1" rx="1.05"/><rect x="7" y="14.8" width="6.4" height="2.1" rx="1.05"/></g></svg></span><span class="appName">Jotform</span></div></div>
       </div>
     </div>
   </div>
@@ -1211,23 +1213,20 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>Consultation</span>
       <h2 style="margin-top:1.2vh;">Three groups shape every feature.</h2>
     </div>
-    <div class="consGrid">
-      <div class="consCard rv d2">
+    <div class="consList">
+      <div class="consItem rv d2">
         <div class="consBadge cg-e">E</div>
-        <h3>Executives</h3>
-        <div class="consRole">Endorsement of feature prototypes prior to building.</div>
+        <div class="consMain"><h3>Executives</h3><div class="consRole">Endorsement of feature prototypes prior to building.</div></div>
         <div class="consQ">&ldquo;Are we ready to proceed?&rdquo;</div>
       </div>
-      <div class="consCard rv d3">
+      <div class="consItem rv d3">
         <div class="consBadge cg-p">P</div>
-        <h3>Primary Consultation Group</h3>
-        <div class="consRole">Subject-matter experts who refine each feature&rsquo;s functional requirements, across the scope of every module.</div>
+        <div class="consMain"><h3>Primary Consultation Group</h3><div class="consRole">Subject-matter experts who help refine each feature&rsquo;s functional requirements, across the scope of every module.</div></div>
         <div class="consQ">&ldquo;What do we need?&rdquo;</div>
       </div>
-      <div class="consCard rv d4">
+      <div class="consItem rv d4">
         <div class="consBadge cg-u">U</div>
-        <h3>Users</h3>
-        <div class="consRole">The people using the feature hands-on &mdash; they speak to the pain points and how to make it work best for them.</div>
+        <div class="consMain"><h3>Users</h3><div class="consRole">The people using the feature hands-on &mdash; they speak to the pain points and how to make it work best for them.</div></div>
         <div class="consQ">&ldquo;How do we get it?&rdquo;</div>
       </div>
     </div>
@@ -1365,10 +1364,13 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow" style="justify-content:center;"><span class="dot"></span>Next steps</span>
       <h2 style="margin-top:1.2vh;">From here, three moves.</h2>
     </div>
-    <div class="nextRow">
-      <div class="nextCard rv d2"><div class="nextNum">01</div><h3>Product Roadmap</h3><p>Confirm the sequence of features and functions across both delivery streams.</p></div>
-      <div class="nextCard rv d3"><div class="nextNum">02</div><h3>Program</h3><p>Build the delivery program from the Dev Team&rsquo;s high-level estimates.</p></div>
-      <div class="nextCard hi rv d4"><div class="nextNum">03</div><h3>Release 1, Phase 1<span class="nextSub">Monthly Project Report</span></h3><p>Deliver the first feature through the full development cycle and into the business.</p></div>
+    <div class="nextList">
+      <div class="nextItem rv d2"><div class="nextNum">01</div>
+        <div class="nextBody"><h3>Product Roadmap</h3><p>Confirm the sequence of features and functions across both delivery streams.</p></div></div>
+      <div class="nextItem rv d3"><div class="nextNum">02</div>
+        <div class="nextBody"><h3>Program</h3><p>Build the delivery program from the Dev Team&rsquo;s high-level estimates.</p></div></div>
+      <div class="nextItem rv d4"><div class="nextNum hi">03</div>
+        <div class="nextBody"><h3>Release 1, Phase 1 <span class="nextSub">&mdash; Monthly Project Report</span></h3><p>Deliver the first feature through the full development cycle and into the business.</p></div></div>
     </div>
   </div>
 </section>
@@ -4056,7 +4058,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-30T08:10:45Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-31T00:18:46Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
