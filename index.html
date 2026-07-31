@@ -613,7 +613,17 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
    acronyms actually spreads the items apart rather than growing the subtitles */
 #s4b .miRow.acr{font-size:clamp(52px,6vw,104px);gap:.55em;}
 #s4b .miRow.acr .isub{font-size:clamp(12px,0.92vw,16px);}
-#s4b.introRunning #modChips,#s4b.introRunning .modShow{opacity:0;}
+#s4b.introRunning #modGrid{opacity:0;}
+#s4b #modGrid{transition:opacity .6s ease;}
+#s4b .modGrid{display:flex;flex-direction:column;gap:1.6vh;margin-top:2.6vh;}
+#s4b .modRow{display:flex;justify-content:center;gap:1.4vw;align-items:stretch;}
+#s4b .modCard{flex:0 1 30%;max-width:30%;background:rgba(var(--srf-rgb),.05);border:1px solid rgba(var(--brd-rgb),.28);border-radius:16px;padding:2.4vh 1.5vw;text-align:center;display:flex;flex-direction:column;gap:1vh;}
+#s4b .mcFn{font-family:var(--font-util);font-size:clamp(10px,.95vw,13px);letter-spacing:.14em;text-transform:uppercase;color:var(--acc2);}
+#s4b .modCard .modLock{display:flex;justify-content:center;align-items:baseline;gap:.28em;font-weight:800;letter-spacing:-.01em;font-size:clamp(18px,2vw,30px);}
+#s4b .modCard .mlA{color:var(--title);}
+#s4b .modCard .mlSep{color:var(--teal);font-weight:500;}
+#s4b .modCard .mlName{color:var(--acc2);}
+#s4b .mcDesc{font-size:clamp(12px,1.05vw,15.5px);color:var(--txt);line-height:1.42;}
 
 </style>
 
@@ -1156,13 +1166,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The Atlas Vision</span>
       <h2 style="margin-top:1.2vh;font-size:clamp(24px,2.6vw,40px);">One brand. Five modules.</h2>
     </div>
-    <div class="modSelect rv d1" id="modChips" role="tablist" aria-label="Atlas modules"></div>
-    <div class="modShow rv d2">
-      <div class="modFn" id="mFn">PEOPLE &amp; PAYROLL</div>
-      <div class="modLock"><span class="mlA">Atlas</span><span class="mlSep">|</span><span class="mlName" id="mName">People</span></div>
-      <div class="modDesc" id="mDesc">Timesheets, payroll, HR and return to work — every person, every record, one home.</div>
-      <div class="modFeats" id="mFeats"></div>
-    </div>
+    <div class="modGrid rv d2" id="modGrid"></div>
   </div>
 </section>
 
@@ -1231,7 +1235,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       </div>
       <div class="goalCol rv d3">
         <div class="goalHd"><span class="goalTag out">Out</span></div>
-        <div class="goalItems pills"><span class="oldPill xls">Procurement Register</span><span class="oldPill xls">F 033 Subcontractor Evaluation Form.xlsx</span><span class="oldPill jot">F099 Requisition</span><span class="oldPill xls">Docket / Delivery Register</span><span class="oldPill xls">F 039 Subcontractor Payment Claim and Schedule</span><span class="oldPill xls">Plant Tracker (Finance)</span><span class="oldPill xls">Plant Tracker (Scheduling)</span><span class="oldPill jot">F 054 Motor Vehicle Declaration</span><span class="oldPill jot">F 069 Light Vehicle Allocation Transfer</span><span class="oldPill jot">F 044.06 Performance Review Upload</span><span class="oldPill jot">F 403 Onboarding Application</span><span class="oldPill jot">F 964 Onboarding New Starter</span><span class="oldPill jot">F 002 Change of Employment Conditions</span><span class="oldPill jot">F 112 Notice of Offboarding</span><span class="oldPill xls">Skills / Training Matrix</span><span class="oldPill xls">Labour Tracker (blue-collar)</span><span class="oldPill xls">F 417 Site Induction Register - Skills Matrix</span><span class="oldPill xls">Budget buildup</span><span class="oldPill xls">Site Diary</span><span class="oldPill word">F 062 Asbestos Daily Project Diary.docx</span><span class="oldPill xls">Cost Tracker</span><span class="oldPill xls">Project Forecasting (PFC)</span><span class="oldPill xls">Stream / Company Forecasting</span><span class="oldPill xls">F 117 Monthly Project Report (Major)</span><span class="oldPill xls">F 241 Variation Register</span><span class="oldPill xls">F 486 Payment Claim Form</span><span class="oldPill xls">Accruals spreadsheets</span><span class="oldPill xls">GL journal spreadsheets</span><span class="oldPill xls">Month-end (EoM) checklist / trackers</span><span class="oldPill word">F 059 Lessons Learned.docx</span><span class="oldPill xls">Countless manual Pronto exports</span><span class="oldPill xls">F 049.01 Executive Critical Risk Register</span></div>
+        <div class="goalItems pills"><span class="oldPill xls">Procurement Register</span><span class="oldPill xls">F 033 Subcontractor Evaluation Form.xlsx</span><span class="oldPill jot">F099 Requisition</span><span class="oldPill xls">Docket / Delivery Register</span><span class="oldPill xls">F 039 Subcontractor Payment Claim and Schedule</span><span class="oldPill xls">Plant Tracker (Finance)</span><span class="oldPill xls">Plant Tracker (Scheduling)</span><span class="oldPill jot">F 054 Motor Vehicle Declaration</span><span class="oldPill jot">F 069 Light Vehicle Allocation Transfer</span><span class="oldPill jot">F 403 Onboarding Application</span><span class="oldPill jot">F 964 Onboarding New Starter</span><span class="oldPill word">F 044 Annual Performance Review-Salaried</span><span class="oldPill word">F 044.01 Annual Performance Review Wages</span><span class="oldPill jot">F 044.06 Performance Review Upload</span><span class="oldPill word">F 044.02 Probation Review</span><span class="oldPill word">F 044.03 Development Plan</span><span class="oldPill word">F 044.04 Probation Review-Wages</span><span class="oldPill jot">F 002 Change of Employment Conditions</span><span class="oldPill jot">F 112 Notice of Offboarding</span><span class="oldPill xls">Skills / Training Matrix</span><span class="oldPill xls">Labour Tracker (blue-collar)</span><span class="oldPill xls">F 417 Site Induction Register - Skills Matrix</span><span class="oldPill xls">Budget buildup</span><span class="oldPill xls">Site Diary</span><span class="oldPill word">F 062 Asbestos Daily Project Diary.docx</span><span class="oldPill xls">Cost Tracker</span><span class="oldPill xls">Project Forecasting (PFC)</span><span class="oldPill xls">Stream / Company Forecasting</span><span class="oldPill xls">F 117 Monthly Project Report (Major)</span><span class="oldPill xls">F 241 Variation Register</span><span class="oldPill xls">F 486 Payment Claim Form</span><span class="oldPill xls">Accruals spreadsheets</span><span class="oldPill xls">GL journal spreadsheets</span><span class="oldPill xls">Month-end (EoM) checklist / trackers</span><span class="oldPill word">F 059 Lessons Learned.docx</span><span class="oldPill xls">Countless manual Pronto exports</span><span class="oldPill xls">F 049.01 Executive Critical Risk Register</span></div>
       </div>
       <div class="goalCol rv d4">
         <div class="goalHd"><span class="goalTag stay">Stays</span></div>
@@ -2180,108 +2184,80 @@ var APPMODS=[
  {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:['General Ledger Journaling','Cashflow Forecast','Accruals','Profit Recognition','EoM Control','Board Reports','Invoicing']}
 ];
 (function(){
-  var chips=document.getElementById('modChips');
-  var mFn=document.getElementById('mFn'),mName=document.getElementById('mName'),
-      mDesc=document.getElementById('mDesc'),mFeats=document.getElementById('mFeats');
-  if(!chips)return;
-  var btns=[];
-  function show(i){
-    var m=APPMODS[i];
-    mFn.textContent=m.fn;mName.textContent=m.name;mDesc.textContent=m.desc;
-    mFeats.innerHTML=m.feats.map(function(f){return '<span>'+f+'</span>';}).join('');
-    btns.forEach(function(b,j){b.classList.toggle('on',j===i);});
-  }
-  APPMODS.forEach(function(m,i){
-    var b=document.createElement('button');b.textContent=m.name;b.setAttribute('role','tab');
-    b.addEventListener('click',function(){show(i);});
-    chips.appendChild(b);btns.push(b);
-  });
-  show(0);
-
-  // ---- Intro animation (nav-driven, reversible). On enter the legacy systems
-  // show as a large centred row "HRIS | TMA | PMT" with full-name subtitles
-  // (h2, chips and the card's feature chips hidden). Left/right step forward /
-  // back through:
-  //   step 1: "Atlas" fades in large above the row.
-  //   step 2: the acronyms slide into the module names "People | Tenders |
-  //           Projects | Operations | Finance" (layout flexes 3 -> 5).
-  //   step 3: the names shift + shrink onto the chip buttons and fade out as the
-  //           buttons appear; a large "Atlas" is retained above; the h2 fades in.
+  var grid=document.getElementById('modGrid');
+  if(!grid)return;
   var section=document.getElementById('s4b');
+  // Build the 3-2 module grid: tagline, Atlas|Name lockup, description. No features.
+  function el(c){var d=document.createElement('div');d.className=c;return d;}
+  var rows=[el('modRow'),el('modRow')];
+  APPMODS.forEach(function(m,i){
+    var card=el('modCard');
+    card.innerHTML='<div class="mcFn">'+m.fn+'</div>'+
+      '<div class="modLock"><span class="mlA">Atlas</span><span class="mlSep">|</span><span class="mlName">'+m.name+'</span></div>'+
+      '<div class="mcDesc">'+m.desc+'</div>';
+    rows[i<2?0:1].appendChild(card);
+  });
+  rows.forEach(function(r){grid.appendChild(r);});
+
+  // ---- Intro animation (nav-driven, reversible): legacy acronyms -> module
+  // names -> dissolve into the 3-2 grid. h2 + grid stay hidden until landed. ----
   var ACR=[{a:'HRIS',full:'Human Resource Information System'},
            {a:'TMA', full:'Tender Management Application'},
            {a:'PMT', full:'Project Management Tools'}];
-  var MODS=['People','Tenders','Projects','Operations','Finance'];   // = chip order
-  var overlay=null,step=0,featsTimer=null,apply=null;
+  var MODS=['People','Tenders','Projects','Operations','Finance'];
+  var overlay=null,step=0,apply=null;
   function introClear(){
-    if(featsTimer){clearTimeout(featsTimer);featsTimer=null;}
     if(overlay&&overlay.parentNode)overlay.parentNode.removeChild(overlay);
     overlay=null;apply=null;step=0;
-    section.classList.remove('introRunning','introH2','introHoldFeats');
+    section.classList.remove('introRunning','introH2');
   }
   function introRun(){
     introClear();
-    if(RM)return;                         // reduced motion: leave chips + h2 as-is
-    section.classList.add('introRunning','introH2','introHoldFeats');
+    if(RM)return;
+    section.classList.add('introRunning','introH2');
     requestAnimationFrame(function(){requestAnimationFrame(introBuild);});
   }
   function introBuild(){
     if(!section.classList.contains('active'))return;
     overlay=document.createElement('div');overlay.className='modIntro';section.appendChild(overlay);
     var o=overlay.getBoundingClientRect(),cx=o.width/2,cy=o.height/2;
-    function centre(el){var r=el.getBoundingClientRect();return{x:r.left-o.left+r.width/2,y:r.top-o.top+r.height/2};}
-    function fontOf(el){return parseFloat(getComputedStyle(el).fontSize);}
-    function chipCentre(i){var q=btns[i].getBoundingClientRect();return{x:q.left-o.left+q.width/2,y:q.top-o.top+q.height/2};}
-    function chipRow(){var l=1e9,r=-1e9,t=1e9;btns.forEach(function(b){var q=b.getBoundingClientRect();l=Math.min(l,q.left);r=Math.max(r,q.right);t=Math.min(t,q.top);});return{cx:(l+r)/2-o.left,top:t-o.top};}
-
+    function centre(e){var r=e.getBoundingClientRect();return{x:r.left-o.left+r.width/2,y:r.top-o.top+r.height/2};}
     var atlas=document.createElement('div');atlas.className='miAtlas';atlas.textContent='Atlas';
     atlas.style.left=cx+'px';atlas.style.top=(cy-150)+'px';overlay.appendChild(atlas);
-
     function buildRow(cls,items,withSub){
       var row=document.createElement('div');row.className='miRow '+cls;
       row.style.left=cx+'px';row.style.top=cy+'px';
       items.forEach(function(it,i){
         if(i){var pp=document.createElement('span');pp.className='miPipe';pp.textContent='|';row.appendChild(pp);}
-        var s=document.createElement('span');s.className='miItem';
-        s.innerHTML=withSub?(it.a+'<span class="isub">'+it.full+'</span>'):it;
-        row.appendChild(s);
+        var sp=document.createElement('span');sp.className='miItem';
+        sp.innerHTML=withSub?(it.a+'<span class="isub">'+it.full+'</span>'):it;
+        row.appendChild(sp);
       });
       overlay.appendChild(row);return row;
     }
     var acr=buildRow('acr',ACR,true);
     var mod=buildRow('mod',MODS,false);
-
-    // Measure once (both rows are laid out and centred the same, mod behind acr).
     var acrItems=[].slice.call(acr.querySelectorAll('.miItem'));
     var modItems=[].slice.call(mod.querySelectorAll('.miItem'));
     var pipes=[].slice.call(mod.querySelectorAll('.miPipe'));
     var srcC=[0,1,2,2,2].map(function(k){return centre(acrItems[k]);}); // People<-HRIS, Tenders<-TMA, P/O/F<-PMT
     var modC=modItems.map(centre);
-    var mFont=fontOf(modItems[0]);
     var srcTf=modItems.map(function(it,i){return 'translate('+(srcC[i].x-modC[i].x)+'px,'+(srcC[i].y-modC[i].y)+'px)';});
-    var chipTf=modItems.map(function(it,i){var cc=chipCentre(i);return 'translate('+(cc.x-modC[i].x)+'px,'+(cc.y-modC[i].y)+'px) scale('+(fontOf(btns[i])/mFont)+')';});
-    var aC=centre(atlas),row=chipRow(),aFont=fontOf(atlas);
-    var parkTf='translate(-50%,-50%) translate('+(row.cx-aC.x)+'px,'+((row.top-42)-aC.y)+'px) scale('+Math.max(0.28,42/aFont)+')';
     var centerTf='translate(-50%,-50%)';
-
     apply=function(n){
-      atlas.style.opacity=n>=1?'1':'0';
-      atlas.style.transform=n>=3?parkTf:centerTf;
+      atlas.style.opacity=(n>=1&&n<3)?'1':'0';
+      atlas.style.transform=centerTf;
       acr.style.opacity=n>=2?'0':'1';
-      mod.style.visibility=n>=2?'visible':'hidden';   // hard-hide pre-convert (dodges Chrome's stray fade-in on a fresh node)
-      mod.style.opacity=n>=2?'1':'0';
-      modItems.forEach(function(it,i){it.style.opacity=n>=3?'0':'1';
-        it.style.transform=n>=3?chipTf[i]:(n>=2?'translate(0px,0px)':srcTf[i]);});
+      mod.style.visibility=n>=2?'visible':'hidden';
+      mod.style.opacity=(n>=2&&n<3)?'1':'0';
+      modItems.forEach(function(it,i){
+        it.style.opacity=n>=3?'0':'1';
+        it.style.transform=n>=3?'translate(0px,-46px)':(n>=2?'translate(0px,0px)':srcTf[i]);
+      });
       pipes.forEach(function(pp){pp.style.opacity=n===2?'1':'0';});
-      section.classList.toggle('introRunning',n<3);   // chips + card hidden until landed
-      section.classList.toggle('introH2',n<3);        // h2 hidden until landed
-      // feature chips stay hidden until the flown names have faded off the buttons
-      if(featsTimer){clearTimeout(featsTimer);featsTimer=null;}
-      section.classList.add('introHoldFeats');
-      if(n>=3)featsTimer=setTimeout(function(){section.classList.remove('introHoldFeats');},650);
+      section.classList.toggle('introRunning',n<3);   // grid hidden until step 3
+      section.classList.toggle('introH2',n<3);         // h2 hidden until step 3
     };
-
-    // Commit the initial (step 0) state without animating it in.
     overlay.classList.add('instant');
     apply(0);
     void overlay.offsetWidth;
@@ -2373,8 +2349,8 @@ CAD.forEach(function(c,i){
   function pdot(x,cls,r){var c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',PSY);c.setAttribute('r',r);c.setAttribute('class',cls);c.dataset.x=x;pg.appendChild(c);return c;}
   // phase END positions (labels at the end of each period)
   var xx=pStart,ends=[];
-  [['Core HR',4],['LMS',2],['Time & Pay',6],['Performance',3]].forEach(function(p){xx+=p[1]*PMONTH;ends.push({name:p[0]+' ('+p[1]+')',x:xx});});
-  var goX=ends[2].x,perfEnd=ends[3].x;
+  [['Go-Live',12],['Day 2',3]].forEach(function(p){xx+=p[1]*PMONTH;ends.push({name:p[0],x:xx});});
+  var goX=ends[0].x,perfEnd=ends[1].x;
   pplStart=pStart;pplEnd=perfEnd;pplGo=goX;
   // spine + striped/solid fill layers (Stage 1 stays striped until GO-LIVE)
   var sp=document.createElementNS(NS,'line');sp.setAttribute('x1',pStart);sp.setAttribute('x2',perfEnd);sp.setAttribute('y1',PSY);sp.setAttribute('y2',PSY);sp.setAttribute('class','pspine');pg.appendChild(sp);
@@ -2384,7 +2360,7 @@ CAD.forEach(function(c,i){
   // start dot (devs onboard) + phase-end delivering dots (Time & Pay end = GO-LIVE)
   pdot(pStart,'pdot start',6);
   ends.forEach(function(e,i){
-    var isGo=(i===2),r=isGo?11:9;
+    var isGo=(i===0),r=isGo?11:9;
     // connector stem from the dot up to its label, matching the release ticks below
     var stem=document.createElementNS(NS,'line');
     stem.setAttribute('x1',e.x);stem.setAttribute('x2',e.x);
@@ -2401,8 +2377,6 @@ CAD.forEach(function(c,i){
   // stage labels above the milestone names; GO-LIVE + start note below the spine
   ptxt((pStart+goX)/2,PSY-58,'pq','middle','Stage 1 · 12 months');
   ptxt((goX+perfEnd)/2,PSY-58,'pq','middle','Stage 2 · 3 months');
-  ptxt(goX,PSY+21,'pgolive','middle','Stage 1 GO-LIVE');
-  ptxt(pStart,PSY+21,'pnote','middle','Devs onboard (start Q4)');
   // People's own playhead marker
   pplHead=document.createElementNS(NS,'g');pplHead.setAttribute('class','pplayhead');
   pplHead.innerHTML='<line x1="0" x2="0" y1="'+(PSY-16)+'" y2="'+(PSY+16)+'"/><circle cx="0" cy="'+PSY+'" r="5"/>';
@@ -4086,7 +4060,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-31T05:00:34Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-31T05:21:29Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
