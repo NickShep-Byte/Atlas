@@ -783,18 +783,23 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
    "Approach" slide (#s6): 7-step development cycle + the three
    consultation groups, compressed onto one screen.
    ============================================================ */
-:root{--cg-p:#0582CA;--cg-u:#00908E;--cg-e:#7A5FB8;}
+:root{--cg-p:var(--teal);--cg-u:var(--sec);--cg-e:var(--navy);}
+[data-theme="dark"] #s6{--cg-e:#6FA8DC;}
 #s6 .head{margin-bottom:1vh;}
 /* Raise the token track above the step-number badges so the flying feature
    name doesn't collide with the numbers. */
-#s6 .lineTrack{top:15px;}
-#s6 .modToken{top:15px;}
-#s6 .stations{padding:64px 0 0;gap:.55vw;}
-#s6 .station{padding:1.1vh .65vw 4.6vh;flex:0 1 13vw;min-width:140px;}
-#s6 .station h3{font-size:clamp(11px,.92vw,15px);margin:.5vh 0 .3vh;line-height:1.15;}
-#s6 .station p{font-size:clamp(8.5px,.7vw,11px);line-height:1.32;margin-top:.4vh;}
-#s6 .station .ring{width:28px;height:28px;margin:0;position:absolute;left:50%;bottom:1.1vh;transform:translateX(-50%);}
-#s6 .station .ring i{width:21px;height:21px;font-size:11px;}
+#s6 .lineTrack{display:none;}
+#s6 .stationRows{display:flex;flex-direction:column;gap:3vh;padding:0;position:relative;}
+#s6 .stationRow{display:flex;justify-content:center;gap:1.1vw;position:relative;padding-top:42px;}
+#s6 .rowTrack{position:absolute;left:5%;right:5%;top:17px;height:2px;background:rgba(var(--acc2-rgb),.4);z-index:1;}
+#s6 .station{padding:1.6vh 1vw 5.4vh;flex:0 1 21vw;min-width:186px;z-index:3;}
+#s6 .station .sNum{width:40px;height:40px;font-size:16px;top:-20px;}
+#s6 .station h3{font-size:clamp(13px,1.2vw,20px);margin:.7vh 0 .35vh;line-height:1.18;}
+#s6 .station p{font-size:clamp(10px,.84vw,13.5px);line-height:1.42;margin-top:.5vh;}
+#s6 .station .ring{width:36px;height:36px;margin:0;position:absolute;left:50%;bottom:1.3vh;transform:translateX(-50%);}
+#s6 .station .ring i{width:27px;height:27px;font-size:13px;}
+#s6 .cg{width:17px;height:17px;font-size:10px;}
+#s6 .modToken{z-index:1;transition:left .8s var(--ease),top .8s var(--ease),opacity .4s ease;}
 #s6 .shelf{display:none;}                     /* a "Delivered" shelf doesn't fit a cycle */
 /* per-step consultation-group badges (top-right of a station) */
 .sGroups{position:absolute;top:6px;right:6px;display:flex;gap:3px;}
@@ -1279,53 +1284,58 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <h2 style="margin-top:1.2vh;">Every feature moves through the same seven-step cycle.</h2>
     </div>
     <div class="lineWrap rv d1">
-      <div class="lineTrack" aria-hidden="true"></div>
-      <div class="stations" id="stations">
-        <div class="station">
+      <div class="stationRows" id="stations">
+        <div class="stationRow" data-row="0">
+          <div class="rowTrack" aria-hidden="true"></div>
+            <div class="station">
           <div class="sNum">1</div>
           <div class="sGroups"><span class="cg cg-p">P</span><span class="cg cg-u">U</span></div>
           <h3>Scope &amp; Requirements</h3>
           <p>Capture detailed requirements, priorities and constraints with the Product Owner and consultation groups.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
-        <div class="station">
+            <div class="station">
           <div class="sNum">2</div>
           <h3>Design &amp; Prototype</h3>
           <p>Build a working prototype (PIM) to validate the design approach before development begins.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
-        <div class="station">
+            <div class="station">
           <div class="sNum">3</div>
           <div class="sGroups"><span class="cg cg-p">P</span><span class="cg cg-u">U</span><span class="cg cg-e">E</span></div>
           <h3>Consultation &amp; Feedback</h3>
           <p>The business reviews the PIM; the design and Work Order are finalised, ready for build.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
-        <div class="station">
+        </div>
+        <div class="stationRow" data-row="1">
+          <div class="rowTrack" aria-hidden="true"></div>
+            <div class="station">
           <div class="sNum">4</div>
           <h3>Build</h3>
           <p>The Lead Developer and Technical Manager build the feature to spec.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
-        <div class="station">
+            <div class="station">
           <div class="sNum">5</div>
           <div class="sGroups"><span class="cg cg-u">U</span></div>
           <h3>Test</h3>
           <p>Technical testing, then User Acceptance Testing with the Product Owner and groups.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
-        <div class="station">
+            <div class="station">
           <div class="sNum">6</div>
           <div class="sGroups"><span class="cg cg-p">P</span><span class="cg cg-e">E</span></div>
           <h3>Release &amp; Change Management</h3>
           <p>Released live to end users under a tailored change management plan.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
         </div>
-        <div class="station">
+            <div class="station">
           <div class="sNum">7</div>
           <h3>Platform Sustainment</h3>
           <p>The Application Manager tracks enhancement requests (ACRs), feeding future cycles.</p>
           <div class="ring"><svg class="ringSvg" viewBox="0 0 46 46" aria-hidden="true"><circle class="ringTrack" cx="23" cy="23" r="20"/><circle class="ringFill" cx="23" cy="23" r="20"/></svg><i>✓</i></div>
+        </div>
         </div>
       </div>
       <div class="modToken" id="modToken" aria-hidden="true">
@@ -2507,13 +2517,24 @@ var token=document.getElementById('modToken');
 var tokenName=document.getElementById('tokenName');
 var shelf=document.getElementById('shelf');
 var stationEls=Array.prototype.slice.call(document.querySelectorAll('#stations .station'));
-function stationCenters(){
-  var wrap=document.querySelector('.lineWrap').getBoundingClientRect();
-  return stationEls.map(function(st){
+var ROWSPLIT=3;   // stations 1-3 on row 0, 4-7 on row 1
+function layout(){
+  var lw=document.querySelector('#s6 .lineWrap');
+  var wrap=lw.getBoundingClientRect();
+  var rows=Array.prototype.slice.call(lw.querySelectorAll('.stationRow'));
+  var rowY=rows.map(function(rw){var t=rw.querySelector('.rowTrack').getBoundingClientRect();return (t.top-wrap.top)+t.height/2;});
+  var pos=stationEls.map(function(st){
     var r=st.getBoundingClientRect();
-    return ((r.left-wrap.left)+r.width/2)/wrap.width*100;
+    var ri=rows.indexOf(st.closest('.stationRow'));
+    return {x:((r.left-wrap.left)+r.width/2)/wrap.width*100, y:rowY[ri]};
   });
+  // vertical band level of the row-0 cards — the token dips to here so it
+  // travels *behind* stations 1-3 on its way back to station 4.
+  var r0=stationEls[0].getBoundingClientRect();
+  var bandY=(r0.top-wrap.top)+r0.height*0.42;
+  return {pos:pos, bandY:bandY};
 }
+function setTok(xPct,yPx){token.style.left=xPct+'%';token.style.top=yPx+'px';}
 function lt(fn,ms){line.timers.push(setTimeout(fn,ms));}
 function clearShelfChips(){
   Array.prototype.slice.call(shelf.querySelectorAll('.dchip')).forEach(function(c){c.remove();});
@@ -2522,24 +2543,29 @@ function runModule(){
   if(!line.running)return;
   var ci=line.modIdx%CAD_FEATURES.length;
   var m={name:CAD_FEATURES[ci]};
-  var centers=stationCenters();
+  var L=layout();
   // reset stations
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
   // new shelf cycle when back at the first feature
   if(ci===0)clearShelfChips();
-  // token enters
+  // token enters at the start of row 0
   tokenName.textContent=m.name;
   token.classList.remove('flying');
   token.style.transition='none';
-  token.style.left='-8%';
+  setTok(-8, L.pos[0].y);
   token.style.opacity='0';
   void token.offsetWidth; // reflow
   token.style.transition='';
   token.style.opacity='1';
   var t=200;
-  var MOVE=850, DWELL=1500;
-  centers.forEach(function(cx,i){
-    lt(function(){token.style.left=cx+'%';},t);
+  var MOVE=800, DWELL=1400, RET=650;
+  L.pos.forEach(function(p,i){
+    // carriage-return: drop behind row 0 and glide left to reach station 4
+    if(i===ROWSPLIT){
+      lt(function(){setTok(L.pos[i-1].x, L.bandY);},t); t+=RET*0.55;
+      lt(function(){setTok(p.x, L.bandY);},t);          t+=RET;
+    }
+    lt(function(){setTok(p.x, p.y);},t);
     t+=MOVE;
     lt(function(){
       stationEls[i].classList.add('active');
@@ -2547,9 +2573,9 @@ function runModule(){
       var start=performance.now();
       (function fill(){
         if(!line.running)return;
-        var p=Math.min(1,(performance.now()-start)/DWELL);
-        stationEls[i].style.setProperty('--pr',Math.round(p*100));
-        if(p<1)requestAnimationFrame(fill);
+        var pr=Math.min(1,(performance.now()-start)/DWELL);
+        stationEls[i].style.setProperty('--pr',Math.round(pr*100));
+        if(pr<1)requestAnimationFrame(fill);
       })();
     },t);
     t+=DWELL;
@@ -4088,7 +4114,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-31T07:41:14Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-07-31T07:53:33Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
