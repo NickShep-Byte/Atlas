@@ -2242,7 +2242,7 @@ var APPMODS=[
     var o=overlay.getBoundingClientRect(),cx=o.width/2,cy=o.height/2;
     function centre(e){var r=e.getBoundingClientRect();return{x:r.left-o.left+r.width/2,y:r.top-o.top+r.height/2};}
     var atlas=document.createElement('div');atlas.className='miAtlas';atlas.textContent='Atlas';
-    atlas.style.left=cx+'px';atlas.style.top=(cy-150)+'px';overlay.appendChild(atlas);
+    atlas.style.left=cx+'px';atlas.style.top=(cy-150)+'px';atlas.style.zIndex='2';overlay.appendChild(atlas);
     function buildRow(cls,items,withSub){
       var row=document.createElement('div');row.className='miRow '+cls;
       row.style.left=cx+'px';row.style.top=cy+'px';
@@ -2263,6 +2263,10 @@ var APPMODS=[
     var modC=modItems.map(centre);
     var srcTf=modItems.map(function(it,i){return 'translate('+(srcC[i].x-modC[i].x)+'px,'+(srcC[i].y-modC[i].y)+'px)';});
     var centerTf='translate(-50%,-50%)';
+    // Five "Atlas" prefixes that slide out from behind the big Atlas, plus a
+    // dedicated People pipe (People has no leading separator of its own).
+    var prefixes=MODS.map(function(){var p=document.createElement('span');p.className='miPrefix';p.textContent='Atlas';p.style.cssText='position:absolute;transform:translate(-50%,-50%);opacity:0;white-space:nowrap;font-family:var(--font);font-weight:800;letter-spacing:-.02em;line-height:1.05;color:var(--title);z-index:1;transition:transform .9s var(--ease),opacity .6s ease;';overlay.appendChild(p);return p;});
+    var peoplePipe=document.createElement('span');peoplePipe.className='miPipe';peoplePipe.textContent='|';peoplePipe.style.cssText='position:absolute;transform:translate(-50%,-50%);opacity:0;font-weight:500;color:var(--teal);z-index:1;transition:transform .9s var(--ease),opacity .5s ease;';overlay.appendChild(peoplePipe);
     function fontOf(e){return parseFloat(getComputedStyle(e).fontSize);}
     apply=function(n){
       if(revealTimer){clearTimeout(revealTimer);revealTimer=null;}
@@ -2272,18 +2276,35 @@ var APPMODS=[
       acr.style.opacity=n>=2?'0':'1';
       mod.style.visibility=n>=2?'visible':'hidden';
       mod.style.opacity=n>=2?'1':'0';
-      pipes.forEach(function(pp){pp.style.opacity=n===2?'1':'0';});
+      pipes.forEach(function(pp){pp.style.opacity=n>=2?'1':'0';});
       modItems.forEach(function(it){it.style.opacity='1';});
       if(n>=3){
-        // Measure the now-settled grid names and fly each overlay name to the
+        // Measure the settled grid lockups and fly every overlay piece to the
         // exact same coordinates + size (pure layout math, computed at fly time).
         modItems.forEach(function(it){it.style.transform='translate(0px,0px)';});
+        pipes.forEach(function(pp){pp.style.transition='';pp.style.transform='';});
         void overlay.offsetWidth;
         var ob=overlay.getBoundingClientRect();
         var ctr=function(el){var r=el.getBoundingClientRect();return {x:r.left-ob.left+r.width/2,y:r.top-ob.top+r.height/2};};
         var gn=[].slice.call(document.querySelectorAll('#modGrid .mlName'));
+        var gA=[].slice.call(document.querySelectorAll('#modGrid .mlA'));
+        var gS=[].slice.call(document.querySelectorAll('#modGrid .mlSep'));
         var tf=modItems.map(function(it,i){var h=ctr(it),t=ctr(gn[i]);return 'translate('+(t.x-h.x)+'px,'+(t.y-h.y)+'px) scale('+(fontOf(gn[i])/fontOf(it))+')';});
-        requestAnimationFrame(function(){modItems.forEach(function(it,i){it.style.transform=tf[i];});});
+        // separators travel with their module (pipes[k] -> module k+1); scale to grid size
+        var pipeStart=pipes.map(ctr), pipeSc=pipes.map(function(pp,k){return fontOf(gS[k+1])/fontOf(pp);});
+        // prefixes start stacked behind the big Atlas, at grid-lockup size
+        var atlasC=ctr(atlas);
+        prefixes.forEach(function(pf,i){pf.style.fontSize=getComputedStyle(gA[i]).fontSize;pf.style.left=atlasC.x+'px';pf.style.top=atlasC.y+'px';});
+        // People pipe starts by People's name, at grid-sep size
+        var pnC=ctr(modItems[0]);
+        peoplePipe.style.fontSize=getComputedStyle(gS[0]).fontSize;peoplePipe.style.left=pnC.x+'px';peoplePipe.style.top=pnC.y+'px';
+        void overlay.offsetWidth;
+        requestAnimationFrame(function(){
+          modItems.forEach(function(it,i){it.style.transform=tf[i];});
+          pipes.forEach(function(pp,k){var t=ctr(gS[k+1]),h=pipeStart[k];pp.style.transition='transform .9s var(--ease),opacity .5s ease';pp.style.transform='translate('+(t.x-h.x)+'px,'+(t.y-h.y)+'px) scale('+pipeSc[k]+')';});
+          prefixes.forEach(function(pf,i){var t=ctr(gA[i]),h=ctr(pf);pf.style.opacity='1';pf.style.transform='translate(-50%,-50%) translate('+(t.x-h.x)+'px,'+(t.y-h.y)+'px)';});
+          var tp=ctr(gS[0]),hp=ctr(peoplePipe);peoplePipe.style.opacity='1';peoplePipe.style.transform='translate(-50%,-50%) translate('+(tp.x-hp.x)+'px,'+(tp.y-hp.y)+'px)';
+        });
         section.classList.add('introRunning','introH2');
         revealTimer=setTimeout(function(){
           var g=document.getElementById('modGrid');
@@ -2295,6 +2316,9 @@ var APPMODS=[
         },900);
       }else{
         modItems.forEach(function(it,i){it.style.transform=(n>=2?'translate(0px,0px)':srcTf[i]);});
+        pipes.forEach(function(pp){pp.style.transition='';pp.style.transform='';pp.style.fontSize='';});
+        prefixes.forEach(function(pf){pf.style.opacity='0';pf.style.transform='translate(-50%,-50%)';});
+        peoplePipe.style.opacity='0';peoplePipe.style.transform='translate(-50%,-50%)';
         section.classList.toggle('introRunning',n<3);
         section.classList.toggle('introH2',n<3);
       }
@@ -4117,7 +4141,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-07-31T08:11:57Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-02T22:53:25Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
