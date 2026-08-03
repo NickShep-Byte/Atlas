@@ -923,7 +923,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sCons .head{text-align:left;}
 #sCons .head .eyebrow{justify-content:flex-start;}
 #sCons .head h2{font-size:clamp(20px,2.3vw,34px);}
-#sCons .consWrap{display:grid;grid-template-columns:1.55fr 1fr;gap:2.4vw;margin-top:2.4vh;align-items:stretch;}
+#sCons .consWrap{display:grid;grid-template-columns:1.4fr 1.18fr;gap:2vw;margin-top:2.4vh;align-items:stretch;}
 #sCons .consDiagram{display:flex;flex-direction:column;gap:1vh;}
 #sCons .tier{color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;
   font-weight:800;letter-spacing:-.01em;padding:.6vh .5vw;box-shadow:var(--card-shadow);}
@@ -937,6 +937,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-util);font-weight:700;
   font-size:clamp(8.5px,.78vw,12px);line-height:1.15;padding:.5vh .2vw;}
 #sCons .consLegend{display:flex;flex-direction:column;justify-content:space-between;gap:1.2vh;}
+#sCons .lg{display:grid;grid-template-columns:minmax(0,1fr) minmax(96px,.6fr);gap:1.3vw;align-items:center;}
+#sCons .lg .q{text-align:center;line-height:1.28;}
 #sCons .lg h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;color:var(--title);display:flex;align-items:center;gap:.5em;}
 #sCons .lg h3::before{content:"";width:.72em;height:.72em;border-radius:3px;flex:0 0 auto;}
 #sCons .lg.exec h3::before{background:var(--navy);}
@@ -1085,6 +1087,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 @media (max-height:600px){
   .slide:not(#s1){align-items:flex-start;overflow-y:auto;}
   .slide .inner{margin:0 auto;}
+#sGoals .inner{max-width:1650px;}
   #hintbar{display:none;}
   #navScrim{display:block;position:fixed;left:0;right:0;bottom:0;height:48px;z-index:49;
     background:var(--bg);pointer-events:none;}
@@ -1278,9 +1281,9 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
         <div class="tierMods"><div class="modGrp"><div class="tier mBox">Projects Consultation Group</div><div class="featRow"><div class="fBox">Feature 1 Group</div><div class="fBox">Feature 2 Group</div><div class="fBox">Feature 3 Group</div><div class="fBox">Feature 4 Group</div></div></div><div class="modGrp"><div class="tier mBox">Operations Consultation Group</div><div class="featRow"><div class="fBox">Feature 5 Group</div><div class="fBox">Feature 6 Group</div><div class="fBox">Feature 7 Group</div></div></div><div class="modGrp"><div class="tier mBox">Finance Consultation Group</div><div class="featRow"><div class="fBox">Feature 8 Group</div><div class="fBox">Feature 9 Group</div><div class="fBox">Feature 10 Group</div></div></div></div>
       </div>
       <div class="consLegend">
-        <div class="lg exec"><h3>Executives</h3><p>Endorsement of feature prototypes prior to building.</p><div class="q">&ldquo;Are we ready to proceed?&rdquo;</div></div>
-        <div class="lg prim"><h3>Primary Consultation Group</h3><p>Subject-matter experts who help refine features&rsquo; functional requirements, across the scope of each module.</p><div class="q">&ldquo;What do we need?&rdquo;</div></div>
-        <div class="lg user"><h3>Users</h3><p>The people who will be using the feature hands-on &mdash; who can talk to the pain points and how we can make it work best for them.</p><div class="q">&ldquo;How do we get it?&rdquo;</div></div>
+        <div class="lg exec"><div class="lgText"><h3>Executives</h3><p>Endorsement of feature prototypes prior to building.</p></div><div class="q">&ldquo;Are we ready to proceed?&rdquo;</div></div>
+        <div class="lg prim"><div class="lgText"><h3>Primary Consultation Group</h3><p>Subject-matter experts who help refine features&rsquo; functional requirements, across the scope of each module.</p></div><div class="q">&ldquo;What do we need?&rdquo;</div></div>
+        <div class="lg user"><div class="lgText"><h3>Users</h3><p>The people who will be using the feature hands-on &mdash; who can talk to the pain points and how we can make it work best for them.</p></div><div class="q">&ldquo;How do we get it?&rdquo;</div></div>
       </div>
     </div>
     <div class="cap rv d4">Each Project Lead maintains a consultation matrix mapping features to cohorts; the PM logs attendance. &nbsp;&middot;&nbsp; Membership indicative &mdash; to be confirmed with Jacob.</div>
@@ -1407,8 +1410,8 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 #sAI .head .eyebrow{justify-content:center;}
 #sAI .aiGrid{display:flex;flex-direction:column;gap:1.8vh;margin-top:2.6vh;}
 #sAI .aiRow{display:flex;justify-content:center;gap:1.4vw;align-items:stretch;}
-#sAI .aiCard{flex:1 1 0;min-width:0;background:rgba(var(--srf-rgb),.05);border:1px solid rgba(var(--brd-rgb),.28);border-radius:14px;padding:1.9vh 1.4vw;display:flex;flex-direction:column;gap:1vh;}
-#sAI .aiCard h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;color:var(--acc2);margin:0;letter-spacing:-.01em;}
+#sAI .aiCard{flex:1 1 0;min-width:0;background:none;border:none;padding:0 1vw;display:flex;flex-direction:column;gap:1.1vh;}
+#sAI .aiCard h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;color:var(--acc2);margin:0 0 .3vh;letter-spacing:-.01em;display:inline-block;align-self:flex-start;border-bottom:2px solid rgba(var(--acc2-rgb),.55);padding-bottom:.5vh;}
 #sAI .aiCard ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7vh;}
 #sAI .aiCard li{font-size:clamp(11px,.92vw,14px);color:var(--txt);line-height:1.4;padding-left:1.1em;position:relative;}
 #sAI .aiCard li::before{content:"\2192";position:absolute;left:0;color:var(--teal);font-weight:700;}
@@ -4179,7 +4182,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-03T00:39:36Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-03T01:19:57Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
