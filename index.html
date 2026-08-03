@@ -954,8 +954,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sCons .cap{color:var(--blue-grey);font-style:italic;margin-top:1.8vh;font-size:clamp(11px,.9vw,14px);text-align:center;}
 
 /* ---------- #sUse : one philosophy, every use case ---------- */
-#sUse .useFlow{display:flex;align-items:stretch;justify-content:center;gap:.7vw;margin-top:3vh;flex-wrap:nowrap;}
-#sUse .useNode{flex:1 1 0;max-width:22vw;padding:2.4vh 1vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.9vh;}
+#sUse .useFlow{display:flex;align-items:stretch;justify-content:center;gap:1.6vw;margin-top:3vh;flex-wrap:nowrap;}
+#sUse .useNode{flex:0 1 auto;max-width:22vw;padding:2.4vh 1.6vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.9vh;}
 #sUse .useNode.atlas{border-color:rgba(var(--acc2-rgb),.5);}
 #sUse .useNode.goal{border-color:rgba(var(--teal-rgb),.55);}
 #sUse .useMark{width:clamp(34px,3.2vw,46px);height:clamp(34px,3.2vw,46px);display:inline-flex;}
@@ -4182,7 +4182,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-03T02:05:50Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-03T06:21:52Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
