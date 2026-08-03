@@ -869,7 +869,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sGoals{--wh:clamp(18px,2.55vh,30px);}
 #sGoals .goalsGrid{display:grid;grid-template-columns:.82fr 1.9fr .82fr;gap:1vw;margin-top:1.8vh;align-items:stretch;}
 #sGoals .goalCol.d2{order:3;}   /* In  -> right */
-#sGoals .goalCol.d3{order:2;}   /* Out -> middle */
+#sGoals .goalCol.d3{order:2;max-width:900px;justify-self:center;}   /* Out -> middle, capped */
 #sGoals .goalCol.d4{order:1;}   /* Staying -> left */
 #sGoals .logoPair{flex-direction:row!important;gap:.5vw;align-items:center;justify-content:center;max-width:100%;}
 #sGoals .logoPair .logoChip img{height:calc(var(--wh)*0.98);width:auto;max-width:none;}
@@ -4182,7 +4182,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-03T01:19:57Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-03T01:52:02Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
