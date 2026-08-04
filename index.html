@@ -936,7 +936,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sCons .fBox{flex:1 1 0;background:var(--sec);min-height:clamp(66px,11vh,112px);border-radius:8px;color:#fff;
   display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-util);font-weight:700;
   font-size:clamp(8.5px,.78vw,12px);line-height:1.15;padding:.5vh .2vw;}
-#sCons .consLegend{display:flex;flex-direction:column;justify-content:space-between;gap:1.2vh;}
+#sCons .consLegend{display:flex;flex-direction:column;justify-content:space-between;gap:1.2vh;position:relative;}
+#sCons .consArrows{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:2;}
 #sCons .lg{display:grid;grid-template-columns:minmax(0,1fr) minmax(96px,.6fr);gap:1.3vw;align-items:center;}
 #sCons .lg .q{text-align:center;line-height:1.28;}
 #sCons .lg h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;color:var(--title);display:flex;align-items:center;gap:.5em;}
@@ -1280,9 +1281,10 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
         <div class="tierMods"><div class="modGrp"><div class="tier mBox">Projects Consultation Group</div><div class="featRow"><div class="fBox">Feature 1 Group</div><div class="fBox">Feature 2 Group</div><div class="fBox">Feature 3 Group</div><div class="fBox">Feature 4 Group</div></div></div><div class="modGrp"><div class="tier mBox">Operations Consultation Group</div><div class="featRow"><div class="fBox">Feature 5 Group</div><div class="fBox">Feature 6 Group</div><div class="fBox">Feature 7 Group</div></div></div><div class="modGrp"><div class="tier mBox">Finance Consultation Group</div><div class="featRow"><div class="fBox">Feature 8 Group</div><div class="fBox">Feature 9 Group</div><div class="fBox">Feature 10 Group</div></div></div></div>
       </div>
       <div class="consLegend">
-        <div class="lg exec"><div class="lgText"><h3>Executives</h3><p>Endorsement of feature prototypes prior to building.</p></div><div class="q">&ldquo;Are we ready to proceed?&rdquo;</div></div>
-        <div class="lg prim"><div class="lgText"><h3>Primary Consultation Group</h3><p>Subject-matter experts who help refine features&rsquo; functional requirements, across the scope of each module.</p></div><div class="q">&ldquo;What do we need?&rdquo;</div></div>
         <div class="lg user"><div class="lgText"><h3>Users</h3><p>The people who will be using the feature hands-on &mdash; who can talk to the pain points and how we can make it work best for them.</p></div><div class="q">&ldquo;How do we get it?&rdquo;</div></div>
+        <div class="lg prim"><div class="lgText"><h3>Primary Consultation Group</h3><p>Subject-matter experts who help refine features&rsquo; functional requirements, across the scope of each module.</p></div><div class="q">&ldquo;What do we need?&rdquo;</div></div>
+        <div class="lg exec"><div class="lgText"><h3>Executives</h3><p>Endorsement of feature prototypes prior to building.</p></div><div class="q">&ldquo;Are we ready to proceed?&rdquo;</div></div>
+        <svg class="consArrows" id="consArrows" aria-hidden="true"></svg>
       </div>
     </div>
     <div class="cap rv d4">Each Project Lead maintains a consultation matrix mapping features to cohorts; the PM logs attendance. &nbsp;&middot;&nbsp; Membership indicative &mdash; to be confirmed with Jacob.</div>
@@ -2698,6 +2700,36 @@ function lineStop(){
 
 onSlideEnter('s6', lineStart);
 onSlideLeave('s6', lineStop);
+})();
+
+/* ============================================================
+   SHEET #sCons — guiding-question arrows (self-contained)
+   ============================================================ */
+(function(){
+  var svg=document.getElementById('consArrows');
+  if(!svg)return;
+  function qc(sel,lb){var e=document.querySelector(sel);if(!e)return null;var r=e.getBoundingClientRect();
+    return {l:r.left-lb.left,r:r.right-lb.left,cy:(r.top+r.bottom)/2-lb.top};}
+  function draw(){
+    var legend=document.querySelector('#sCons .consLegend');if(!legend)return;
+    var lb=legend.getBoundingClientRect(); if(!lb.width)return;
+    var user=qc('#sCons .lg.user .q',lb), prim=qc('#sCons .lg.prim .q',lb), exec=qc('#sCons .lg.exec .q',lb);
+    if(!user||!prim||!exec)return;
+    var W=lb.width,H=lb.height, bulge=Math.max(26,W*0.09);
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    // Arc 1: "What do we need?" (prim) --up, arcing LEFT--> "How do we get it?" (user)
+    var lx=Math.min(user.l,prim.l)-bulge;
+    var a1='M '+(prim.l-4)+' '+prim.cy+' C '+lx+' '+prim.cy+', '+lx+' '+user.cy+', '+(user.l-4)+' '+user.cy;
+    // Arc 2: "How do we get it?" (user) --down, arcing RIGHT--> "Are we ready to proceed?" (exec)
+    var rx=Math.max(user.r,exec.r)+bulge;
+    var a2='M '+(user.r+4)+' '+user.cy+' C '+rx+' '+user.cy+', '+rx+' '+exec.cy+', '+(exec.r+4)+' '+exec.cy;
+    svg.innerHTML='<defs><marker id="consAh" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--teal)"/></marker></defs>'+
+      '<path d="'+a1+'" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" marker-end="url(#consAh)"/>'+
+      '<path d="'+a2+'" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" marker-end="url(#consAh)"/>';
+  }
+  function run(){ requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(draw,120);});}); }
+  onSlideEnter('sCons', run);
+  window.addEventListener('resize', function(){ if(document.getElementById('sCons').classList.contains('active')) draw(); });
 })();
 
 /* ============================================================
@@ -4182,7 +4214,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-03T07:22:48Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-04T05:54:34Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
