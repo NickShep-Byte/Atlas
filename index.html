@@ -924,15 +924,15 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sCons .head .eyebrow{justify-content:flex-start;}
 #sCons .head h2{font-size:clamp(20px,2.3vw,34px);}
 #sCons .consWrap{display:grid;grid-template-columns:1.4fr 1.18fr;gap:2vw;margin-top:2.4vh;align-items:stretch;}
-#sCons .consDiagram{display:flex;flex-direction:column-reverse;gap:1vh;}
+#sCons .consDiagram{display:flex;flex-direction:column-reverse;gap:2px;}
 #sCons .tier{color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;
   font-weight:800;letter-spacing:-.01em;padding:.6vh .5vw;box-shadow:var(--card-shadow);}
 #sCons .tierExec{background:var(--navy);min-height:clamp(56px,8vh,90px);font-size:clamp(17px,1.9vw,30px);border:1px solid rgba(255,255,255,.14);}
 [data-theme="dark"] #sCons .tierExec{background:var(--navy-mid);}
-#sCons .tierMods{display:grid;grid-template-columns:repeat(3,1fr);gap:1vw;}
-#sCons .modGrp{display:flex;flex-direction:column-reverse;gap:1vh;}
+#sCons .tierMods{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+#sCons .modGrp{display:flex;flex-direction:column-reverse;gap:2px;}
 #sCons .mBox{background:var(--teal);min-height:clamp(64px,10vh,104px);font-size:clamp(13px,1.25vw,20px);line-height:1.12;}
-#sCons .featRow{display:flex;gap:.5vw;}
+#sCons .featRow{display:flex;gap:2px;}
 #sCons .fBox{flex:1 1 0;background:var(--sec);min-height:clamp(66px,11vh,112px);border-radius:8px;color:#fff;
   display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-util);font-weight:700;
   font-size:clamp(8.5px,.78vw,12px);line-height:1.15;padding:.5vh .2vw;}
@@ -2710,25 +2710,38 @@ onSlideLeave('s6', lineStop);
   if(!svg)return;
   function qc(sel,lb){var e=document.querySelector(sel);if(!e)return null;var r=e.getBoundingClientRect();
     return {l:r.left-lb.left,r:r.right-lb.left,cy:(r.top+r.bottom)/2-lb.top};}
-  var ARROW="M20.1871 175C15.7485 172.891 13.0008 172.469 12.1553 170.992 8.98489 165.508 5.39173 160.024 3.70083 153.908-1.37187 137.666-0.737781 121.214 2.64402 104.762 8.35081 76.7092 21.0325 51.8201 36.8847 28.1966 38.5756 25.6655 40.0552 23.1344 41.7461 20.3924 41.7461 20.1814 41.5347 19.7596 41.112 19.1268 36.462 20.3923 31.6007 21.6579 26.9507 22.7125 24.4144 23.1344 21.4552 23.1344 18.9189 22.2907 17.4394 21.8688 15.3258 19.5486 15.3258 18.0722 15.3258 16.1739 16.8053 13.8537 18.0735 12.1663 19.1303 11.1117 21.0326 10.9008 22.7235 10.4789 35.4052 7.31508 48.087 3.72935 60.9801 0.776411 71.9709-1.75468 75.564 1.83105 74.9299 12.5882 74.2959 23.7672 74.0845 34.9462 73.6618 45.9142 73.4505 49.289 72.8164 52.8747 72.3936 56.6714 63.5164 52.6638 63.5164 52.6638 60.346 18.494 47.0301 33.2588 38.1529 49.289 29.9098 65.7411 21.6666 82.1932 16.1712 99.489 13.2121 117.839 10.2531 136.823 13.8462 154.751 20.1871 175Z", AW=75, AH=175;
+  function cgetC(sel){var e=document.querySelector(sel);return e?getComputedStyle(e).color:'#00908E';}
+  function bez(P,t){var m=1-t;return {x:m*m*m*P[0].x+3*m*m*t*P[1].x+3*m*t*t*P[2].x+t*t*t*P[3].x,y:m*m*m*P[0].y+3*m*m*t*P[1].y+3*m*t*t*P[2].y+t*t*t*P[3].y};}
+  function bezT(P,t){var m=1-t;var x=3*m*m*(P[1].x-P[0].x)+6*m*t*(P[2].x-P[1].x)+3*t*t*(P[3].x-P[2].x);var y=3*m*m*(P[1].y-P[0].y)+6*m*t*(P[2].y-P[1].y)+3*t*t*(P[3].y-P[2].y);var L=Math.hypot(x,y)||1;return {x:x/L,y:y/L};}
+  // Fixed head + max shaft width -> a longer arrow only lengthens its shaft (same thickness, same head, same tail taper).
+  var HW=8, HL=16, WMAX=5.4;
+  function arrow(id,S,D,sign,c0,c1){
+    var vx=D.x-S.x, vy=D.y-S.y, Ln=Math.hypot(vx,vy)||1, ux=vx/Ln, uy=vy/Ln;
+    var Bp={x:D.x-ux*HL, y:D.y-uy*HL};                    // shaft stops where the head starts
+    var bx=Math.min(46,Ln*0.34)*sign;                     // horizontal bulge (arrows are ~vertical)
+    var P=[S,{x:S.x+(Bp.x-S.x)*0.35+bx, y:S.y+(Bp.y-S.y)*0.35},{x:S.x+(Bp.x-S.x)*0.65+bx, y:S.y+(Bp.y-S.y)*0.65},Bp];
+    var N=28,Lp=[],Rp=[];
+    for(var k=0;k<=N;k++){var t=k/N,p=bez(P,t),tg=bezT(P,t),qx=-tg.y,qy=tg.x,hw=(WMAX/2)*Math.min(1,t/0.16);
+      Lp.push((p.x+qx*hw)+' '+(p.y+qy*hw)); Rp.push((p.x-qx*hw)+' '+(p.y-qy*hw));}
+    var shaft='M '+Lp[0]; for(k=1;k<=N;k++) shaft+=' L '+Lp[k]; for(k=N;k>=0;k--) shaft+=' L '+Rp[k]; shaft+=' Z';
+    var et=bezT(P,1),ex=-et.y,ey=et.x;
+    var head='M '+D.x+' '+D.y+' L '+(Bp.x+ex*HW)+' '+(Bp.y+ey*HW)+' L '+(Bp.x-ex*HW)+' '+(Bp.y-ey*HW)+' Z';
+    var g='<linearGradient id="'+id+'" gradientUnits="userSpaceOnUse" x1="'+S.x+'" y1="'+S.y+'" x2="'+D.x+'" y2="'+D.y+'"><stop offset="0" stop-color="'+c0+'"/><stop offset="1" stop-color="'+c1+'"/></linearGradient>';
+    return {g:g, path:'<path d="'+shaft+'" fill="url(#'+id+')"/><path d="'+head+'" fill="url(#'+id+')"/>'};
+  }
   function draw(){
     var legend=document.querySelector('#sCons .consLegend');if(!legend)return;
     var lb=legend.getBoundingClientRect(); if(!lb.width)return;
     var user=qc('#sCons .lg.user .q',lb), prim=qc('#sCons .lg.prim .q',lb), exec=qc('#sCons .lg.exec .q',lb);
     if(!user||!prim||!exec)return;
-    var W=lb.width,H=lb.height;
-    svg.setAttribute('viewBox','0 0 '+W+' '+H);
-    // Arrow tip is bbox (66,0); after 180deg rotation the tip is bbox (9,175).
-    var TIPX=66, RTIPX=9, RTIPY=175, CX=AW/2, CY=AH/2;
-    // Left arrow (natural, head up): tip just left of "How do we get it?" (user), trailing down to "What do we need?" (prim)
-    var s1=Math.max(0.4,(prim.cy-user.cy)/AH);
-    var tx1=(user.l-6)-TIPX*s1, ty1=user.cy;
-    // Right arrow (rotated 180, head down): tip just right of "Are we ready to proceed?" (exec), trailing up, in the right margin
-    var s2=Math.max(0.4,(exec.cy-user.cy)/AH);
-    var tx2=(exec.r+6)-RTIPX*s2, ty2=exec.cy-RTIPY*s2;
-    svg.innerHTML=
-      '<g transform="translate('+tx1+' '+ty1+') scale('+s1+')"><path d="'+ARROW+'" fill="var(--teal)"/></g>'+
-      '<g transform="translate('+tx2+' '+ty2+') scale('+s2+') rotate(180 '+CX+' '+CY+')"><path d="'+ARROW+'" fill="var(--teal)"/></g>';
+    svg.setAttribute('viewBox','0 0 '+lb.width+' '+lb.height);
+    var cU=cgetC('#sCons .lg.user .q'), cP=cgetC('#sCons .lg.prim .q'), cE=cgetC('#sCons .lg.exec .q');
+    var m=6;
+    // Arrow 1: tail at "What do we need?" (prim), head up at "How do we get it?" (user); bulge LEFT; gradient prim->user colour
+    var a1=arrow('cgA1',{x:prim.l-m,y:prim.cy},{x:user.l-m,y:user.cy},-1,cP,cU);
+    // Arrow 2: tail at "How do we get it?" (user), head down at "Are we ready to proceed?" (exec); bulge RIGHT; gradient user->exec colour
+    var a2=arrow('cgA2',{x:user.r+m,y:user.cy},{x:exec.r+m,y:exec.cy},1,cU,cE);
+    svg.innerHTML='<defs>'+a1.g+a2.g+'</defs>'+a1.path+a2.path;
   }
   function run(){ requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(draw,120);});}); }
   onSlideEnter('sCons', run);
@@ -4217,7 +4230,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-04T07:49:08Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-04T07:56:16Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
