@@ -924,13 +924,13 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sCons .head .eyebrow{justify-content:flex-start;}
 #sCons .head h2{font-size:clamp(20px,2.3vw,34px);}
 #sCons .consWrap{display:grid;grid-template-columns:1.4fr 1.18fr;gap:2vw;margin-top:2.4vh;align-items:stretch;}
-#sCons .consDiagram{display:flex;flex-direction:column;gap:1vh;}
+#sCons .consDiagram{display:flex;flex-direction:column-reverse;gap:1vh;}
 #sCons .tier{color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;
   font-weight:800;letter-spacing:-.01em;padding:.6vh .5vw;box-shadow:var(--card-shadow);}
 #sCons .tierExec{background:var(--navy);min-height:clamp(56px,8vh,90px);font-size:clamp(17px,1.9vw,30px);border:1px solid rgba(255,255,255,.14);}
 [data-theme="dark"] #sCons .tierExec{background:var(--navy-mid);}
 #sCons .tierMods{display:grid;grid-template-columns:repeat(3,1fr);gap:1vw;}
-#sCons .modGrp{display:flex;flex-direction:column;gap:1vh;}
+#sCons .modGrp{display:flex;flex-direction:column-reverse;gap:1vh;}
 #sCons .mBox{background:var(--teal);min-height:clamp(64px,10vh,104px);font-size:clamp(13px,1.25vw,20px);line-height:1.12;}
 #sCons .featRow{display:flex;gap:.5vw;}
 #sCons .fBox{flex:1 1 0;background:var(--sec);min-height:clamp(66px,11vh,112px);border-radius:8px;color:#fff;
@@ -2260,7 +2260,7 @@ var APPMODS=[
   // names -> dissolve into the 3-2 grid. h2 + grid stay hidden until landed. ----
   var ACR=[{a:'HRIS',full:'Human Resource Information System'},
            {a:'TMA', full:'Tender Management Application'},
-           {a:'PMT', full:'Project Management Tools'}];
+           {a:'PMT', full:'Project Management Transformation'}];
   var MODS=['People','Tenders','Projects','Operations','Finance'];
   var overlay=null,step=0,apply=null,revealTimer=null;
   function introClear(){
@@ -2723,7 +2723,7 @@ onSlideLeave('s6', lineStop);
     // Arc 2: "How do we get it?" (user) --down, arcing RIGHT--> "Are we ready to proceed?" (exec)
     var rx=Math.max(user.r,exec.r)+bulge;
     var a2='M '+(user.r+4)+' '+user.cy+' C '+rx+' '+user.cy+', '+rx+' '+exec.cy+', '+(exec.r+4)+' '+exec.cy;
-    svg.innerHTML='<defs><marker id="consAh" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--teal)"/></marker></defs>'+
+    svg.innerHTML='<defs><marker id="consAh" viewBox="0 0 12 12" refX="6.5" refY="6" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M2.5 2.5 L9 6 L2.5 9.5" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>'+
       '<path d="'+a1+'" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" marker-end="url(#consAh)"/>'+
       '<path d="'+a2+'" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" marker-end="url(#consAh)"/>';
   }
@@ -4214,7 +4214,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-04T05:54:34Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-04T06:03:40Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
