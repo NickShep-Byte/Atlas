@@ -2716,16 +2716,21 @@ onSlideLeave('s6', lineStop);
   // Fixed head + max shaft width -> a longer arrow only lengthens its shaft (same thickness, same head, same tail taper).
   var HW=8, HL=16, WMAX=5.4;
   function arrow(id,S,D,sign,c0,c1){
-    var vx=D.x-S.x, vy=D.y-S.y, Ln=Math.hypot(vx,vy)||1, ux=vx/Ln, uy=vy/Ln;
-    var Bp={x:D.x-ux*HL, y:D.y-uy*HL};                    // shaft stops where the head starts
-    var bx=Math.min(46,Ln*0.34)*sign;                     // horizontal bulge (arrows are ~vertical)
-    var P=[S,{x:S.x+(Bp.x-S.x)*0.35+bx, y:S.y+(Bp.y-S.y)*0.35},{x:S.x+(Bp.x-S.x)*0.65+bx, y:S.y+(Bp.y-S.y)*0.65},Bp];
-    var N=28,Lp=[],Rp=[];
-    for(var k=0;k<=N;k++){var t=k/N,p=bez(P,t),tg=bezT(P,t),qx=-tg.y,qy=tg.x,hw=(WMAX/2)*Math.min(1,t/0.16);
-      Lp.push((p.x+qx*hw)+' '+(p.y+qy*hw)); Rp.push((p.x-qx*hw)+' '+(p.y-qy*hw));}
-    var shaft='M '+Lp[0]; for(k=1;k<=N;k++) shaft+=' L '+Lp[k]; for(k=N;k>=0;k--) shaft+=' L '+Rp[k]; shaft+=' Z';
-    var et=bezT(P,1),ex=-et.y,ey=et.x;
-    var head='M '+D.x+' '+D.y+' L '+(Bp.x+ex*HW)+' '+(Bp.y+ey*HW)+' L '+(Bp.x-ex*HW)+' '+(Bp.y-ey*HW)+' Z';
+    var vx=D.x-S.x, vy=D.y-S.y, Ln=Math.hypot(vx,vy)||1;
+    var bx=Math.min(46,Ln*0.34)*sign;                    // horizontal bulge (arrows are ~vertical)
+    var P=[S,{x:S.x+(D.x-S.x)*0.35+bx,y:S.y+(D.y-S.y)*0.35},{x:S.x+(D.x-S.x)*0.65+bx,y:S.y+(D.y-S.y)*0.65},D];
+    var N=48,pts=[],seg=[0],tot=0,k;
+    for(k=0;k<=N;k++) pts.push(bez(P,k/N));
+    for(k=1;k<=N;k++){tot+=Math.hypot(pts[k].x-pts[k-1].x,pts[k].y-pts[k-1].y);seg.push(tot);}
+    var cutLen=Math.max(0,tot-HL), ci=N;                 // shaft stops HL short so the head sits on the tip
+    for(k=1;k<=N;k++){if(seg[k]>=cutLen){ci=k;break;}}
+    var Lp=[],Rp=[];
+    for(k=0;k<=ci;k++){var t=k/N,tg=bezT(P,t),qx=-tg.y,qy=tg.x,hw=(WMAX/2)*Math.min(1,seg[k]/(0.16*tot));
+      Lp.push((pts[k].x+qx*hw)+' '+(pts[k].y+qy*hw)); Rp.push((pts[k].x-qx*hw)+' '+(pts[k].y-qy*hw));}
+    var shaft='M '+Lp[0]; for(k=1;k<=ci;k++) shaft+=' L '+Lp[k]; for(k=ci;k>=0;k--) shaft+=' L '+Rp[k]; shaft+=' Z';
+    // head: tip at D, pointing along the curve's END tangent (i.e. toward the question), fixed size
+    var et=bezT(P,1), bp={x:D.x-et.x*HL,y:D.y-et.y*HL}, ex=-et.y,ey=et.x;
+    var head='M '+D.x+' '+D.y+' L '+(bp.x+ex*HW)+' '+(bp.y+ey*HW)+' L '+(bp.x-ex*HW)+' '+(bp.y-ey*HW)+' Z';
     var g='<linearGradient id="'+id+'" gradientUnits="userSpaceOnUse" x1="'+S.x+'" y1="'+S.y+'" x2="'+D.x+'" y2="'+D.y+'"><stop offset="0" stop-color="'+c0+'"/><stop offset="1" stop-color="'+c1+'"/></linearGradient>';
     return {g:g, path:'<path d="'+shaft+'" fill="url(#'+id+')"/><path d="'+head+'" fill="url(#'+id+')"/>'};
   }
@@ -4230,7 +4235,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-04T07:56:16Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-05T00:14:21Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
