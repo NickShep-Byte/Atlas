@@ -2717,7 +2717,7 @@ onSlideLeave('s6', lineStop);
   var HW=6, HL=12, WMAX=4;
   function arrow(id,S,D,sign,c0,c1){
     var vx=D.x-S.x, vy=D.y-S.y, Ln=Math.hypot(vx,vy)||1;
-    var bx=Math.min(46,Ln*0.34)*sign;                    // horizontal bulge (arrows are ~vertical)
+    var bx=sign;                                          // signed horizontal bulge in px (0 = straight)
     var P=[S,{x:S.x+(D.x-S.x)*0.35+bx,y:S.y+(D.y-S.y)*0.35},{x:S.x+(D.x-S.x)*0.65+bx,y:S.y+(D.y-S.y)*0.65},D];
     var N=48,pts=[],seg=[0],tot=0,k;
     for(k=0;k<=N;k++) pts.push(bez(P,k/N));
@@ -2741,12 +2741,14 @@ onSlideLeave('s6', lineStop);
     if(!user||!prim||!exec)return;
     svg.setAttribute('viewBox','0 0 '+lb.width+' '+lb.height);
     var cU=cgetC('#sCons .lg.user .q'), cP=cgetC('#sCons .lg.prim .q'), cE=cgetC('#sCons .lg.exec .q');
-    var g=4;
-    // Arrow 1: DOWN from "How do we get it?" (user) to "What do we need?" (prim), in the gap between the text; gradient user->prim
-    var a1=arrow('cgA1',{x:user.cx,y:user.bot+g},{x:prim.cx,y:prim.t-g},0,cU,cP);
-    // Arrow 2: DOWN from "What do we need?" (prim) to "Are we ready to proceed?" (exec), in the gap; gradient prim->exec
-    var a2=arrow('cgA2',{x:prim.cx,y:prim.bot+g},{x:exec.cx,y:exec.t-g},0,cP,cE);
-    svg.innerHTML='<defs>'+a1.g+a2.g+'</defs>'+a1.path+a2.path;
+    var g=4, cx=(user.cx+prim.cx)/2;
+    var yT=user.bot+g, yB=prim.t-g, Lp=yB-yT, BL=Math.max(20,Math.min(40,Lp*0.75));
+    // How <-> What: two arrows forming a CLOCKWISE loop (down on the right, up on the left) -> iterative step
+    var down=arrow('cgD',{x:cx,y:yT},{x:cx,y:yB}, BL,cU,cP);   // How -> What, bulge right, head down
+    var up  =arrow('cgU',{x:cx,y:yB},{x:cx,y:yT},-BL,cP,cU);   // What -> How, bulge left,  head up
+    // What -> Are: stays straight
+    var str =arrow('cgS',{x:prim.cx,y:prim.bot+g},{x:exec.cx,y:exec.t-g},0,cP,cE);
+    svg.innerHTML='<defs>'+down.g+up.g+str.g+'</defs>'+down.path+up.path+str.path;
   }
   function run(){ requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(draw,120);});}); }
   onSlideEnter('sCons', run);
@@ -4235,7 +4237,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-05T00:21:48Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-05T00:32:35Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
