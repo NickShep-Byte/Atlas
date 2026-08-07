@@ -1732,19 +1732,15 @@ var FEATURE_MODS=[
    pain:"Vendor claims arrive in personal mailboxes under strict compliance rules and are captured in error-prone Excel, and the month-end accruals raised from them are journaled manually with no easy way to trace an accrual back to the claim it relates to.",
    scope:"Ingests, standardises and validates vendor claims for one consistent view of what vendors are claiming, then standardises the resulting accrual calculation and journal creation directly from that claim data, with a schedule that rolls forward and reverses automatically each period.",
    ben:"Standardised vendor-claim capture and validation, better vendor-exposure visibility, and consistent, auditable accruals each month-end tied straight back to the underlying claims."},
-  {n:'05',name:'Productivity Analysis',
-   pain:'Labour and plant productivity on site is difficult to measure, so under-performance against budgeted hours or output isn\u2019t identified until well after the fact.',
-   scope:'Analyses labour and plant productivity against budgeted rates and output using data already captured in Daily Diary and Cost Coding Control.',
-   ben:'Earlier visibility of productivity issues, better-informed resourcing decisions, and a clearer link between site performance and cost outcomes.'},
-  {n:'06',name:'Daily Diary',
-   pain:'Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.',
-   scope:'Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.',
-   ben:'Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool.'},
-  {n:'07',name:'Cost to Complete Forecast',
+  {n:'05',name:'Daily Diary & Productivity',
+   pain:'Daily Diary data lives in fragile, non-standardised spreadsheets — manual, hard to interrogate, rarely validated — and because of that, labour and plant productivity against budgeted hours or output isn’t identified until well after the fact.',
+   scope:'Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting, then analyses labour and plant productivity against budgeted rates and output using that same captured data and Cost Coding Control.',
+   ben:'Digitises the diary at source, reconciles charges before they post, and turns one structured site-capture record into earlier visibility of productivity issues and a clear link between site performance and cost outcomes. Replaces the core of the PFC tool.'},
+  {n:'06',name:'Cost to Complete Forecast',
    pain:'Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.',
    scope:'Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.',
    ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'},
-  {n:'08',name:'Monthly Project Report',
+  {n:'07',name:'Monthly Project Report',
    pain:'MPRs are generated manually — slow, time-consuming and out of sync with the EoM timelines.',
    scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
    ben:'Major reduction in project-reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'}
@@ -2715,7 +2711,7 @@ onSlideLeave('s6', lineStop);
     var g=4, cx=(user.cx+prim.cx)/2;
     var yT=user.bot+g, yB=prim.t-g, Lp=yB-yT, BL=Math.max(20,Math.min(40,Lp*0.75));
     // How <-> What: two arrows forming a CLOCKWISE loop (down on the right, up on the left) -> iterative step
-    var HG=20;   // half of the 40px gap between the two loop lanes
+    var HG=40;   // half of the 80px gap between the two loop lanes
     var down=arrow('cgD',{x:cx+HG,y:yT},{x:cx+HG,y:yB}, BL,cU,cP);   // How -> What, right lane, head down
     var up  =arrow('cgU',{x:cx-HG,y:yB},{x:cx-HG,y:yT},-BL,cP,cU);   // What -> How, left lane,  head up
     // What -> Are: stays straight
@@ -4209,7 +4205,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-07T01:49:21Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-07T03:58:57Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
