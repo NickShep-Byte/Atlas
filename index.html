@@ -1191,7 +1191,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   <div class="inner">
     <div class="head rv">
       <span class="eyebrow"><span class="dot"></span>The Atlas Vision</span>
-      <h2 style="margin-top:1.2vh;font-size:clamp(24px,2.6vw,40px);">One brand. Five modules.</h2>
+      <h2 style="margin-top:1.2vh;font-size:clamp(24px,2.6vw,40px);">One application. Five modules.</h2>
     </div>
     <div class="modGrid rv d2" id="modGrid"></div>
   </div>
@@ -1671,43 +1671,27 @@ function onSlidePrev(id,fn){slideHooks.prev[id]=fn;}
    features. Clicking any node shows its pain/scope/benefit in the panel
    below. Data sourced from Atlas_Description_Text_updated.docx. */
 var FEATURE_MODS=[
- {name:'People',fn:'People, Payroll & Learning',desc:'A single platform to manage the entire employee lifecycle — from pre-employment and onboarding through payroll, performance, learning and workforce management.',feats:[
-  {n:'01',name:'Employee Profile & Core HR',
-   pain:'Employee information is spread across multiple systems and spreadsheets, making it difficult to maintain a complete, accurate view of each employee and identify actions requiring attention.',
-   scope:'A single employee profile covering personal, employment, contract and compliance information, supported by dashboards for Line Managers and Administrators to manage key activities such as probation, medical expiries and required actions.',
-   ben:'One trusted employee record across all entities, reduced administration, and better visibility of workforce information.'},
-  {n:'02',name:'Onboarding',
-   pain:'The onboarding process relies on manual data entry across multiple systems, creating duplication, limited visibility and a risk of payroll or system access being provided before a new starter is confirmed.',
-   scope:'A digital onboarding workflow that coordinates HR, Payroll, IT and Line Managers through shared checklists, stages employees until Day 1 confirmation, and integrates with recruitment systems to eliminate duplicate data entry.',
-   ben:'A streamlined recruitment-to-employment process, improved visibility for all stakeholders, fewer manual tasks, and reduced risk.'},
-  {n:'03',name:'Timesheets',
-   pain:'Timesheet submission and approval is inconsistent, labour intensive and disconnected from project costing, limiting visibility of labour costs and delaying approvals.',
-   scope:'A simple, mobile-friendly timesheet with project-based approvals and labour cost allocations through integration with Atlas Projects and dashboards that highlight outstanding approvals and exceptions.',
-   ben:'Faster approvals, improved user experience, better project costing and greater operational visibility.'},
-  {n:'04',name:'Leave Management',
-   pain:'Company leave policies are enforced manually after submissions, creating unnecessary Payroll effort and inconsistent policy compliance.',
-   scope:'Automated leave rules that validate requests against company policy before submission.',
-   ben:'Consistent policy compliance, reduced Payroll intervention and a simpler approval process for managers.'},
-  {n:'05',name:'End-to-End Payroll',
-   pain:'Payroll relies on manual reconciliation and limited visibility of issues before processing, increasing effort and the risk of pay errors.',
-   scope:'A central payroll dashboard that integrates with MicrOpay, highlights exceptions before processing and supports the full payroll lifecycle.',
-   ben:'Faster payroll processing, fewer errors and greater confidence before each pay run.'},
-  {n:'06',name:'Performance & Talent',
-   pain:'Performance reviews, career development and succession planning are managed inconsistently, making it difficult to develop talent and identify future leaders.',
-   scope:'Digital management of goals, KPIs, performance reviews, probation, development plans and succession planning.',
-   ben:'Consistent performance management, stronger succession planning and improved employee development.'},
-  {n:'07',name:'E-Learning',
-   pain:'Training records and compliance/recertification training are managed outside core systems via Acorn, making them hard to track and report on.',
-   scope:'Provides an LMS course catalogue, compliance and recertification training, and a structured training record for every employee, replacing and decommissioning Acorn.',
-   ben:'One source of truth for training compliance, easier recertification tracking, and reporting that ties training directly to the workforce.'},
-  {n:'08',name:'Company Inductions',
-   pain:'Site and company inductions are tracked manually across spreadsheets and paper sign-offs, making it hard to confirm who is actually cleared to be on site.',
-   scope:'Digitises company and site induction sign-off with a structured, auditable record for every worker, linked to their employee profile.',
-   ben:'A defensible, always-current induction record, faster site access for compliant workers, and one less manual check for site teams.'},
-  {n:'09',name:'Course Requests',
-   pain:'Course enrolments and completions sit in disconnected systems and spreadsheets, with no easy way to see who has done what.',
-   scope:'A structured course catalogue with enrolment, progress tracking and completion records, tied directly to each employee\u2019s training history.',
-   ben:'Clear visibility of course completion across the workforce, easier planning of upcoming training, and one record instead of many.'}
+ {name:'People',fn:'People, Payroll & Learning',desc:'A single platform to manage the entire employee lifecycle - from pre-employment and onboarding through payroll, performance, learning and workforce management.',feats:[
+  {n:'01',name:'Core HR',
+   pain:'Employee data, onboarding and compliance checks are split across ConnX, spreadsheets and manual trackers, making it hard to see one complete, trusted employee record.',
+   scope:'Builds a single employee profile, supported by onboarding, offboarding, compliance and medical workflows.',
+   ben:'One trusted employee record, clearer visibility of employee actions, and less duplicated admin across Payroll, HR, RTW and IT.'},
+  {n:'02',name:'Time & Pay',
+   pain:'Time, leave, award rules and payroll currently rely on disconnected tools, manual checks and limited visibility before pay is processed.',
+   scope:'Covers mobile timesheets, project-based approvals, Award and EBA rules, policy-validated leave, and the MicrOpay payroll interface.',
+   ben:'Cleaner time and pay data, faster approvals, better project costing, and greater confidence before each pay run.'},
+  {n:'03',name:'Learning',
+   pain:'Acorn, the current LMS, is overly complex to administer, was configured to handle both training and compliance without doing either well, and has poor uptake - most Customer Streams run their own workarounds instead of using it properly.',
+   scope:'Upload and maintain training records, run and record training on mobile devices out on site, administer all company training from one platform, and let people self-serve upskilling courses in downtime.',
+   ben:'One company-wide training system driving consistent compliance and skills growth, replacing Acorn with something faster and more intuitive for employees and managers alike.'},
+  {n:'04',name:'Performance',
+   pain:'Goals, reviews, development and succession planning are not tracked consistently, making it harder to grow people and identify future leaders.',
+   scope:'Covers goals, KPIs, performance reviews, development plans and succession planning.',
+   ben:'A consistent approach to performance, clearer development pathways, and stronger visibility of future talent.'},
+  {n:'05',name:'Reporting',
+   pain:'Reporting and data currently need to be pulled and reconciled manually across systems.',
+   scope:'Covers Reporting & Dashboards, Data Migration, and Integrations.',
+   ben:'Consistent reporting and clean data flow underpinning every other People feature.'}
  ]},
  {name:'Tenders',fn:'Tender Management',desc:'The whole pipeline, driven — every opportunity from first lead to job won, built on our existing Tender Management Application as the framework\u2019s basis.',feats:[
   {n:'01',name:'Tender/ Project Histories',
@@ -1736,42 +1720,34 @@ var FEATURE_MODS=[
    pain:"Costs outside Purchase/Subcontract Orders land on cost codes that cost controllers never review, so Pronto can't act as a usable Cost Breakdown Structure.",
    scope:'Intercepts all inbound costs (payroll, plant, overheads, Purchase Card, internal invoices) before they post to Pronto, so controllers code them to the budgeted cost code.',
    ben:'Makes Pronto an effective source of truth for the CBS, gives PMs visibility of cost performance and enables EVM tracking. Builds on the Finance module\u2019s journaling framework to give project teams more control of their costs.'},
-  {n:'02',name:'Revenue Management',
-   pain:'Revenue \u2014 contract value, variations and claims \u2014 is tracked in disconnected Excel registers with no direct link to what\u2019s actually been billed or recognised.',
-   scope:'A structured revenue register covering contract value, variations and claims, connected directly to Progress Claims and Profit Recognition.',
-   ben:'One accurate view of revenue position per project, less manual reconciliation, and a clear line from contract to what\u2019s actually claimed.'},
+  {n:'02',name:'Revenue & Claims',
+   pain:"Revenue — contract value, variations and claims — is tracked in disconnected Excel registers, and around 80% of customer progress claims are prepared in error-prone spreadsheets outside core systems, with no direct link to what's actually been billed or recognised.",
+   scope:"A structured revenue register covering contract value, variations and claims that also standardises, evaluates and checks every customer progress claim (including Rise & Fall and escalation clauses), connected directly to Profit Recognition.",
+   ben:"One accurate view of revenue position per project, standardised claims with less manual rework, and a clear line from contract through to what's actually claimed and recognised."},
   {n:'03',name:'Procurement Controls',
    pain:'Procurement commitments and purchase orders are tracked in a basic Excel register, disconnected from budget and cost data.',
    scope:'A structured procurement register that tracks commitments and purchase orders against budget, integrated with Cost Coding Control.',
    ben:'Clear visibility of committed spend against budget, fewer surprises at cost-to-complete, and one place to check procurement status.'},
-  {n:'04',name:'Progress Claims (Upstream)',
-   pain:'80% of project claims are prepared in error-prone Excel outside core systems; some customers mandate their own error-prone sheets.',
-   scope:'Standardises, evaluates and checks all customer progress claims using AI, including Rise & Fall and escalation clauses.',
-   ben:'Standardised claims, less manual effort and rework, better revenue visibility, and confidence we claim everything applicable.'},
-  {n:'05',name:'Vendor Claim Validation',
-   pain:'Vendor claims arrive in personal mailboxes under strict compliance rules, often left unprocessed and captured in error-prone Excel.',
-   scope:'Ingests, standardises and validates vendor claims for one consistent view of what vendors are claiming.',
-   ben:'Standardised capture, clearer validation, better vendor-exposure visibility and improved compliance.'},
-  {n:'06',name:'Productivity Analysis',
+  {n:'04',name:'Vendor Claims & Accruals',
+   pain:"Vendor claims arrive in personal mailboxes under strict compliance rules and are captured in error-prone Excel, and the month-end accruals raised from them are journaled manually with no easy way to trace an accrual back to the claim it relates to.",
+   scope:"Ingests, standardises and validates vendor claims for one consistent view of what vendors are claiming, then standardises the resulting accrual calculation and journal creation directly from that claim data, with a schedule that rolls forward and reverses automatically each period.",
+   ben:"Standardised vendor-claim capture and validation, better vendor-exposure visibility, and consistent, auditable accruals each month-end tied straight back to the underlying claims."},
+  {n:'05',name:'Productivity Analysis',
    pain:'Labour and plant productivity on site is difficult to measure, so under-performance against budgeted hours or output isn\u2019t identified until well after the fact.',
    scope:'Analyses labour and plant productivity against budgeted rates and output using data already captured in Daily Diary and Cost Coding Control.',
    ben:'Earlier visibility of productivity issues, better-informed resourcing decisions, and a clearer link between site performance and cost outcomes.'},
-  {n:'07',name:'Daily Diary',
+  {n:'06',name:'Daily Diary',
    pain:'Daily Diary data lives in fragile, non-standardised spreadsheets. Manual, hard to interrogate, rarely validated.',
    scope:'Captures daily site information (workers, weather, incidents, progress) and reconciles weekly labour and plant charges against diary data before posting.',
    ben:'Digitises the diary at source, reconciles charges before they post, and creates a single structured site-capture record. Replaces the core of the PFC tool.'},
-  {n:'08',name:'Cost to Complete Forecast',
+  {n:'07',name:'Cost to Complete Forecast',
    pain:'Cost-to-complete forecasts are manual and inconsistent, with no reliable cost data to extrapolate from.',
    scope:'Helps teams forecast cost-to-complete by extrapolating labour, plant, subcontractors, materials and external resources.',
    ben:'Faster, more consistent forecasts that draw on data already in Atlas, strengthening forward-looking controls.'},
-  {n:'09',name:'Monthly Project Report',
+  {n:'08',name:'Monthly Project Report',
    pain:'MPRs are generated manually — slow, time-consuming and out of sync with the EoM timelines.',
    scope:'Auto-generates ~95% of MPR data straight from Pronto and other source systems. PMs add commentary only, and can query their data via AI.',
-   ben:'Major reduction in project-reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'},
-  {n:'10',name:'Resource Requests',
-   pain:"Requesting extra plant or people happens over email and phone calls, with no record of what's been asked for, approved, or already committed to another project.",
-   scope:'A structured request-and-approval workflow for additional plant or labour, checked against live Plant Allocation & Scheduling and Resource Management & Planning data before it’s approved.',
-   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'}
+   ben:'Major reduction in project-reporting effort, consistent and comparable reporting, workflow visibility, and easy interrogation of current and previous MPRs.'}
  ]},
  {name:'Operations',fn:'Resources & Scheduling',desc:'People and plant — scheduled, costed and tracked, the whole operation in motion.',feats:[
   {n:'01',name:'Skills Matrix',
@@ -1785,7 +1761,11 @@ var FEATURE_MODS=[
   {n:'03',name:'Resource Management & Planning',
    pain:"Blue-collar labour is scheduled from disconnected spreadsheets (key-person risk); the white-collar workforce isn't consistently tracked at all.",
    scope:'Expands Plant Allocation & Scheduling for labour. One window for people and plant, drawing resources from HRIS, licences from Hammertech, and projects from TMA and Pronto.',
-   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'}
+   ben:'A single source for plant data and compliance, utilisation and engine-hour visibility, and proactive servicing and R&M tracking.'},
+  {n:'04',name:'Resource Requests',
+   pain:"Requesting extra plant or people happens over email and phone calls, with no record of what's been asked for, approved, or already committed to another project.",
+   scope:'A structured request-and-approval workflow for additional plant or labour, checked against live Plant Allocation & Scheduling and Resource Management & Planning data before it’s approved.',
+   ben:'Faster turnaround on resourcing requests, a clear approval trail, and fewer double-bookings across projects.'}
  ]},
  {name:'Finance',fn:'Finance & Reporting',desc:'Journals, month-end controls and board reports — the numbers, closed with confidence.',feats:[
   {n:'01',name:'General Ledger Journaling',
@@ -1796,26 +1776,14 @@ var FEATURE_MODS=[
    pain:'Monthly cashflow forecasts are stitched together by hand across systems. Slow, and hard to trust.',
    scope:'Uses data across Pronto, Atlas and CAAPS to help teams produce a monthly cashflow forecast, building on Cost to Complete Forecast.',
    ben:'Cross-system cashflow visibility in one view, supporting finance and project leadership.'},
-  {n:'03',name:'Accruals',
-   pain:'Month-end accruals are calculated and journaled manually across spreadsheets, with no consistent method between accountants or projects and no easy way to trace an accrual back to the source cost or claim it relates to.',
-   scope:'Standardises accrual calculation and journal creation directly from Atlas cost and claim data, with a reviewable schedule that rolls forward and reverses automatically each period.',
-   ben:'Consistent, auditable accruals every month-end, less manual journal work, and a clear link between each accrual and the underlying project data.'},
-  {n:'04',name:'Profit Recognition',
+  {n:'03',name:'Profit Recognition',
    pain:'Profit take-up is run manually in Pronto at least twice a month by three to four accountants, and cost recognised has differed from actual cost in 1,136 instances across 488 projects over eleven straight months \u2014 a structural gap that unsubmitted variations, cost overruns and Won/Tender mismatches make very easy to miss by hand.',
    scope:'Reproduces our declared profit recognition method exactly in a single deterministic pass across every company and project, automatically quarantining anything that can\u2019t be safely recognised, and produces an auditable review dashboard with by-stream and by-company summaries for accountant sign-off before any journal is posted.',
    ben:'Removes the mechanical, repetitive recognition work, catches invalid or borderline recognition automatically, and leaves a saved, reviewable audit trail every cycle \u2014 while keeping the same maker-checker control we use today.'},
-  {n:'05',name:'EoM Control',
-   pain:'Month-end close is run as a checklist of emails and spreadsheet trackers, so it\u2019s hard to see what\u2019s outstanding, blocked, or already signed off until the numbers are due.',
-   scope:'A structured month-end close checklist across Atlas, tracking journals, accruals and reconciliations as they\u2019re completed so nothing closes the books unchecked.',
-   ben:'A faster, more confident month-end close, with a clear record of what was checked and by whom.'},
-  {n:'06',name:'Board Reports',
+  {n:'04',name:'Board Reports',
    pain:'Board packs are compiled by hand from several systems each month, which is slow and hard to trace back to the underlying numbers.',
    scope:'Builds board-ready reports directly from Atlas project, cost and finance data, drawing on the same figures used in Monthly Reporting and Cashflow Forecast.',
-   ben:'Faster, more consistent board reporting with a clear line back to the source data behind every figure.'},
-  {n:'07',name:'Invoicing',
-   pain:'Customer invoices are raised and tracked outside Pronto in spreadsheets and email, with no clear link back to the claim or milestone they were billed against.',
-   scope:'Generates and tracks customer invoices directly from progress claims and milestones already in Atlas, posting into Pronto with a clear audit trail.',
-   ben:'Faster invoicing, fewer billing errors, and a clean link from every invoice back to the claim it was raised against.'}
+   ben:'Faster, more consistent board reporting with a clear line back to the source data behind every figure.'}
  ]}
 ];
 /* ---------- Slide 4: Feature ecosystem (SIGNATURE 2) — script logic;
@@ -2747,8 +2715,9 @@ onSlideLeave('s6', lineStop);
     var g=4, cx=(user.cx+prim.cx)/2;
     var yT=user.bot+g, yB=prim.t-g, Lp=yB-yT, BL=Math.max(20,Math.min(40,Lp*0.75));
     // How <-> What: two arrows forming a CLOCKWISE loop (down on the right, up on the left) -> iterative step
-    var down=arrow('cgD',{x:cx,y:yT},{x:cx,y:yB}, BL,cU,cP);   // How -> What, bulge right, head down
-    var up  =arrow('cgU',{x:cx,y:yB},{x:cx,y:yT},-BL,cP,cU);   // What -> How, bulge left,  head up
+    var HG=20;   // half of the 40px gap between the two loop lanes
+    var down=arrow('cgD',{x:cx+HG,y:yT},{x:cx+HG,y:yB}, BL,cU,cP);   // How -> What, right lane, head down
+    var up  =arrow('cgU',{x:cx-HG,y:yB},{x:cx-HG,y:yT},-BL,cP,cU);   // What -> How, left lane,  head up
     // What -> Are: stays straight
     var str =arrow('cgS',{x:prim.cx,y:prim.bot+g},{x:exec.cx,y:exec.t-g},0,cP,cE);
     svg.innerHTML='<defs>'+down.g+up.g+str.g+'</defs>'+down.path+up.path+str.path;
@@ -4240,7 +4209,7 @@ if(RM)slides.forEach(function(s){frags(s).forEach(function(f){f.classList.add('s
 // document.lastModified proved unreliable — git checkout / missing
 // Last-Modified headers report the wrong time). Shown in the viewer's
 // local time.
-var BUILD_STAMP='2026-08-06T23:24:54Z';   // UTC; update on every commit
+var BUILD_STAMP='2026-08-07T01:49:21Z';   // UTC; update on every commit
 (function(){
   var tip=document.getElementById('brandTip');if(!tip)return;
   var d=new Date(BUILD_STAMP);
