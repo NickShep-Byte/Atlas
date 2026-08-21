@@ -104,10 +104,10 @@ button:hover:not(.sel):not(.hi):not(.on):not(.cur):not(.hub){color:var(--teal);}
 /* ---------- Shared vocabulary ---------- */
 .eyebrow{
   display:inline-flex;align-items:center;gap:.6em;
-  font-size:clamp(11px,.95vw,14px);font-weight:700;letter-spacing:.28em;
+  font-size:clamp(16.5px,1.43vw,21px);font-weight:700;letter-spacing:.28em;
   color:var(--blue-bright);
 }
-.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--blue-bright);animation:pulse 2.4s ease-in-out infinite;}
+.eyebrow .dot{width:12px;height:12px;border-radius:50%;background:var(--blue-bright);animation:pulse 2.4s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;}55%{opacity:.4;}}
 h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spacing:-.012em;}
 .sub{font-size:clamp(15px,1.3vw,21px);color:var(--grey);line-height:1.55;font-weight:400;}
@@ -965,6 +965,11 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #sUse .useNode{flex:0 1 auto;max-width:22vw;padding:2.4vh 1.6vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.9vh;}
 #sUse .useNode.atlas{border-color:rgba(var(--acc2-rgb),.5);}
 #sUse .useNode.goal{border-color:rgba(var(--teal-rgb),.55);}
+#sUse .useNode.phil{max-width:26vw;}
+#sUse .usePhil{list-style:none;margin:.4vh 0 0;padding:0;display:flex;flex-direction:column;gap:.7vh;text-align:left;width:100%;}
+#sUse .usePhil li{display:flex;align-items:flex-start;gap:.55em;font-size:clamp(11px,1vw,15px);color:var(--soft);line-height:1.3;}
+#sUse .usePhil .upIcon{flex:none;font-size:1.05em;line-height:1.3;color:var(--blue-bright);}
+#sUse .usePhil .upTxt b{color:var(--title);font-weight:800;}
 #sUse .useMark{width:clamp(34px,3.2vw,46px);height:clamp(34px,3.2vw,46px);display:inline-flex;}
 #sUse .useMark img{width:100%;height:100%;object-fit:contain;}
 #sUse .useGlyph{width:clamp(34px,3.2vw,46px);height:clamp(34px,3.2vw,46px);border-radius:12px;display:flex;align-items:center;justify-content:center;
@@ -1399,7 +1404,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <h2 style="margin-top:1.2vh;">One philosophy. Every use case.</h2>
     </div>
     <div class="useFlow">
-      <div class="useNode rv d2"><div class="useGlyph wdo">W&middot;D&middot;O</div><h3>The Philosophy</h3><p>Work &middot; Data &middot; Outputs</p></div>
+      <div class="useNode phil rv d2"><h3>The Philosophy</h3><ul class="usePhil"><li><span class="upIcon">&#9881;</span><span class="upTxt"><b>Work</b> &mdash; straightforward &amp; efficient</span></li><li><span class="upIcon">&#9707;</span><span class="upTxt"><b>Data</b> &mdash; standardised, structured &amp; visible</span></li><li><span class="upIcon">&#10003;</span><span class="upTxt"><b>Outputs</b> &mdash; accurate, reliable &amp; consistent</span></li></ul></div>
       <div class="useArrow rv d2" aria-hidden="true">&#8594;</div>
       <div class="useNode atlas rv d3"><svg class="mlogo useMark"><use href="#atlasMark"/></svg><h3>Atlas</h3><p>One structured platform</p></div>
       <div class="useArrow rv d3" aria-hidden="true">&#8594;</div>
@@ -2553,6 +2558,9 @@ onSlideLeave('s5', cadenceStop);
    ============================================================ */
 
 (function(){
+/* Approach uses the shared CAD_FEATURES list minus General Ledger Journaling,
+   which is shown on the Cadence timeline only. */
+var APPROACH_FEATURES=CAD_FEATURES.filter(function(f){return f!=='General Ledger Journaling';});
 var line={timers:[],running:false,modIdx:0};
 var token=document.getElementById('modToken');
 var tokenName=document.getElementById('tokenName');
@@ -2582,8 +2590,8 @@ function clearShelfChips(){
 }
 function runModule(){
   if(!line.running)return;
-  var ci=line.modIdx%CAD_FEATURES.length;
-  var m={name:CAD_FEATURES[ci]};
+  var ci=line.modIdx%APPROACH_FEATURES.length;
+  var m={name:APPROACH_FEATURES[ci]};
   var L=layout();
   // reset stations
   stationEls.forEach(function(st){st.classList.remove('active','done');st.style.setProperty('--pr',0);});
@@ -2650,7 +2658,7 @@ function lineStart(){
   if(RM){
     stationEls.forEach(function(st){st.classList.add('done');st.style.setProperty('--pr',100);});
     clearShelfChips();
-    CAD_FEATURES.slice(0,3).forEach(function(f){
+    APPROACH_FEATURES.slice(0,3).forEach(function(f){
       var chip=document.createElement('span');
       chip.className='dchip';chip.textContent=f;
       shelf.appendChild(chip);
