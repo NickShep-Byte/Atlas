@@ -155,12 +155,6 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
    Weight is carried on the markup (stroke-width 4.886 in the
    257.143-unit viewBox) to reproduce the static glyph's 1.9-per-100
    line ratio, so it matches at 24px, 35px and the 620px watermark. */
-/* The watermark, core and hub marks are declared pointer-events:none and sit
-   behind slide content, so hover never reached them (first/last slide and the
-   feature diagram). Re-enable hit testing on the mark itself; content above
-   still wins wherever it overlaps. */
-svg.atlasSine{pointer-events:auto;}
-svg.atlasSine circle{pointer-events:all;}
 #atlasSineSrc{display:none;}
 .atlasWatermark{position:absolute;left:50%;top:44.8%;transform:translate(-50%,-50%);
   width:min(620px,52vw,72vh);height:min(620px,52vw,72vh);z-index:0;pointer-events:none;
@@ -4311,7 +4305,7 @@ var BUILD_STAMP='2026-08-07T04:00:51Z';   // UTC; update on every commit
    Exposed as atlasSine() and idempotent, because the Features drill-in builds
    its hub mark at runtime and has to be converted after the fact. */
 function atlasSine(scope){
-  var MID=2, VB='-28.571 -28.571 257.143 257.143';
+  var DUR=4, MID=2, VB='-28.571 -28.571 257.143 257.143';
   var src=document.getElementById('atlasSineSrc');
   if(!src||!scope)return;
   var sel='svg.bmark,svg.mlogo,svg.atlasWatermark,svg.coreMark,svg.transMark,svg.hubMark';
@@ -4322,12 +4316,46 @@ function atlasSine(scope){
     Array.prototype.forEach.call(src.children,function(n){svg.appendChild(n.cloneNode(true));});
     svg.setAttribute('viewBox',VB);
     svg.classList.add('atlasSine');
-    function hold(){try{svg.pauseAnimations();svg.setCurrentTime(MID);}catch(e){}}
-    function run(){try{svg.unpauseAnimations();}catch(e){}}
-    hold();
-    var t=svg.closest('.app,.useNode,#brand,.core,.hub')||svg;
-    t.addEventListener('mouseenter',run);
-    t.addEventListener('mouseleave',hold);
+    var on=false, raf=0;
+    function phase(){try{return svg.getCurrentTime()%DUR;}catch(e){return MID;}}
+    /* park on the midpoint frame of whichever cycle we are in */
+    function park(){try{var t=svg.getCurrentTime();svg.pauseAnimations();
+      svg.setCurrentTime(Math.floor(t/DUR)*DUR+MID);}catch(e){}}
+    function run(){if(raf){cancelAnimationFrame(raf);raf=0;}
+      if(on)return;on=true;try{svg.unpauseAnimations();}catch(e){}}
+    /* leaving does not snap back: let the loop play on to the next midpoint
+       and stop there, so the mark always comes to rest on the same frame. */
+    function hold(){
+      if(!on)return; on=false;
+      var prev=phase(), armed=prev<MID;
+      raf=requestAnimationFrame(function step(){
+        if(on){raf=0;return;}                       // hover resumed mid-settle
+        var ph=phase();
+        if(!armed&&ph<prev)armed=true;               // cycle wrapped
+        if(armed&&ph>=MID){raf=0;park();return;}
+        prev=ph; raf=requestAnimationFrame(step);
+      });
+    }
+    park();
+    var t=svg.closest('.app,.useNode,#brand,.core,.hub');
+    if(t){
+      /* A container target is immune to text sitting over the mark: mouseenter
+         and mouseleave do not fire when the pointer moves between descendants. */
+      t.addEventListener('mouseenter',run);
+      t.addEventListener('mouseleave',hold);
+    }else{
+      /* No container (the background watermarks). Test the pointer against the
+         mark's circle instead of relying on hit testing, so the wordmark and
+         copy layered over it cannot interrupt the hover. */
+      var scope=svg.closest('.slide')||document;
+      scope.addEventListener('mousemove',function(e){
+        var b=svg.getBoundingClientRect(); if(!b.width)return hold();
+        var vb=svg.viewBox.baseVal, rad=90/vb.width*b.width;
+        var dx=e.clientX-(b.left+b.width/2), dy=e.clientY-(b.top+b.height/2);
+        (dx*dx+dy*dy<=rad*rad)?run():hold();
+      });
+      scope.addEventListener('mouseleave',hold);
+    }
   });
 }
 atlasSine(document);
