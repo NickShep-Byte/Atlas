@@ -99,6 +99,10 @@ button:hover:not(.sel):not(.hi):not(.on):not(.cur):not(.hub){color:var(--teal);}
   pointer-events:auto;
 }
 .slide.prior{transform:translateX(-3.5vw);}
+/* Wrapping between the last and first slide crossfades instead of sliding:
+   the horizontal travel reads as a jump back through the whole deck. */
+body.blend .slide{transform:none!important;}
+body.blend .slide.active{transition:opacity .65s var(--ease);}
 .inner{width:90%;max-width:1650px;max-height:100%;margin-left:auto;margin-right:auto;}
 
 /* ---------- Shared vocabulary ---------- */
@@ -4077,8 +4081,13 @@ function onLeave(s){
   var fn=slideHooks.leave[s.id];
   if(fn)fn();
 }
+var blendT=0;
 function goTo(i,skipFragReset){
   if(i<0||i>=slides.length||(i===cur&&slides[i].classList.contains('active')))return;
+  var wrap=(cur===0&&i===slides.length-1)||(cur===slides.length-1&&i===0);
+  document.body.classList.toggle('blend',wrap);
+  if(wrap){clearTimeout(blendT);blendT=setTimeout(function(){
+    document.body.classList.remove('blend');},800);}
   var old=slides[cur];
   onLeave(old);
   old.classList.remove('active');
