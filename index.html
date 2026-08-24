@@ -1418,7 +1418,67 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
     </div>
   </div>
 </section>
-<style> /* SHEET #sAI — Faster progression at every stage */
+<style> /* SHEET #sVibe — AI-assisted coding, not vibe coding */
+#sVibe .head{text-align:center;margin-bottom:.5vh;}
+#sVibe .head .eyebrow{justify-content:center;}
+#sVibe .head .sub{margin:1.2vh auto 0;max-width:62ch;}
+#sVibe .vbGrid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 3.2vw;margin-top:4.2vh;align-items:stretch;}
+#sVibe .vbRule{background:linear-gradient(180deg,transparent,rgba(var(--brd-rgb),.34) 12%,rgba(var(--brd-rgb),.34) 88%,transparent);}
+#sVibe .vbCol{display:flex;flex-direction:column;gap:1.6vh;min-width:0;padding:0 .4vw;}
+#sVibe .vbCol h3{font-size:clamp(15px,1.4vw,22px);font-weight:800;margin:0;letter-spacing:-.01em;
+  display:inline-block;align-self:flex-start;padding-bottom:.5vh;border-bottom:2px solid;}
+#sVibe .vbCol.muted h3{color:var(--soft);border-bottom-color:rgba(var(--soft-rgb),.45);}
+#sVibe .vbCol.ours  h3{color:var(--acc2);border-bottom-color:rgba(var(--acc2-rgb),.55);}
+#sVibe .vbCol ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1.05vh;}
+#sVibe .vbCol li{font-size:clamp(11px,.92vw,14px);line-height:1.45;padding-left:1.1em;position:relative;}
+#sVibe .vbCol.muted li{color:var(--soft);}
+#sVibe .vbCol.ours  li{color:var(--txt);}
+#sVibe .vbCol.muted li::before{content:"\2022";position:absolute;left:0;color:rgba(var(--soft-rgb),.7);font-weight:700;}
+#sVibe .vbCol.ours  li::before{content:"\2192";position:absolute;left:0;color:var(--teal);font-weight:700;}
+#sVibe .vbFlow{margin-top:auto;padding-top:1.8vh;font-family:var(--font-util);font-weight:700;
+  font-size:clamp(10.5px,.88vw,13.5px);letter-spacing:.06em;}
+#sVibe .vbCol.muted .vbFlow{color:rgba(var(--soft-rgb),.85);}
+#sVibe .vbCol.ours  .vbFlow{color:var(--acc2);}
+#sVibe .vbCap{text-align:center;margin-top:4vh;font-size:clamp(12px,1vw,15px);color:var(--blue-grey);font-style:italic;}
+</style>
+
+<section class="slide" id="sVibe" data-label="AI-assisted coding" data-act="5">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>How we build</span>
+      <h2 style="margin-top:1vh;">Our approach: AI-assisted coding &mdash; not vibe coding.</h2>
+      <p class="sub">The distinction matters when developing a large, interconnected system.</p>
+    </div>
+    <div class="vbGrid">
+      <div class="vbCol muted rv d2">
+        <h3>Vibe coding</h3>
+        <ul>
+          <li>AI leads implementation from broad prompts</li>
+          <li>Outputs may be accepted without full technical scrutiny</li>
+          <li>Useful for experiments and rapid prototypes</li>
+          <li>Decisions can become inconsistent across connected features</li>
+          <li>Does not provide the architectural control required for a large, interconnected production system</li>
+        </ul>
+        <div class="vbFlow">Prompt &rarr; generate &rarr; ship</div>
+      </div>
+      <div class="vbRule rv d3" aria-hidden="true"></div>
+      <div class="vbCol ours rv d4">
+        <h3>Our AI-assisted approach</h3>
+        <ul>
+          <li>Developers retain control of architecture and implementation</li>
+          <li>AI accelerates specific activities throughout development</li>
+          <li>Outputs are reviewed, tested and verified before release</li>
+          <li>Changes are assessed against dependencies across the wider system</li>
+          <li>Supports secure, maintainable and scalable development</li>
+        </ul>
+        <div class="vbFlow">Developer directs &rarr; AI accelerates &rarr; developer verifies</div>
+      </div>
+    </div>
+    <div class="vbCap rv d5">AI increases delivery speed; disciplined engineering keeps the system coherent.</div>
+  </div>
+</section>
+
+<style> /* SHEET #sAI — How Claude accelerates each stage */
 #sAI .head{text-align:center;margin-bottom:.5vh;}
 #sAI .head .eyebrow{justify-content:center;}
 #sAI .aiGrid{display:flex;flex-direction:column;gap:1.8vh;margin-top:2.6vh;}
@@ -1433,17 +1493,17 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
 </style>
 
 
-<section class="slide" id="sAI" data-label="Faster progression" data-act="5">
+<section class="slide" id="sAI" data-label="Claude by stage" data-act="5">
   <div class="inner">
     <div class="head rv">
-      <span class="eyebrow"><span class="dot"></span>Claude across the cycle</span>
-      <h2 style="margin-top:1vh;">Faster progression, at every stage.</h2>
+      <span class="eyebrow"><span class="dot"></span>AI-assisted coding in practice</span>
+      <h2 style="margin-top:1vh;">How Claude accelerates each stage.</h2>
     </div>
     <div class="aiGrid">
       <div class="aiRow"><div class="aiCard rv d2"><h3>Design</h3><ul><li>Draft technical implementation plans for developer sign-off</li><li>Draft visual mockups for design review</li><li>Distil complex requirements for the team to refine</li></ul></div><div class="aiCard rv d3"><h3>Development</h3><ul><li>Accelerate the developers&rsquo; code writing</li><li>Break down tasks &amp; dependencies to assist with planning</li><li>Frees developers to focus on complex problem-solving</li></ul></div><div class="aiCard rv d4"><h3>Testing</h3><ul><li>Draft unit tests for developer review</li><li>Recording automated frontend test scripts</li><li>Support security testing</li><li>Analyse code quality</li></ul></div></div>
       <div class="aiRow two"><div class="aiCard rv d3"><h3>Documentation</h3><ul><li>Draft documentation from code and tests, reviewed by developers before publishing</li></ul></div><div class="aiCard rv d4"><h3>App functionality</h3><ul><li>Process invoices, timesheets and dockets for team verification</li><li>Draft data analysis summaries for review (e.g. Monthly Project Report)</li><li>Support natural language data retrieval (e.g. Compass)</li><li>Frees the team to focus on higher-value analysis</li></ul></div></div>
     </div>
-    <div class="aiCap rv d5">Developer-reviewed before it ships &mdash; every stage moves faster, without cutting corners.</div>
+    <div class="aiCap rv d5">Developer-directed and reviewed before it ships &mdash; AI accelerates the work without compromising the wider system.</div>
   </div>
 </section>
 
