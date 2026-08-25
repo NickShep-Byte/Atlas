@@ -1550,6 +1550,417 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
   </div>
 </section>
 
+<style> /* SHEET #sPlan — delivery schedule (Gantt) */
+/* The chart arrives as a standalone page; every rule below is scoped to
+   #sPlan so its global html/body styling cannot reach the deck, and its
+   hardcoded palette is mapped onto the deck's theme variables so the chart
+   reads correctly in both light and dark. */
+#sPlan .inner{display:flex;flex-direction:column;height:100%;width:96%;max-width:1780px;}
+#sPlan .head{text-align:center;margin-bottom:.6vh;flex:none;}
+#sPlan .head .eyebrow{justify-content:center;}
+#sPlan .ganttWrap{flex:1 1 auto;min-height:0;display:flex;justify-content:center;}
+#sPlan #gantt{width:100%;height:100%;min-width:0;min-height:0;
+  font-family:var(--font-util);
+  --paper:var(--bg);
+  --ink:var(--title);
+  --grid:rgba(var(--brd-rgb),.28);
+  --grid-strong:rgba(var(--brd-rgb),.55);
+  --bar:var(--acc2);
+  --dependency:var(--sec);
+  --summary:var(--soft);
+}
+#sPlan .quarter-cell{fill:rgba(var(--srf-rgb),.05);stroke:var(--grid-strong);stroke-width:.7;vector-effect:non-scaling-stroke;}
+#sPlan .quarter-label{fill:var(--ink);font-size:12px;font-weight:700;dominant-baseline:middle;text-anchor:middle;}
+#sPlan .quarter-label.partial{font-size:10px;}
+#sPlan .quarter-grid{stroke:var(--grid);stroke-width:.8;vector-effect:non-scaling-stroke;}
+#sPlan .schedule-edge{fill:none;stroke:var(--grid-strong);stroke-width:1;vector-effect:non-scaling-stroke;}
+#sPlan .group-outline{fill:none;stroke:var(--summary);stroke-width:1;vector-effect:non-scaling-stroke;}
+#sPlan .group-cap,#sPlan .summary-bar{fill:none;stroke:var(--summary);stroke-width:3.2;vector-effect:non-scaling-stroke;}
+#sPlan .summary-tick{stroke:var(--summary);stroke-width:2;vector-effect:non-scaling-stroke;}
+#sPlan .task-bar{fill:var(--bar);}
+#sPlan .task-label,#sPlan .summary-label{fill:var(--ink);font-size:13px;font-weight:700;
+  paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round;dominant-baseline:middle;}
+#sPlan .task-label{text-anchor:end;}
+#sPlan .summary-label{text-anchor:middle;}
+#sPlan .dependency{fill:none;stroke:var(--dependency);stroke-width:1.55;stroke-linecap:round;
+  stroke-linejoin:round;opacity:.98;marker-end:url(#arrow-blue);vector-effect:non-scaling-stroke;}
+#sPlan .dependency.black{stroke:var(--summary);opacity:.92;marker-end:url(#arrow-black);}
+#sPlan .milestone{fill:var(--teal);stroke:var(--paper);stroke-width:1.5;vector-effect:non-scaling-stroke;}
+</style>
+
+<section class="slide" id="sPlan" data-label="Delivery schedule" data-act="6">
+  <div class="inner">
+    <div class="head rv">
+      <span class="eyebrow"><span class="dot"></span>Delivery schedule</span>
+      <h2 style="margin-top:1vh;font-size:clamp(18px,2.1vw,32px);">Every feature, sequenced and dependency-mapped.</h2>
+    </div>
+    <div class="ganttWrap rv d2">
+      <svg id="gantt" viewBox="0 0 1600 1134" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="gantt-title gantt-description">
+        <title id="gantt-title">Atlas delivery schedule Gantt chart</title>
+        <desc id="gantt-description">A data-driven Gantt chart of the Atlas enabling, projects, operations and finance delivery schedule.</desc>
+        <defs>
+      <marker id="arrow-blue" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M0 0L8 4L0 8Z" fill="currentColor" style="color:var(--sec)"></path>
+      </marker>
+      <marker id="arrow-black" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M0 0L8 4L0 8Z" fill="currentColor" style="color:var(--soft)"></path>
+      </marker>
+      <clipPath id="chart-clip">
+        <rect x="0" y="0" width="1600" height="1134"></rect>
+      </clipPath>
+    </defs>
+        <g id="schedule" clip-path="url(#chart-clip)"></g>
+      </svg>
+    </div>
+  </div>
+</section>
+<script>
+    (() => {
+      'use strict';
+
+      const NS = 'http://www.w3.org/2000/svg';
+      const root = document.getElementById('schedule');
+
+      const layout = Object.freeze({
+        width: 1600,
+        height: 1134,
+        chartLeft: 120,
+        chartRight: 1580,
+        headerHeight: 38,
+        rowHeight: 34,
+        barHeight: 9,
+        timelineStart: '2026-06-01',
+        timelineEnd: '2029-02-01'
+      });
+
+      const tasks = Object.freeze([
+        { id: 'dev', label: 'Dev Onboarded', start: '2026-09-03', finish: '2026-09-29' },
+        { id: 'enabling', label: 'Enabling work', start: '2026-10-19', finish: '2027-02-26', type: 'summary', children: ['approval', 'actions', 'notifications', 'period'] },
+        { id: 'approval', label: 'Core - Approval Workflow', start: '2026-10-19', finish: '2026-11-06' },
+        { id: 'actions', label: 'Core - Actions service', start: '2026-11-09', finish: '2026-11-27' },
+        { id: 'notifications', label: 'Core - Notifications', start: '2027-01-15', finish: '2027-02-05' },
+        { id: 'period', label: 'Core - Period Control', start: '2027-02-08', finish: '2027-02-26' },
+
+        { id: 'projects', label: 'Atlas | Projects', start: '2026-08-20', finish: '2028-12-01', type: 'summary', children: ['project-profile', 'projects-hub', 'monthly-report', 'wbs', 'notice-register', 'variations', 'progress-claims', 'cost-coding', 'accruals', 'forecast', 'procurement', 'requisition', 'vendor-validation', 'daily-core', 'daily-support', 'productivity'] },
+        { id: 'project-profile', label: 'Project Profile', start: '2026-09-30', finish: '2026-12-01' },
+        { id: 'projects-hub', label: 'Projects Hub / Dashboard', start: '2026-12-02', finish: '2027-01-14' },
+        { id: 'monthly-report', label: 'Monthly Project Report', start: '2026-12-02', finish: '2027-03-19' },
+        { id: 'wbs', label: 'Revenue Management - WBS (task budget assignment)', start: '2027-04-21', finish: '2027-08-24' },
+        { id: 'notice-register', label: 'Contract Notice Register', start: '2027-03-22', finish: '2027-04-20' },
+        { id: 'variations', label: 'Revenue Management - Variations', start: '2027-10-08', finish: '2028-01-10' },
+        { id: 'progress-claims', label: 'Progress Claims', start: '2028-01-11', finish: '2028-02-08' },
+        { id: 'cost-coding', label: 'Cost Coding Control', start: '2027-05-26', finish: '2027-09-30' },
+        { id: 'accruals', label: 'Accruals', start: '2027-10-01', finish: '2027-11-10' },
+        { id: 'forecast', label: 'Cost to Complete Forecasting', start: '2028-01-11', finish: '2028-05-05' },
+        { id: 'procurement', label: 'Procurement Controls', start: '2028-02-09', finish: '2028-06-07' },
+        { id: 'requisition', label: 'Requisition Recommendation', start: '2028-06-08', finish: '2028-07-05' },
+        { id: 'vendor-validation', label: 'Vendor Claim Validation', start: '2028-07-06', finish: '2028-08-02' },
+        { id: 'daily-core', label: 'Daily Diary - capture core (works, task-code allocation, resource matrix)', start: '2028-05-08', finish: '2028-08-24' },
+        { id: 'daily-support', label: 'Daily Diary - supporting sections (delays, deliveries, KPIs, photos)', start: '2028-08-03', finish: '2028-11-22' },
+        { id: 'productivity', label: 'Productivity Tracking', start: '2028-08-25', finish: '2028-09-21' },
+
+        { id: 'operations', label: 'Atlas | Operations', start: '2027-03-01', finish: '2028-12-01', type: 'summary', children: ['plant-profile', 'operations-hub', 'plant-scheduling', 'personnel-scheduling', 'resource-requests'] },
+        { id: 'plant-profile', label: 'Plant Profile', start: '2027-03-01', finish: '2027-04-27' },
+        { id: 'operations-hub', label: 'Operations Hub/Dashboard', start: '2027-04-28', finish: '2027-05-25' },
+        { id: 'plant-scheduling', label: 'Plant Scheduling', start: '2027-08-25', finish: '2027-10-07' },
+        { id: 'personnel-scheduling', label: 'Personnel Scheduling', start: '2028-09-22', finish: '2028-11-03' },
+        { id: 'resource-requests', label: 'Resource Requests', start: '2028-11-06', finish: '2028-12-01' },
+
+        { id: 'finance', label: 'Atlas | Finance', start: '2026-08-20', finish: '2026-10-16', type: 'summary', children: ['gl-journaling'] },
+        { id: 'gl-journaling', label: 'GL Journaling', start: '2026-08-20', finish: '2026-10-16' },
+        { id: 'delivered', label: 'Atlas Projects Operations and Finance delivered', start: '2028-12-01', finish: '2028-12-01', type: 'milestone', hideLabel: true }
+      ]);
+
+      const dependencies = Object.freeze([
+        { from: 'actions', to: 'notifications' },
+        { from: 'actions', to: 'period' },
+        { from: 'approval', to: 'wbs' },
+        { from: 'approval', to: 'variations' },
+        { from: 'approval', to: 'requisition' },
+        { from: 'period', to: 'accruals' },
+
+        { from: 'project-profile', to: 'projects-hub' },
+        { from: 'project-profile', to: 'monthly-report' },
+        { from: 'project-profile', to: 'plant-profile' },
+        { from: 'project-profile', to: 'procurement' },
+        { from: 'monthly-report', to: 'wbs' },
+        { from: 'wbs', to: 'forecast' },
+        { from: 'wbs', to: 'procurement' },
+        { from: 'notice-register', to: 'variations' },
+        { from: 'variations', to: 'forecast' },
+        { from: 'progress-claims', to: 'forecast', kind: 'black' },
+        { from: 'cost-coding', to: 'daily-core' },
+        { from: 'accruals', to: 'forecast' },
+        { from: 'forecast', to: 'requisition' },
+        { from: 'procurement', to: 'requisition' },
+        { from: 'requisition', to: 'vendor-validation' },
+        { from: 'vendor-validation', to: 'daily-support', kind: 'black' },
+        { from: 'vendor-validation', to: 'productivity' },
+
+        { from: 'plant-profile', to: 'operations-hub' },
+        { from: 'plant-profile', to: 'plant-scheduling' },
+        { from: 'operations-hub', to: 'plant-scheduling' },
+        { from: 'plant-scheduling', to: 'personnel-scheduling' },
+        { from: 'plant-scheduling', to: 'resource-requests' },
+
+        { from: 'gl-journaling', to: 'cost-coding' },
+        { from: 'gl-journaling', to: 'plant-scheduling' },
+        { from: 'gl-journaling', to: 'accruals' },
+        { from: 'gl-journaling', to: 'personnel-scheduling' },
+        { from: 'projects', to: 'delivered', kind: 'black' },
+        { from: 'operations', to: 'delivered', kind: 'black' }
+      ]);
+
+      function svgElement(name, attributes = {}, text = '') {
+        const node = document.createElementNS(NS, name);
+        for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, String(value));
+        if (text) node.textContent = text;
+        return node;
+      }
+
+      function utcDate(value) {
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(Date.UTC(year, month - 1, day));
+      }
+
+      function addDays(date, days) {
+        return new Date(date.getTime() + days * 86400000);
+      }
+
+      const timelineStart = utcDate(layout.timelineStart);
+      const timelineEnd = utcDate(layout.timelineEnd);
+      const timelineSpan = timelineEnd - timelineStart;
+      const chartWidth = layout.chartRight - layout.chartLeft;
+
+      function xForDate(date) {
+        return layout.chartLeft + ((date - timelineStart) / timelineSpan) * chartWidth;
+      }
+
+      const taskById = new Map();
+      tasks.forEach((task, index) => {
+        const startDate = utcDate(task.start);
+        const finishDate = utcDate(task.finish);
+        taskById.set(task.id, Object.freeze({
+          ...task,
+          row: index,
+          y: layout.headerHeight + index * layout.rowHeight + layout.rowHeight / 2,
+          startDate,
+          finishDate,
+          startX: xForDate(startDate),
+          finishX: xForDate(addDays(finishDate, 1))
+        }));
+      });
+
+      function renderQuarterHeader() {
+        const layer = svgElement('g', { 'aria-label': 'Quarter header' });
+        const firstQuarter = new Date(Date.UTC(2026, 3, 1));
+
+        for (let cursor = firstQuarter; cursor < timelineEnd;) {
+          const quarter = Math.floor(cursor.getUTCMonth() / 3) + 1;
+          const next = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth() + 3, 1));
+          const visibleStart = cursor < timelineStart ? timelineStart : cursor;
+          const visibleEnd = next > timelineEnd ? timelineEnd : next;
+
+          if (visibleEnd > visibleStart) {
+            const x = xForDate(visibleStart);
+            const width = xForDate(visibleEnd) - x;
+            const partial = visibleStart > cursor || visibleEnd < next;
+            const label = partial
+              ? `Q${quarter} '${String(cursor.getUTCFullYear()).slice(-2)}`
+              : `Q${quarter} ${cursor.getUTCFullYear()}`;
+
+            layer.appendChild(svgElement('rect', {
+              x,
+              y: 0,
+              width,
+              height: layout.headerHeight,
+              class: 'quarter-cell'
+            }));
+            layer.appendChild(svgElement('text', {
+              x: x + width / 2,
+              y: layout.headerHeight / 2,
+              class: `quarter-label${partial ? ' partial' : ''}`
+            }, label));
+            layer.appendChild(svgElement('line', {
+              x1: x,
+              y1: layout.headerHeight,
+              x2: x,
+              y2: layout.height,
+              class: 'quarter-grid'
+            }));
+          }
+
+          cursor = next;
+        }
+
+        layer.appendChild(svgElement('line', {
+          x1: layout.chartRight,
+          y1: layout.headerHeight,
+          x2: layout.chartRight,
+          y2: layout.height,
+          class: 'quarter-grid'
+        }));
+        root.appendChild(layer);
+      }
+
+      function renderScheduleBoundary() {
+        root.appendChild(svgElement('rect', {
+          x: layout.chartLeft,
+          y: layout.headerHeight,
+          width: chartWidth,
+          height: layout.height - layout.headerHeight - 8,
+          class: 'schedule-edge'
+        }));
+      }
+
+      function renderGroupOutlines() {
+        const layer = svgElement('g', { 'aria-label': 'Workstream boundaries' });
+
+        for (const task of taskById.values()) {
+          if (task.type !== 'summary') continue;
+          const lastChild = taskById.get(task.children[task.children.length - 1]);
+          const top = task.y + 7;
+          const bottom = lastChild.y + layout.rowHeight / 2;
+          const width = Math.max(2, task.finishX - task.startX);
+
+          layer.appendChild(svgElement('rect', {
+            x: task.startX,
+            y: top,
+            width,
+            height: bottom - top,
+            rx: 3,
+            class: 'group-outline'
+          }));
+          layer.appendChild(svgElement('line', {
+            x1: task.startX,
+            y1: top,
+            x2: task.finishX,
+            y2: top,
+            class: 'group-cap'
+          }));
+        }
+
+        root.appendChild(layer);
+      }
+
+      function dependencyPath(from, to) {
+        const startX = from.type === 'milestone' ? from.startX : from.finishX;
+        const endX = to.startX;
+        const startY = from.y;
+        const endY = to.y;
+        const routeX = Math.min(layout.chartRight - 8, Math.max(startX + 9, endX - 9));
+        const radius = 4;
+        const direction = Math.sign(endY - startY) || 1;
+
+        return [
+          `M${startX} ${startY}`,
+          `H${routeX - radius}`,
+          `Q${routeX} ${startY} ${routeX} ${startY + direction * radius}`,
+          `V${endY - direction * radius}`,
+          `Q${routeX} ${endY} ${routeX + Math.sign(endX - routeX) * radius} ${endY}`,
+          `H${endX - 3}`
+        ].join(' ');
+      }
+
+      function renderDependencies() {
+        const layer = svgElement('g', { 'aria-label': 'Task dependencies' });
+        for (const dependency of dependencies) {
+          const from = taskById.get(dependency.from);
+          const to = taskById.get(dependency.to);
+          if (!from || !to) throw new Error(`Unknown dependency: ${dependency.from} -> ${dependency.to}`);
+          layer.appendChild(svgElement('path', {
+            d: dependencyPath(from, to),
+            class: `dependency${dependency.kind === 'black' ? ' black' : ''}`,
+            'data-from': dependency.from,
+            'data-to': dependency.to
+          }));
+        }
+        root.appendChild(layer);
+      }
+
+      function renderTasks() {
+        const layer = svgElement('g', { 'aria-label': 'Schedule tasks' });
+
+        for (const task of taskById.values()) {
+          const group = svgElement('g', {
+            'data-task-id': task.id,
+            'data-start': task.start,
+            'data-finish': task.finish,
+            role: 'group',
+            'aria-label': `${task.label}: ${task.start} to ${task.finish}`
+          });
+          group.appendChild(svgElement('title', {}, `${task.label} - ${task.start} to ${task.finish}`));
+
+          if (task.type === 'summary') {
+            const y = task.y + 7;
+            group.appendChild(svgElement('line', {
+              x1: task.startX,
+              y1: y,
+              x2: task.finishX,
+              y2: y,
+              class: 'summary-bar'
+            }));
+            group.appendChild(svgElement('line', {
+              x1: task.startX,
+              y1: y,
+              x2: task.startX,
+              y2: y + 8,
+              class: 'summary-tick'
+            }));
+            group.appendChild(svgElement('line', {
+              x1: task.finishX,
+              y1: y,
+              x2: task.finishX,
+              y2: y + 8,
+              class: 'summary-tick'
+            }));
+            group.appendChild(svgElement('text', {
+              x: (task.startX + task.finishX) / 2,
+              y: task.y - 7,
+              class: 'summary-label'
+            }, task.label));
+          } else if (task.type === 'milestone') {
+            const size = 8;
+            group.appendChild(svgElement('path', {
+              d: `M${task.startX} ${task.y - size}L${task.startX + size} ${task.y}L${task.startX} ${task.y + size}L${task.startX - size} ${task.y}Z`,
+              class: 'milestone'
+            }));
+            if (!task.hideLabel) {
+              group.appendChild(svgElement('text', {
+                x: task.startX - 12,
+                y: task.y,
+                class: 'task-label'
+              }, task.label));
+            }
+          } else {
+            group.appendChild(svgElement('rect', {
+              x: task.startX,
+              y: task.y - layout.barHeight / 2,
+              width: Math.max(3, task.finishX - task.startX),
+              height: layout.barHeight,
+              class: 'task-bar'
+            }));
+            group.appendChild(svgElement('text', {
+              x: task.startX - 8,
+              y: task.y,
+              class: 'task-label'
+            }, task.label));
+          }
+
+          layer.appendChild(group);
+        }
+
+        root.appendChild(layer);
+      }
+
+      renderQuarterHeader();
+      renderScheduleBoundary();
+      renderGroupOutlines();
+      renderDependencies();
+      renderTasks();
+    })();
+  </script>
+
 <section class="slide" id="sQ" data-label="Questions" data-act="6">
   <div class="halo"></div>
   <svg class="atlasWatermark" viewBox="0 0 100 100" aria-hidden="true"><use href="#atlasMark"/></svg>
