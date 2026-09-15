@@ -180,10 +180,6 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 .eco.drilled .core .coreMark .m-fill{fill:var(--title)!important;}
 .eco.drilled .core .coreMark .bg-shadow{fill:var(--bg)!important;stroke:var(--bg)!important;}
 
-/* the selected module name sits under the hub disc, like the labels on the
-   surrounding nodes, so it no longer overlaps the lockup wordmark */
-.mod.hub .hubName{position:relative;z-index:1;color:var(--title)!important;
-  font-weight:800;margin-top:.15em;}
 
 /* Title and Questions slides: the large mark is now the hero at full opacity,
    so the text that used to sit over it is repositioned around the lockup.
@@ -564,7 +560,8 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .mod{cursor:pointer;}
 .mod.hub{z-index:4;}
 .mod.hub .node{
-  width:clamp(90px,min(8.8vw,14vh),165px);height:clamp(90px,min(8.8vw,14vh),165px);
+  --hubD:clamp(90px,min(8.8vw,14vh),165px);
+  width:var(--hubD);height:var(--hubD);
   background:#0a4673;
   border-color:transparent;color:#fff;position:relative;overflow:hidden;
   font-weight:800;font-size:clamp(16px,1.6vw,34px);letter-spacing:-.01em;cursor:default;
@@ -573,8 +570,15 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .mod.hub .hubMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:118%;height:118%;color:#fff;opacity:.16;pointer-events:none;}
 .mod.hub .hubA{position:relative;z-index:1;font-size:clamp(20px,2.5vw,40px);font-weight:800;letter-spacing:-.01em;line-height:1.05;}
-.mod.hub .hubName{position:relative;z-index:1;font-size:clamp(12px,1.5vw,22px);font-weight:700;
-  letter-spacing:-.01em;color:#8fd0ff;line-height:1.05;}
+/* The module name sits inside the disc, in the gap between the lockup's
+   wordmark and the M. The mark is 118% of the disc, and within the mark the
+   wordmark ends at .575 and the M starts at .7152, so in disc terms the gap
+   runs .5885-.7539 and centres at 67.1%. Sized against --hubD so it always
+   fits that gap, with a knockout in the disc colour for the wave crossing it. */
+.mod.hub .hubName{position:absolute;left:0;right:0;top:67.1%;transform:translateY(-50%);
+  z-index:1;margin:0;text-align:center;color:#fff;font-weight:800;
+  font-size:calc(var(--hubD)*.105);line-height:1;letter-spacing:-.01em;
+  text-shadow:0 0 3px #0a4673,0 0 3px #0a4673,0 0 7px #0a4673,0 0 12px #0a4673;}
 .mod.out{opacity:0!important;pointer-events:none;}
 .mod.fan .node{width:clamp(36px,3.8vw,70px);height:clamp(36px,3.8vw,70px);font-size:clamp(7.5px,.56vw,13px);color:var(--sec);}
 .eco.drilled .mod:not(.hub) .node{width:clamp(48px,min(6.2vw,9.6vh),98px);height:clamp(48px,min(6.2vw,9.6vh),98px);font-size:clamp(7px,.6vw,11px);}
@@ -1189,9 +1193,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
   .eco:not(.drilled) .core{--coreD:clamp(52px,min(8.8vw,10vh),140px);width:var(--coreD)!important;height:var(--coreD)!important;}
   .eco .core .coreLabel{font-size:calc(var(--coreD)*.27)!important;}
   .eco .core .coreSub{font-size:calc(var(--coreD)*.128)!important;}
-  .mod.hub .node{width:clamp(58px,min(8.8vw,11vh),140px)!important;height:clamp(58px,min(8.8vw,11vh),140px)!important;}
-  .mod.hub .hubA{font-size:clamp(13px,1.6vw,25px)!important;}
-  .mod.hub .hubName{font-size:clamp(9px,1.2vw,18px)!important;}
+  .mod.hub .node{--hubD:clamp(58px,min(8.8vw,11vh),140px);width:var(--hubD)!important;height:var(--hubD)!important;}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -2350,7 +2352,7 @@ function drillInto(m,btn){
   btn.classList.add('hub');
   placeAt(btn,hubXPct,50);
   btn.setAttribute('aria-label','Module: '+m.name);
-  btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'</span><span class="hubName">'+m.name+'</span>';
+  btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'<span class="hubName">'+m.name+'</span></span>';
   atlasSine(btn);
   clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>','');
   rdHint.style.display='none';
