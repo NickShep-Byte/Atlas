@@ -171,10 +171,11 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
   top:calc(44.8% + 0.1451 * min(620px,52vw,72vh));transform:translateY(-50%);
 }
 /* the tagline sits inside the ring, where a wave crosses it in the same
-   blue; knock the wave out behind the text the way the artwork does for
-   its own logo shapes (background matches the ring fill, so no visible box) */
-#s1 .lineWrap .line,#sQ .lineWrap .line{margin-top:0;display:inline-block;
-  background:var(--bg);padding:.08em .55em;}
+   blue; soften the wave behind it with a halo in the ring fill colour
+   rather than a solid block, so there is no hard edge */
+#s1 .lineWrap .line,#sQ .lineWrap .line{margin-top:0;
+  text-shadow:0 0 5px var(--bg),0 0 5px var(--bg),0 0 10px var(--bg),
+              0 0 16px var(--bg),0 0 24px var(--bg);}
 #sQ .qWrap{
   position:absolute;left:0;right:0;z-index:1;text-align:center;
   top:calc(44.8% + 0.35 * min(620px,52vw,72vh) + 1.2vh);
