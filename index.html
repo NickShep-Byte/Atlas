@@ -147,7 +147,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
 
 /* Animated Atlas mark (sine variant). Injected into every mark host at
    runtime so each instance gets its own SMIL clock; held paused at the
-   midpoint of the loop until hovered.
+   start of the loop until hovered.
    Weight is carried on the markup (stroke-width 4.886 in the
    257.143-unit viewBox) to reproduce the static glyph's 1.9-per-100
    line ratio. The large template halves that: the same ratio reads
@@ -4601,14 +4601,14 @@ var BUILD_STAMP='2026-08-07T04:00:51Z';   // UTC; update on every commit
 
 
 /* Atlas mark: swap every instance to the animated sine variant. Each host gets
-   its own cloned SMIL clock, paused at the midpoint of the 4s loop so the
-   resting mark is a mid-phase wave, and unpaused while hovered. The viewBox
+   its own cloned SMIL clock, paused at the start of the 4s loop so the resting
+   mark is the loop's first frame, and unpaused while hovered. The viewBox
    window scales the r=90 circle to the 0.35 radius ratio of the original glyph,
    so the rendered diameter is unchanged at every call site.
    Exposed as atlasSine() and idempotent, because the Features drill-in builds
    its hub mark at runtime and has to be converted after the fact. */
 function atlasSine(scope){
-  var DUR=4, MID=2, VB='-28.571 -28.571 257.143 257.143';
+  var DUR=4, PARK=0, VB='-28.571 -28.571 257.143 257.143';
   var src=document.getElementById('atlasSineSrc');
   if(!src||!scope)return;
   var sel='svg.bmark,svg.mlogo,svg.atlasWatermark,svg.coreMark,svg.transMark,svg.hubMark,svg.useLockup';
@@ -4625,22 +4625,23 @@ function atlasSine(scope){
     svg.setAttribute('viewBox',VB);
     svg.classList.add('atlasSine');
     var on=false, raf=0;
-    function phase(){try{return svg.getCurrentTime()%DUR;}catch(e){return MID;}}
-    /* park on the midpoint frame of whichever cycle we are in */
+    function phase(){try{return svg.getCurrentTime()%DUR;}catch(e){return PARK;}}
+    /* park on the resting frame of whichever cycle we are in */
     function park(){try{var t=svg.getCurrentTime();svg.pauseAnimations();
-      svg.setCurrentTime(Math.floor(t/DUR)*DUR+MID);}catch(e){}}
+      svg.setCurrentTime(Math.floor(t/DUR)*DUR+PARK);}catch(e){}}
     function run(){if(raf){cancelAnimationFrame(raf);raf=0;}
       if(on)return;on=true;try{svg.unpauseAnimations();}catch(e){}}
-    /* leaving does not snap back: let the loop play on to the next midpoint
-       and stop there, so the mark always comes to rest on the same frame. */
+    /* leaving does not snap back: let the loop play on to the next resting
+       frame and stop there, so the mark always comes to rest on the same one.
+       With PARK at 0 that means running to the end of the cycle. */
     function hold(){
       if(!on)return; on=false;
-      var prev=phase(), armed=prev<MID;
+      var prev=phase(), armed=prev<PARK;
       raf=requestAnimationFrame(function step(){
         if(on){raf=0;return;}                       // hover resumed mid-settle
         var ph=phase();
         if(!armed&&ph<prev)armed=true;               // cycle wrapped
-        if(armed&&ph>=MID){raf=0;park();return;}
+        if(armed&&ph>=PARK){raf=0;park();return;}
         prev=ph; raf=requestAnimationFrame(step);
       });
     }
