@@ -159,6 +159,32 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
    the slide id glued onto its first selector. */
 #atlasSineSrc,#atlasSineLgSrc{display:none;}
 
+/* Features diagram (#s4): the dark core and the drilled-in hub are navy discs.
+   Their lockup is inverted -- the disc itself is the field, so the ring, waves
+   and wordmark go light and the drop shadow takes the disc colour -- and runs
+   at full opacity, with the lockup's own wordmark replacing the separate
+   "Atlas" label. Inline styles on the template carry the default palette, so
+   these overrides need !important. */
+.eco .core .coreMark,.mod.hub .hubMark{opacity:1!important;}
+.eco .core .coreLabel{display:none;}
+.eco .core .coreMark .field,.mod.hub .hubMark .field{fill:none!important;stroke:#fff!important;}
+.eco .core .coreMark .wave,.mod.hub .hubMark .wave{stroke:#fff!important;}
+.eco .core .coreMark .atlas-fill,.eco .core .coreMark .m-fill,
+.mod.hub .hubMark .atlas-fill,.mod.hub .hubMark .m-fill{fill:#fff!important;}
+.eco .core .coreMark .bg-shadow,.mod.hub .hubMark .bg-shadow{fill:#0a4673!important;stroke:#0a4673!important;}
+/* post module selection the core loses its navy fill and becomes the large
+   Atlas, so it reverts to the regular non-inverted lockup */
+.eco.drilled .core .coreMark .field{fill:var(--bg)!important;stroke:var(--sec)!important;}
+.eco.drilled .core .coreMark .wave{stroke:var(--sec)!important;}
+.eco.drilled .core .coreMark .atlas-fill,
+.eco.drilled .core .coreMark .m-fill{fill:var(--title)!important;}
+.eco.drilled .core .coreMark .bg-shadow{fill:var(--bg)!important;stroke:var(--bg)!important;}
+
+/* the selected module name sits under the hub disc, like the labels on the
+   surrounding nodes, so it no longer overlaps the lockup wordmark */
+.mod.hub .hubName{position:relative;z-index:1;color:var(--title)!important;
+  font-weight:800;margin-top:.15em;}
+
 /* Title and Questions slides: the large mark is now the hero at full opacity,
    so the text that used to sit over it is repositioned around the lockup.
    Offsets are fractions of the mark's own rendered size, measured from the
@@ -2324,7 +2350,7 @@ function drillInto(m,btn){
   btn.classList.add('hub');
   placeAt(btn,hubXPct,50);
   btn.setAttribute('aria-label','Module: '+m.name);
-  btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'<span class="hubA">Atlas</span><span class="hubName">'+m.name+'</span></span>';
+  btn.innerHTML='<span class="node">'+ATLAS_MARK_SVG+'</span><span class="hubName">'+m.name+'</span>';
   atlasSine(btn);
   clearDetail(m.fn,m.name,'<div class="dSec"><p>'+m.desc+'</p></div>','');
   rdHint.style.display='none';
