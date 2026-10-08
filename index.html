@@ -7,6 +7,298 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Atlas | Vision</title>
+<!-- atlas-unified:start -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style id="atlas-unified">
+/* ── Atlas unified stylesheet ─────────────────────────────────────────────
+   Master copy. Each Live PIM embeds this verbatim between the
+   atlas-unified:start / atlas-unified:end markers (inline, not a stylesheet
+   link, because the Service Report copies every style element into its
+   generated documents).
+   Edit here, then re-sync into the HTML files. */
+
+/* ── Tokens ── */
+:root{
+  /* colour */
+  --atlas-white:#FFFFFF;
+  --atlas-ink:#003764; --atlas-ink-soft:#41647D; --atlas-ink-hover:#00213C;
+  --atlas-accent:#00908E; --atlas-accent-hover:#007372;
+  --atlas-tertiary:#0582CA;
+  --atlas-canvas:#FAF9F7; --atlas-canvas-2:#E6EBF0;
+  --atlas-surface:#FFFFFF; --atlas-chrome:#FFFFFF;
+  --atlas-line:#D4DCE5; --atlas-line-solid:#CBD6E0;
+  --atlas-blue-50:#F6F8F9; --atlas-blue-tint:#E6EBF0;
+  --atlas-focus-ring:#E0F0FA; --atlas-accent-tint:#EAF6F5; --atlas-highlight:#FBBF24;
+  --atlas-overlay:rgba(0,55,100,.28);
+  --atlas-tooltip-bg:#003764;
+  /* status */
+  --atlas-danger:#B23B2E;  --atlas-danger-bg:#FBEAE7;  --atlas-danger-border:#E9B4AC;
+  --atlas-success:#247252; --atlas-success-bg:#D9F0EF;
+  --atlas-warning:#92400E; --atlas-warning-bg:#FEF3C7; --atlas-warning-border:#E3C878;
+  /* type */
+  --atlas-font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --atlas-fs-xs:10px; --atlas-fs-sm:11px; --atlas-fs-base:12px; --atlas-fs-md:13px;
+  --atlas-fs-lg:14px; --atlas-fs-xl:16px; --atlas-fs-2xl:18px; --atlas-fs-3xl:22px;
+  --atlas-fs-4xl:28px; --atlas-fs-5xl:40px; --atlas-fs-hero:clamp(31px,4vw,48px);
+  /* shape */
+  --atlas-radius-sm:4px; --atlas-radius-md:8px; --atlas-radius-lg:12px;
+  /* elevation */
+  --atlas-shadow-sm:0 4px 16px rgba(0,55,100,.22);
+  --atlas-shadow-md:0 6px 20px rgba(0,55,100,.3);
+  --atlas-shadow-lg:0 20px 60px rgba(0,20,40,.35);
+}
+
+/* ── Base ── */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{font-family:var(--atlas-font);font-size:var(--atlas-fs-base);color:var(--atlas-ink);background:var(--atlas-canvas)}
+body{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--atlas-tertiary);outline-offset:2px}
+/* elements with a display value would otherwise beat the hidden attribute */
+[hidden]{display:none !important}
+/* Zero-specificity baselines: any class rule overrides them. */
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range],[type=color]),select,textarea),.input{padding:6px 9px;border:1px solid var(--atlas-line-solid);border-radius:var(--atlas-radius-md);background:var(--atlas-surface)}
+/* date fields: 2px top/bottom since the picker icon already gives the height; the browser sizes the field for its
+   widest possible text, leaving a wide gap before the icon, so the width is set to the date ("dd/mm/yyyy" ≈ 6.2em)
+   + padding, border and icon. Zero specificity, so full-width form fields keep their own width; a rule that needs
+   the fitted width back (e.g. inside a dialog) uses var(--atlas-date-w). */
+:root{--atlas-date-w:calc(6.4em + 44px)}
+:where(input[type=date]){padding-block:2px;width:var(--atlas-date-w)}
+:where(textarea){resize:none;field-sizing:content;min-height:70px;max-height:320px;overflow:auto}
+:where(table){width:100%;border-collapse:collapse}
+:where(th){text-align:left;font-size:var(--atlas-fs-xs);letter-spacing:.05em;color:var(--atlas-ink-soft);padding:9px 14px;border-bottom:1px solid var(--atlas-line)}
+:where(td){padding:10px 14px;border-bottom:1px solid var(--atlas-canvas-2)}
+:where(tr:last-child > td){border-bottom:none}
+
+/* ── Header: breadcrumb bar + lockup ── */
+.crumbs{display:flex;align-items:center;gap:10px;padding:9px 26px;background:var(--atlas-chrome);border-bottom:1px solid var(--atlas-line)}
+.crumbs__back,.crumbs__fav{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--atlas-line);border-radius:var(--atlas-radius-md);background:var(--atlas-surface);cursor:pointer;flex-shrink:0}
+.crumbs__back:hover,.crumbs__fav:hover{border-color:var(--atlas-accent);color:var(--atlas-accent)}
+.crumbs__back svg,.crumbs__fav svg{width:15px;height:15px}
+.crumbs__fav{margin-left:auto;color:var(--atlas-ink-soft)}
+.crumbs__actions{margin-left:auto;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.crumbs__fav[aria-pressed="true"]{color:var(--atlas-warning);border-color:var(--atlas-warning)}
+.crumbs__fav[aria-pressed="true"] svg{fill:var(--atlas-highlight)}
+.crumbs__list{display:flex;align-items:center;gap:2px;list-style:none;margin:0;padding:0;flex-wrap:wrap;font-family:var(--atlas-font);font-size:var(--atlas-fs-base)}
+.crumbs__item{display:inline-flex;align-items:center;gap:2px}
+.crumbs__link{color:var(--atlas-ink-soft);text-decoration:none;background:none;border:none;padding:0;font:inherit;cursor:pointer}
+.crumbs__link:hover{color:var(--atlas-accent);text-decoration:underline}
+.crumbs__sep{width:13px;height:13px;color:var(--atlas-line-solid);margin:0 2px}
+.crumbs__current{color:var(--atlas-ink-soft)}
+.crumbs__current--here{color:var(--atlas-tertiary);font-weight:bold}
+.lockup{font-family:var(--atlas-font);font-weight:bold;font-size:var(--atlas-fs-xl);letter-spacing:-0.02em;color:var(--atlas-ink)}
+.lockup .sep{color:var(--atlas-accent);font-weight:normal;margin:0 6px}
+.lockup .mod{color:var(--atlas-tertiary)}
+
+/* ── Primary buttons (teal everywhere) ── */
+.btn.primary{background:var(--atlas-accent);border-color:var(--atlas-accent);color:var(--atlas-white)}
+.btn.primary:hover{background:var(--atlas-accent-hover);border-color:var(--atlas-accent-hover);color:var(--atlas-white)}
+
+/* ── Toast (bottom-right, above scrims and the data button) ── */
+.toast{position:fixed;right:24px;bottom:24px;background:var(--atlas-tooltip-bg);color:var(--atlas-white);padding:12px 18px;border-radius:var(--atlas-radius-md);transform:translateY(90px);opacity:0;transition:.25s;z-index:99000}
+.toast.show{transform:none;opacity:1}
+.toast.ok,.toast.warn,.toast.fail{background:var(--tone)}
+
+/* ── Utilities ── */
+.toggle:not(.show):not(.active){display:none}
+.muted{color:var(--atlas-ink-soft)}
+.note{font-size:var(--atlas-fs-sm);font-weight:normal;color:var(--atlas-ink-soft)}
+.strong{font-weight:bold}
+.good{color:var(--atlas-accent);font-weight:bold}
+.bad{color:var(--atlas-danger);font-weight:bold}
+.spacer{flex:1}
+.full{grid-column:1/-1}
+.flex,.actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.actions{justify-content:flex-end;margin-left:auto}
+.h1{margin:0;font-weight:bold;font-size:var(--atlas-fs-5xl);letter-spacing:-.03em}
+/* one line, shrunk to fit — only where text-fit exists; elsewhere nowrap would just overflow, so titles wrap as normal */
+@supports (text-fit:shrink){.h1{text-fit:shrink;text-wrap:nowrap}}
+.eyebrow{margin-bottom:4px;font-size:var(--atlas-fs-sm);letter-spacing:.18em;color:var(--atlas-ink-soft)}
+.link{color:var(--atlas-tertiary);font-weight:bold;cursor:pointer}
+.link:hover{color:var(--atlas-accent);text-decoration:underline}
+/* a bare .link button loses the native chrome; .btn.link (declared later) keeps the button look */
+:where(button).link{padding:0;border:0;background:none}
+.stack{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+/* Tones: set --tone/--tone-bg, which .pill and .notice read. */
+.ok{--tone:var(--atlas-success);--tone-bg:var(--atlas-success-bg)}
+.warn{--tone:var(--atlas-warning);--tone-bg:var(--atlas-warning-bg)}
+.fail{--tone:var(--atlas-danger);--tone-bg:var(--atlas-danger-bg)}
+.info{--tone:var(--atlas-tertiary)}
+
+/* ── Buttons ── */
+.btn,.ad-miniBtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 13px;border:1px solid var(--atlas-line-solid);border-radius:var(--atlas-radius-md);background:var(--atlas-surface);font-weight:bold;white-space:nowrap;text-decoration:none;cursor:pointer}
+.btn:hover,.ad-miniBtn:hover{border-color:var(--atlas-accent);color:var(--atlas-accent)}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.btn.sm,.ad-miniBtn{padding:4px 10px;font-size:var(--atlas-fs-sm)}
+.btn.danger{border-color:var(--atlas-danger);color:var(--atlas-danger)}
+.btn svg{flex:none;width:15px;height:15px}
+/* quiet remove/delete button (chips, rows, notes, data-panel rows) */
+.rm,.ad-delBtn{padding:2px 6px;border:none;border-radius:var(--atlas-radius-sm);background:none;color:var(--atlas-ink-soft);cursor:pointer}
+.rm:hover,.ad-delBtn:hover{background:var(--atlas-danger-bg);color:var(--atlas-danger)}
+
+/* ── Pill (chips, badges, statuses) ── */
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:max-content;text-align:center;flex:none;padding:2px 9px;border-radius:999px;background:var(--tone-bg,var(--atlas-canvas-2));color:var(--tone,var(--atlas-ink-soft));font-size:var(--atlas-fs-xs);font-weight:bold;letter-spacing:.04em;white-space:nowrap}
+.pill.lg{padding:5px 16px;font-size:var(--atlas-fs-lg)}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+
+/* ── Notice ── */
+.notice{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--atlas-line);border-left:3px solid var(--tone,var(--atlas-tertiary));border-radius:var(--atlas-radius-md);background:var(--tone-bg,var(--atlas-canvas));color:var(--atlas-ink-soft)}
+.notice strong{display:block;margin-bottom:2px;color:var(--tone,var(--atlas-ink))}
+
+/* ── Panel + dialog ── */
+.panel{border:1px solid var(--atlas-line);border-radius:var(--atlas-radius-lg);background:var(--atlas-surface)}
+.panel.pad{display:flex;flex-direction:column;gap:10px;padding:14px}
+.panel-hd,.panel-ft{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.panel-hd{justify-content:space-between;border-bottom:1px solid var(--atlas-line)}
+.panel-ft{justify-content:flex-end;border-top:1px solid var(--atlas-line)}
+.panel-bd{padding:16px 18px}
+.panel-hd .t{font-size:var(--atlas-fs-md);font-weight:bold}
+.panel-hd .x{border:none;background:none;color:var(--atlas-ink-soft);font-size:var(--atlas-fs-lg);cursor:pointer}
+.scrim,.atlasDataOverlay{position:fixed;inset:0;z-index:98000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--atlas-overlay)}
+.dialog{display:flex;flex-direction:column;width:min(600px,100%);max-height:88vh;overflow:auto;padding:0;border:1px solid var(--atlas-line);border-radius:var(--atlas-radius-lg);background:var(--atlas-surface);color:var(--atlas-ink);box-shadow:var(--atlas-shadow-lg)}
+.dialog.wide{width:min(900px,100%)}
+/* header and footer stay put; the body scrolls between them (sticky table headers inside pin under the dialog header) */
+.dialog > .panel-hd,.dialog > .panel-ft{flex:none}
+.dialog > .panel-bd{flex:1 1 auto;min-height:0;overflow:auto}
+.dialog > .panel-bd .th{top:-16px}  /* pin flush under the dialog header, not 16px down inside the body's top padding */
+dialog.dialog:not([open]){display:none}
+.dialog::backdrop{background:var(--atlas-overlay)}
+
+/* ── Lists, progress, toggle ── */
+.list-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--atlas-line)}
+.list-row:last-child{border-bottom:none}
+.progress{height:6px;overflow:hidden;border-radius:var(--atlas-radius-sm);background:var(--atlas-canvas-2)}
+.progress > *{height:100%;background:var(--atlas-tertiary);transition:width .4s}
+.toggleChip{display:inline-flex;align-items:center;gap:8px;padding:6px 8px 6px 14px;border:1px solid var(--atlas-line-solid);border-radius:999px;background:var(--atlas-canvas);color:var(--atlas-ink-soft);font-size:var(--atlas-fs-lg);font-weight:bold;cursor:pointer;user-select:none}
+.toggleChip .sw{position:relative;width:30px;height:17px;border-radius:999px;background:var(--atlas-line-solid);transition:background .15s}
+.toggleChip .sw::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--atlas-white);transition:transform .15s}
+.toggleChip.on{border-color:var(--atlas-accent);background:var(--atlas-accent-tint);color:var(--atlas-accent)}
+.toggleChip.warnOn{border-color:var(--atlas-danger-border);background:var(--atlas-danger-bg);color:var(--atlas-danger)}
+.toggleChip.on .sw,.toggleChip.warnOn .sw{background:currentColor}
+.toggleChip.on .sw::after,.toggleChip.warnOn .sw::after{transform:translateX(13px)}
+
+/* ── Key/value fields ── */
+.fieldsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px 32px}
+.field{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
+.k{letter-spacing:.03em;color:var(--atlas-ink-soft)}
+.v{font-size:var(--atlas-fs-lg);line-height:1.5}
+.v .empty{color:var(--atlas-ink-soft);font-style:italic}
+
+/* ── Div-grid table ── */
+.proj-table-wrap{border:1px solid var(--atlas-line);border-radius:var(--atlas-radius-md)}
+.grid-table{display:grid;width:100%;align-content:start}
+.tr{display:contents}
+/* body cells must be allowed to shrink and wrap anywhere, or the fr tracks overflow anyway; headers wrap at words only */
+.th,.td{display:flex;padding:8px 10px;border-bottom:1px solid var(--atlas-line)}
+.th{position:sticky;top:0;z-index:4;align-items:flex-end;background:var(--atlas-canvas-2);font-size:var(--atlas-fs-xs);font-weight:bold;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;user-select:none}
+.td{flex-direction:column;justify-content:center;min-width:0;line-height:1.3;overflow-wrap:anywhere}
+.tr.row:hover > .td{background:var(--atlas-canvas);cursor:pointer}
+.tr:first-child .th:first-child{border-top-left-radius:var(--atlas-radius-md)}
+.tr:first-child .th:last-child{border-top-right-radius:var(--atlas-radius-md)}
+.tr:last-child .td{border-bottom:none}
+.td.span-all{grid-column:1/-1;padding:16px;color:var(--atlas-ink-soft)}
+/* overflow-wrap:anywhere would split "5401429" or "$1,022.11", so numeric columns opt out */
+.td.num,.th.num,.td.money,.th.money{overflow-wrap:normal;white-space:nowrap}
+.td.num,.th.num{overflow:hidden;text-overflow:ellipsis}
+/* currency right-aligned so decimal points line up down the column */
+.td.money,.th.money{align-items:flex-end;text-align:right}
+.th.money{justify-content:flex-end}
+
+/* ── AtlasLookup (panels are appended to body, so these stay global) ── */
+.lookup{position:relative}
+.lookup input{width:100%}
+.lookup-panel{position:absolute;top:100%;left:0;right:0;z-index:60;min-width:220px;display:none;max-height:280px;margin-top:8px;overflow:auto;border:1px solid var(--atlas-line-solid);border-radius:var(--atlas-radius-md);background:var(--atlas-surface);box-shadow:0 4px 10px rgba(0,55,100,.08)}
+.lookup-panel.open{display:block}
+.lookup-item{padding:10px 12px;border-bottom:1px solid var(--atlas-line);cursor:pointer}
+.lookup-item:last-child{border-bottom:0}
+.lookup-item:hover,.lookup-item.active{background:var(--atlas-canvas-2)}
+.lu-primary{font-weight:bold;font-size:var(--atlas-fs-md)}
+.lu-secondary,.lookup-empty,.lookup-hint{font-size:var(--atlas-fs-sm);color:var(--atlas-ink-soft)}
+.lookup-empty{padding:10px 12px}
+
+/* ── AtlasCascade drop-down: .mpick trigger, one .mpick-panel on <body> (columns per level) ── */
+.mpick{display:inline-flex;align-items:center;gap:4px;min-width:64px;max-width:100%;min-height:31px;padding:5px 30px 5px 9px;border:1px solid var(--atlas-line-solid);border-radius:var(--atlas-radius-md);text-align:left;vertical-align:middle;cursor:pointer;
+  background:var(--atlas-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2341647D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center/14px}
+.mpick:disabled{opacity:.6;cursor:not-allowed}
+.mpick[aria-expanded="true"]{border-color:var(--atlas-tertiary)}
+.field .mpick{display:flex;width:100%;max-width:520px}
+.mpick-val{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mpick-ph{color:var(--atlas-ink-soft)}
+.mpick-chip{display:inline-block;max-width:160px;margin-right:4px;padding:0 7px;overflow:hidden;border-radius:999px;background:var(--atlas-canvas-2);font-size:var(--atlas-fs-sm);text-overflow:ellipsis;vertical-align:middle}
+.mpick-panel{position:fixed;z-index:99500;display:flex;flex-direction:column;max-width:calc(100vw - 16px);max-height:min(400px,calc(100vh - 16px));border:1px solid var(--atlas-line-solid);border-radius:var(--atlas-radius-md);background:var(--atlas-surface);color:var(--atlas-ink);font-size:var(--atlas-fs-base);box-shadow:var(--atlas-shadow-sm)}
+.mpick-head{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--atlas-line)}
+.mpick-panel.compact .mpick-head{position:absolute;width:1px;height:1px;padding:0;border:0;overflow:hidden;opacity:0;pointer-events:none}
+.mpick-search{flex:1;min-width:0}
+.mpick-cols{display:flex;flex:1;min-height:0;overflow-x:auto}
+.mpick-col{display:flex;flex-direction:column;flex:none;width:240px;min-height:0;border-right:1px solid var(--atlas-line)}
+.mpick-col:last-child{border-right:0}
+.mpick-col-hd{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid var(--atlas-line);background:var(--atlas-canvas);font-size:var(--atlas-fs-xs);font-weight:bold;letter-spacing:.08em;text-transform:uppercase;color:var(--atlas-ink-soft)}
+.mpick-back{display:none;padding:0 6px;border:0;background:none;font-size:var(--atlas-fs-lg);cursor:pointer}
+.mpick-list,.mpick-results{flex:1;min-height:0;overflow:auto;padding:3px 0}
+.mpick-results{width:min(560px,calc(100vw - 18px))}
+.mpick-item{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer}
+.mpick-item:hover,.mpick-item.active{background:var(--atlas-canvas-2)}
+.mpick-item.open{background:var(--atlas-accent-tint);font-weight:bold}
+.mpick-item.cur{color:var(--atlas-accent);font-weight:bold}
+.mpick-item input{flex:none;margin:0}
+.mpick-lbl{flex:1;min-width:0;overflow-wrap:anywhere}
+.mpick-path{display:block;font-size:var(--atlas-fs-sm);font-weight:normal;color:var(--atlas-ink-soft)}
+.mpick-caret{color:var(--atlas-ink-soft)}
+.mpick-dot{flex:none;display:inline-block;width:9px;height:9px;margin-right:6px;border-radius:50%;vertical-align:middle}
+.mpick-hint{flex:none;margin-left:auto;padding-left:14px;font-size:var(--atlas-fs-sm);white-space:nowrap;color:var(--atlas-ink-soft)}
+.mpick-new{color:var(--atlas-warning);font-style:italic}
+.mpick-empty{padding:8px 10px;font-size:var(--atlas-fs-sm);font-style:italic;color:var(--atlas-ink-soft)}
+/* breakpoints: 1200 (narrow desktop), 950 (tablet / mobile layout), 500 (phone) — pages use only these, one block per size */
+@media (max-width:950px){
+  .crumbs{padding:8px 12px;gap:7px}
+  .crumbs__list{font-size:var(--atlas-fs-sm)}
+  .lockup{font-size:var(--atlas-fs-lg)}
+  /* picker: one column at a time; the column header's ‹ steps back up */
+  .mpick-col{display:none;flex:1;width:auto}
+  .mpick-col.on{display:flex}
+  .mpick-back{display:inline-block}
+}
+
+/* ── Atlas data panel ── */
+.atlasDataBtn{position:fixed;right:22px;bottom:22px;z-index:9999;display:flex;align-items:center;gap:8px;padding:11px 18px 11px 14px;border:none;border-radius:999px;background:var(--atlas-accent);color:var(--atlas-white);font-weight:bold;font-size:var(--atlas-fs-md);box-shadow:var(--atlas-shadow-sm);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.atlasDataBtn:hover{transform:translateY(-1px);box-shadow:var(--atlas-shadow-md)}
+.atlasDataBtn svg{flex:none;width:16px;height:16px}
+.atlasDataPanel{position:relative;display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden;border-radius:var(--atlas-radius-lg);background:var(--atlas-surface);box-shadow:var(--atlas-shadow-lg)}
+.atlasDataClose{position:absolute;top:10px;right:10px;z-index:2;width:30px;height:30px;border:none;border-radius:50%;background:var(--atlas-tooltip-bg);color:var(--atlas-white);font-size:var(--atlas-fs-xl);line-height:1;cursor:pointer}
+.atlasDataClose:hover{background:var(--atlas-ink-hover)}
+.ad-header{display:flex;align-items:center;flex-shrink:0;gap:14px;padding:14px 46px 14px 20px;border-bottom:1px solid var(--atlas-line)}
+.ad-header h2{font-size:var(--atlas-fs-xl)}
+.ad-header .meta{margin-left:auto;font-size:var(--atlas-fs-sm);letter-spacing:.06em;color:var(--atlas-ink-soft)}
+.ad-main{flex:1;overflow:auto;padding:18px 20px 32px;background:var(--atlas-canvas-2)}
+.ad-panel,.ad-block{margin-bottom:16px;overflow:hidden;border:1px solid var(--atlas-line);border-radius:var(--atlas-radius-md);background:var(--atlas-surface)}
+.ad-panel h2,.ad-blockHead{padding:10px 14px;border-bottom:1px solid var(--atlas-line);background:var(--atlas-canvas-2)}
+.ad-panel h2{font-size:var(--atlas-fs-md)}
+.ad-blockHead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:var(--atlas-fs-sm);color:var(--atlas-ink-soft)}
+.ad-blockHead b{font-size:var(--atlas-fs-md);color:var(--atlas-ink)}
+.ad-tableScroll{overflow:auto;max-height:280px}
+.ad-tableScroll table{width:auto;min-width:fit-content}
+.ad-tableScroll th,.ad-tableScroll td{border-bottom-color:var(--atlas-line);white-space:nowrap}
+.ad-tableScroll th{position:sticky;top:0;z-index:1;padding:7px 10px;background:var(--atlas-surface)}
+.ad-tableScroll td{padding:4px 6px}
+.ad-tableScroll td.ad-readonly{padding:4px 10px;color:var(--atlas-ink-soft)}
+.ad-kv{display:grid;grid-template-columns:220px 1fr}
+.ad-kv > div{padding:8px 14px;border-bottom:1px solid var(--atlas-line)}
+.ad-kv > div:nth-child(odd){background:var(--atlas-canvas);color:var(--atlas-ink-soft)}
+.ad-cellInput{width:100%;min-height:28px;padding:4px 6px;border-radius:var(--atlas-radius-sm);font-size:var(--atlas-fs-sm);field-sizing:content}
+@media (max-width:500px){
+  .atlasDataBtn{right:14px;bottom:14px;padding:10px 14px 10px 12px;font-size:var(--atlas-fs-base)}
+}
+
+/* ── Print ── */
+@media print{
+  .crumbs,.toast,.atlasDataBtn,button{display:none !important}
+  html,body{background:var(--atlas-white) !important}
+  .panel,table,tr,figure{break-inside:avoid}
+  thead{display:table-header-group}
+}
+</style>
+<!-- atlas-unified:end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -70,7 +362,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
 body{
-  font-family:var(--font);
+  font-family:var(--font);font-size:16px;
   background:var(--bg);
   color:var(--white);
   -webkit-font-smoothing:antialiased;
@@ -109,7 +401,7 @@ body.blend .slide.active{transition:opacity .65s var(--ease);}
 .eyebrow{
   display:inline-flex;align-items:center;gap:.6em;
   font-size:clamp(16.5px,1.43vw,21px);font-weight:700;letter-spacing:.28em;
-  color:var(--blue-bright);
+  color:var(--blue-bright);margin-bottom:0;
 }
 .eyebrow .dot{width:12px;height:12px;border-radius:50%;background:var(--blue-bright);animation:pulse 2.4s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;}55%{opacity:.4;}}
@@ -246,7 +538,7 @@ h2{font-size:clamp(28px,3.4vw,52px);font-weight:800;line-height:1.08;letter-spac
    ============================================================ */
 #s3 .head{text-align:center;margin-bottom:2.2vh;max-width:1200px;margin-left:auto;margin-right:auto;}
 #s3 .head h2{font-size:clamp(24px,2.7vw,42px);}
-#s3 .stack{display:flex;flex-direction:column;align-items:center;}
+#s3 .stack{display:flex;flex-direction:column;align-items:center;gap:0;}
 .layer{
   width:min(1060px,88vw);border-radius:16px;padding:1.8vh 2vw;text-align:center;
 }
@@ -695,6 +987,26 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s4b .modCard .mlA{color:var(--title);}
 #s4b .modCard .mlSep{color:var(--teal);font-weight:500;}
 #s4b .mcDesc{font-size:clamp(12px,1.05vw,15.5px);color:var(--txt);line-height:1.42;}
+/* Atlas | Delivery — the bottom row (Projects + Operations + Finance) framed as one
+   delivery stream: outline, lockup title on the top edge, tagline on the bottom edge and
+   a "+" between the cards. Drawn in on the extra intro step (introDelivery = held back). */
+#s4b .modRow.delivery{position:relative;padding:2vh 1vw 2.4vh;border:3px solid rgba(var(--acc2-rgb),.5);border-radius:16px;
+  background:rgba(var(--sec-rgb),.01);transition:border-color .6s ease,background .6s ease;}
+#s4b .modRow.delivery .modCard{position:relative;}
+#s4b .modRow.delivery .modCard + .modCard::before{content:'+';position:absolute;left:-.7vw;top:calc(1.8vh + .53em);transform:translate(-50%,-50%);
+  font-size:clamp(24px,2.7vw,42px);font-weight:500;line-height:1;color:var(--teal);transition:opacity .5s ease .2s;}
+#s4b .dlvTag{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);padding:0 .6em;background:var(--bg);white-space:nowrap;
+  font-weight:800;letter-spacing:-.02em;line-height:1;font-size:clamp(18px,1.9vw,30px);transition:opacity .6s ease,transform .6s var(--ease);}
+#s4b .dlvTag .dlA{color:var(--title);}
+#s4b .dlvTag .dlSep{color:var(--teal);font-weight:500;}
+#s4b .dlvTag .dlName{color:var(--acc2);}
+#s4b .dlvCap{position:absolute;bottom:0;left:50%;transform:translate(-50%,50%);padding:0 .9em;background:var(--bg);white-space:nowrap;
+  font-family:var(--font-util);font-size:clamp(12px,1vw,15px);font-weight:600;letter-spacing:.04em;color:var(--soft);
+  transition:opacity .6s ease .25s;}
+#s4b.introDelivery .modRow.delivery{border-color:transparent;background:transparent;}
+#s4b.introDelivery .modRow.delivery .modCard + .modCard::before,
+#s4b.introDelivery .dlvCap{opacity:0;}
+#s4b.introDelivery .dlvTag{opacity:0;transform:translate(-50%,-50%) scale(.9);}
 
 </style>
 
@@ -747,6 +1059,7 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 #s5 .mlk .mlA{fill:var(--title);}
 #s5 .mlk .mlSep{fill:var(--teal);font-weight:500;}
 #s5 .mlk .mlName{fill:var(--sec);}
+#s5 .modCol .dlvBr{fill:none;stroke:var(--teal);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 #s5 .cap{text-align:center;font-size:clamp(12px,1vw,16px);color:var(--blue-grey);font-style:italic;margin-top:.5vh;}
 
 </style>
@@ -1428,7 +1741,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
       <span class="eyebrow"><span class="dot"></span>The When</span>
       <h2 style="margin-top:1.4vh;">Controlled and coordinated quarterly drops for features &amp; updates.</h2>
     </div>
-    <svg class="tl" id="tlSvg" viewBox="0 0 1630 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, releases delivered as time progresses, with the Atlas People rollout shown above">
+    <svg class="tl" id="tlSvg" viewBox="-165 0 1795 520" preserveAspectRatio="xMidYMid meet" aria-label="Indicative release timeline, releases delivered as time progresses, with the Atlas People rollout shown above">
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="var(--sec)"/><stop offset="1" stop-color="var(--acc2)"/>
@@ -1745,7 +2058,7 @@ h2,.layer h3,.station h3,.round h3,.theme h3,.detail h3{color:var(--title);}
     </div>
     <div class="nextList">
       <div class="nextItem rv d2"><div class="nextNum">01</div>
-        <div class="nextBody"><h3>Product Roadmap</h3><p>Confirm the features and functions themselves to build across both delivery streams &mdash; and the sequence they land in.</p></div></div>
+        <div class="nextBody"><h3>Product Roadmap</h3><p>Confirm the features and functions themselves to build across Atlas&nbsp;|&nbsp;People and Atlas&nbsp;|&nbsp;Delivery &mdash; and the sequence they land in.</p></div></div>
       <div class="nextItem rv d3"><div class="nextNum">02</div>
         <div class="nextBody"><h3>Program</h3><p>Build the delivery program from the Dev Team&rsquo;s high-level estimates.</p></div></div>
       <div class="nextItem rv d4"><div class="nextNum hi">03</div>
@@ -2741,32 +3054,38 @@ var APPMODS=[
   var section=document.getElementById('s4b');
   // Build the 3-2 module grid: tagline, Atlas|Name lockup, description. No features.
   function el(c){var d=document.createElement('div');d.className=c;return d;}
-  var rows=[el('modRow'),el('modRow')];
+  var rows=[el('modRow'),el('modRow delivery')];
   APPMODS.forEach(function(m,i){
     var card=el('modCard');
     card.innerHTML='<div class="modLock"><span class="mlA">Atlas</span> <span class="mlSep">|</span> <span class="mlName">'+m.name+'</span></div>'+
       '<div class="mcDesc">'+m.desc+'</div>';
     rows[i<2?0:1].appendChild(card);
   });
+  // Atlas | Delivery = Projects + Operations + Finance. Own class names (dl*), so the
+  // intro's FLIP lookups of .mlA/.mlSep/.mlName still map one-to-one onto the cards.
+  rows[1].insertAdjacentHTML('afterbegin',
+    '<div class="dlvTag"><span class="dlA">Atlas</span> <span class="dlSep">|</span> <span class="dlName">Delivery</span></div>'+
+    '<div class="dlvCap">One System, from start to finish</div>');
   rows.forEach(function(r){grid.appendChild(r);});
 
   // ---- Intro animation (nav-driven, reversible): legacy acronyms -> module
-  // names -> dissolve into the 3-2 grid. h2 + grid stay hidden until landed. ----
+  // names -> dissolve into the 3-2 grid -> Projects, Operations and Finance
+  // framed as Atlas | Delivery. h2 + grid stay hidden until landed. ----
   var ACR=[{a:'HRIS',full:'Human Resource Information System'},
            {a:'TMA', full:'Tender Management Application'},
            {a:'PMT', full:'Project Management Transformation'}];
   var MODS=['People','Tenders','Projects','Operations','Finance'];
-  var overlay=null,step=0,apply=null,revealTimer=null;
+  var overlay=null,step=0,lastN=0,apply=null,revealTimer=null;
   function introClear(){
     if(revealTimer){clearTimeout(revealTimer);revealTimer=null;}
     if(overlay&&overlay.parentNode)overlay.parentNode.removeChild(overlay);
-    overlay=null;apply=null;step=0;
-    section.classList.remove('introRunning','introH2');
+    overlay=null;apply=null;step=0;lastN=0;
+    section.classList.remove('introRunning','introH2','introDelivery');
   }
   function introRun(){
     introClear();
     if(RM)return;
-    section.classList.add('introRunning','introH2');
+    section.classList.add('introRunning','introH2','introDelivery');
     requestAnimationFrame(function(){requestAnimationFrame(introBuild);});
   }
   function introBuild(){
@@ -2802,6 +3121,11 @@ var APPMODS=[
     var peoplePipe=document.createElement('span');peoplePipe.className='miPipe';peoplePipe.textContent='|';peoplePipe.style.cssText='position:absolute;transform:translate(-50%,-50%);opacity:0;font-weight:500;color:var(--teal);z-index:1;transition:transform .9s var(--ease),opacity .5s ease;';overlay.appendChild(peoplePipe);
     function fontOf(e){return parseFloat(getComputedStyle(e).fontSize);}
     apply=function(n){
+      // step 4 only draws the Atlas | Delivery frame round the landed grid; stepping
+      // 3 <-> 4 must not re-run the step-3 FLIP.
+      section.classList.toggle('introDelivery',n<4);
+      var frameOnly=(n===4||(n===3&&lastN===4));lastN=n;
+      if(frameOnly)return;
       if(revealTimer){clearTimeout(revealTimer);revealTimer=null;}
       overlay.style.opacity='1';
       atlas.style.opacity=(n>=1&&n<3)?'1':'0';   // fade out together with the names moving
@@ -2868,7 +3192,7 @@ var APPMODS=[
     requestAnimationFrame(function(){overlay.classList.remove('instant');});
     step=0;
   }
-  function introNext(){ if(!apply||step>=3)return false; step++;apply(step);return true; }
+  function introNext(){ if(!apply||step>=4)return false; step++;apply(step);return true; }
   function introPrev(){ if(!apply||step<=0)return false; step--;apply(step);return true; }
   onSlideEnter('s4b',introRun);
   onSlideLeave('s4b',introClear);
@@ -2989,6 +3313,14 @@ CAD.forEach(function(c,i){
   var lg=document.createElementNS(NS,'g');lg.setAttribute('class','modCol');
   lg.appendChild(atlasLockup(24,PSY,'People'));   // in line with the People bar
   ['Projects','Operations','Finance'].forEach(function(m,i){lg.appendChild(atlasLockup(24,MIDY-26+i*26,m));});
+  // the three together are Atlas | Delivery: lockup to the left of a "{" spanning the stack
+  // (the svg viewBox starts at x=-165 to make room for it)
+  var y1=MIDY-44,y2=MIDY+34,ym=MIDY-5,xr=20,xm=14,xl=8,r=6;   // ym = visual centre of the stack
+  var dBr=document.createElementNS(NS,'path');dBr.setAttribute('class','dlvBr');
+  dBr.setAttribute('d','M'+xr+' '+y1+' Q'+xm+' '+y1+' '+xm+' '+(y1+r)+' V'+(ym-r)+' Q'+xm+' '+ym+' '+xl+' '+ym+
+    ' Q'+xm+' '+ym+' '+xm+' '+(ym+r)+' V'+(y2-r)+' Q'+xm+' '+y2+' '+xr+' '+y2);
+  lg.appendChild(dBr);
+  lg.appendChild(atlasLockup(xl-6,ym+5,'Delivery','end'));
   tl.appendChild(lg);
 })();
 var relStripe=document.getElementById('relStripe');
